@@ -7,3 +7,16 @@ C:\Users\Admin\source\repos\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.G
 C:\Users\Admin\source\repos\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.CoreCompileInputs.cache
 C:\Users\Admin\source\repos\WindowsFormsApp\obj\Release\WindowsFormsApp.exe
 C:\Users\Admin\source\repos\WindowsFormsApp\obj\Release\WindowsFormsApp.pdb
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\WindowsFormsApp.exe
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\WindowsFormsApp.pdb
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.Form1.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.Properties.Resources.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.CoreCompileInputs.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.exe
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.pdb
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.setting_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Newtonsoft.Json.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Newtonsoft.Json.xml
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.CopyComplete
