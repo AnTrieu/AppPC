@@ -165,7 +165,7 @@
             this.confirm_vutton.TabIndex = 8;
             this.confirm_vutton.Text = "Confirm";
             this.confirm_vutton.UseVisualStyleBackColor = true;
-            this.confirm_vutton.Click += new System.EventHandler(this.button1_Click);
+            this.confirm_vutton.Click += new System.EventHandler(this.Confirm_Click);
             // 
             // cancel_button
             // 

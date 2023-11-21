@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WindowsFormsApp
 {
@@ -38,6 +39,24 @@ namespace WindowsFormsApp
             }
         }
 
+        // Define a class to hold any data you want to pass
+        public class ConfirmEventArgs : EventArgs
+        {
+            public string name { get; set; } // Example: Data to be passed from child to parent
+            public string width_resolution { get; set; } // Example: Data to be passed from child to parent
+            public string height_resolution { get; set; } // Example: Data to be passed from child to parent
+            public string width_real { get; set; } // Example: Data to be passed from child to parent
+            public string height_real { get; set; } // Example: Data to be passed from child to parent
+            public string bittrate_select { get; set; } // Example: Data to be passed from child to parent
+
+        }
+
+        // Định nghĩa một delegate để đại diện cho sự kiện
+        public delegate void ButtonClickEventHandler(object sender, EventArgs e);
+
+        // Định nghĩa sự kiện bằng delegate ở trên
+        public event EventHandler<ConfirmEventArgs> ConfirmClick;
+
         public setting_form()
         {
             InitializeComponent();
@@ -54,15 +73,50 @@ namespace WindowsFormsApp
             this.height_real.Text = "1080";
 
             this.bittrate_select.SelectedIndex = 5;
-            this.ShowDialog();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        public void set_name_program(string name)
         {
+            this.name_program.Text = name;
+        }
+
+        public void set_resolution(string width, string height)
+        {
+            this.width_resolution.Text = width;
+            this.height_resolution.Text = height;
+        }
+
+        public void set_resolution_real(string width, string height)
+        {
+            this.width_real.Text = width;
+            this.height_real.Text = height;
+        }
+
+        public void set_bittrate(string bittrate)
+        {
+            this.bittrate_select.SelectedIndex = this.bittrate_select.FindString(bittrate); 
+        }
+
+        private void Confirm_Click(object sender, EventArgs e)
+        {
+            // Create an instance of ConfirmEventArgs and set any data you want to pass
+            ConfirmEventArgs eventArgs = new ConfirmEventArgs
+            {
+                name = this.name_program.Text,
+                width_resolution = this.width_resolution.Text,
+                height_resolution = this.height_resolution.Text,
+                width_real = this.width_real.Text,
+                height_real = this.height_real.Text,
+                bittrate_select = this.bittrate_select.Text
+            };
+
+            // Khi nút được nhấn, gọi sự kiện và truyền thông tin về control cha
+            ConfirmClick?.Invoke(this, eventArgs);
+
             this.Close();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
