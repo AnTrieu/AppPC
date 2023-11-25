@@ -1,18 +1,24 @@
-﻿using System;
+﻿using Accord.Video.FFMPEG;
+using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Timer = System.Windows.Forms.Timer;
 
 public class ResizablePanel : Panel
 {
     private const int ResizeHandleSize = 10;
     private bool isResizing;
+    private bool isReStart;
     private bool isMove;
     private bool isAutoMove;
     private Point lastMousePosition;
     private Panel DestinationPanel { get; set; }
     private Label activeResizeHandle;
+
+    public VideoFileReader videoFileReader = null;
+    public Timer updateTimer = null;
 
     // Determine the dynamic snap distance based on the distance between centers
     private int snapDistance = 10;
@@ -83,55 +89,15 @@ public class ResizablePanel : Panel
 
         this.MouseDown += (sender, e) =>
         {
-            // Event callback
-            OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, true);
-
-            isAutoMove = true;
-            isMove = true;
-            lastMousePosition = e.Location;      
+            maunalActiveMouseDown(sender, e);
         };
         this.MouseUp += (sender, e) =>
         {
-            isAutoMove = false;
-            isMove = false;
+            maunalActiveMouseUp(sender, e);
         };
         this.MouseMove += (sender, e) =>
         {
-            if (isMove)
-            {
-                int deltaX = e.X - lastMousePosition.X;
-                int deltaY = e.Y - lastMousePosition.Y;
-
-                int newLeft = this.Left + deltaX;
-                int newTop = this.Top + deltaY;
-
-                int maxX = this.Parent.Width - this.Width;
-                int maxY = this.Parent.Height - this.Height;
-
-                newLeft = Math.Max(0, Math.Min(newLeft, maxX));
-                newTop = Math.Max(0, Math.Min(newTop, maxY));
-
-
-                // Kiểm tra va chạm với các đối tượng khác
-                if (isAutoMove && !CheckCollision(deltaX, deltaY))
-                {
-                    // Event callback
-                    OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
-
-                    this.Location = new Point(newLeft, newTop);         
-                }
-                else if (!isAutoMove)
-                {
-                    if ((Math.Abs(deltaX) > snapDistance) || (Math.Abs(deltaY) > snapDistance))
-                    {
-                        isAutoMove = true;
-                    }                    
-                }
-                else
-                {
-                    isAutoMove = false;
-                }
-            }
+            maunalActiveMouseMove(sender, e);
         };
     }
 
@@ -200,6 +166,63 @@ public class ResizablePanel : Panel
         return ret;
     }
 
+    public void maunalActiveMouseUp(object sender, MouseEventArgs e)
+    {
+        isAutoMove = false;
+        isMove = false;
+
+        // Event callback
+        OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, true);
+    }
+
+    public void maunalActiveMouseDown(object sender, MouseEventArgs e)
+    {
+        isAutoMove = true;
+        isMove = true;
+        lastMousePosition = e.Location;
+
+        // Event callback
+        OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, true);
+    }
+
+    public void maunalActiveMouseMove(object sender, MouseEventArgs e)
+    {
+        if (isMove)
+        {
+            int deltaX = e.X - lastMousePosition.X;
+            int deltaY = e.Y - lastMousePosition.Y;
+
+            int newLeft = this.Left + deltaX;
+            int newTop = this.Top + deltaY;
+
+            int maxX = this.Parent.Width - this.Width;
+            int maxY = this.Parent.Height - this.Height;
+
+            newLeft = Math.Max(0, Math.Min(newLeft, maxX));
+            newTop = Math.Max(0, Math.Min(newTop, maxY));
+
+
+            // Kiểm tra va chạm với các đối tượng khác
+            if (isAutoMove && !CheckCollision(deltaX, deltaY))
+            {
+                // Event callback
+                OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
+
+                this.Location = new Point(newLeft, newTop);
+            }
+            else if (!isAutoMove)
+            {
+                if ((Math.Abs(deltaX) > snapDistance) || (Math.Abs(deltaY) > snapDistance))
+                {
+                    isAutoMove = true;
+                }
+            }
+            else
+            {
+                isAutoMove = false;
+            }
+        }
+    }
     public void InitializeResizeHandles()
     {
         for (int panelIndex = DestinationPanel.Controls.Count - 1; panelIndex >= 0; panelIndex--)
@@ -224,10 +247,22 @@ public class ResizablePanel : Panel
             }
         }
 
-        Controls.Add(CreateResizeHandle(0, 0, "top-left")); // Top-left
-        Controls.Add(CreateResizeHandle(Width - ResizeHandleSize, 0, "top-right")); // Top-right
-        Controls.Add(CreateResizeHandle(0, Height - ResizeHandleSize, "bottom-left")); // Bottom-left
-        Controls.Add(CreateResizeHandle(Width - ResizeHandleSize, Height - ResizeHandleSize, "bottom-right")); // Bottom-right
+        Label top_left_point = CreateResizeHandle(0, 0, "top-left");
+        Controls.Add(top_left_point); // Top-left
+        Controls.SetChildIndex(top_left_point, 0);
+
+        Label top_right_point = CreateResizeHandle(Width - ResizeHandleSize, 0, "top-right");
+        Controls.Add(top_right_point); // Top-right
+        Controls.SetChildIndex(top_right_point, 0);
+
+        Label bottom_left_point = CreateResizeHandle(0, Height - ResizeHandleSize, "bottom-left");
+        Controls.Add(bottom_left_point); // Bottom-left
+        Controls.SetChildIndex(bottom_left_point, 0);
+
+        Label bottom_right_point = CreateResizeHandle(Width - ResizeHandleSize, Height - ResizeHandleSize, "bottom-right");
+        Controls.Add(bottom_right_point); // Bottom-right
+        Controls.SetChildIndex(bottom_right_point, 0);
+
     }
 
     private Label CreateResizeHandle(int x, int y, String Name)
@@ -240,7 +275,7 @@ public class ResizablePanel : Panel
             Name = Name,
             AllowDrop = true
         };
-
+ 
         handle.MouseDown += ResizeHandle_MouseDown;
         
         return handle;
@@ -300,9 +335,22 @@ public class ResizablePanel : Panel
 
         // Active resize event
         isResizing = true;
+        isReStart = false;
+
+        if (updateTimer.Enabled)
+        {
+            isReStart = true;
+            updateTimer.Stop();
+        }
 
         lastMousePosition = Cursor.Position;
         activeResizeHandle.DoDragDrop(activeResizeHandle, DragDropEffects.Move);
+
+        if(isReStart)
+        {
+            isReStart = false;
+            updateTimer.Start();
+        }
 
         // De-Active resize event
         isResizing = false;

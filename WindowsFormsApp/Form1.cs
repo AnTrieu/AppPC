@@ -16,6 +16,11 @@ using Accord.Video.FFMPEG;
 using System.Collections.Generic;
 using AxWMPLib;
 using System.Threading.Tasks;
+using System.Security.Policy;
+using WMPLib;
+using System.Windows.Forms.Integration;
+using Timer = System.Windows.Forms.Timer;
+using System.Windows.Media.Media3D;
 
 namespace WindowsFormsApp
 {
@@ -26,6 +31,8 @@ namespace WindowsFormsApp
         private String screen = "terminal";
         private Thread udpListenerThread = null;
         private CancellationTokenSource cts = new CancellationTokenSource();
+
+        private FormWindowState windowStateK1 = FormWindowState.Normal;
 
         List<Control> controlsList = new List<Control>();
 
@@ -47,6 +54,15 @@ namespace WindowsFormsApp
 
         private void Form_SizeChanged(object sender, EventArgs e)
         {
+            if(this.WindowState == FormWindowState.Minimized)
+            {
+                return;
+            }
+            //else if(windowStateK1 != this.WindowState)
+            //{
+            //    reinit();
+            //}
+
             this.panel7.Width = (this.Width - 548) / 2;
             this.panel8.Width = (this.Width - 548) / 2;
             this.panel37.Width = (this.panel36.Width - 600) / 2;
@@ -71,7 +87,12 @@ namespace WindowsFormsApp
                 this.show_file.Height = 250;
 
                 this.bk_program.Width = 70;
-            }   
+            }
+
+            // Refresh design area
+            refresh_program_design();
+
+            windowStateK1 = this.WindowState;
         }
 
 
@@ -368,6 +389,8 @@ namespace WindowsFormsApp
         {
             InitializeComponent();
 
+            this.WindowState = windowStateK1;
+
             this.panel4.MouseDown += new MouseEventHandler(Form1_MouseDown);
             this.panel5.MouseDown += new MouseEventHandler(Form1_MouseDown);
             
@@ -496,7 +519,7 @@ namespace WindowsFormsApp
 
         private void max_button_Click(object sender, EventArgs e)
         {
-            if(this.WindowState == FormWindowState.Normal)
+            if (this.WindowState == FormWindowState.Normal)
             {
                 this.MaximizedBounds = Screen.FromHandle(this.Handle).WorkingArea;
                 this.WindowState = FormWindowState.Maximized;
@@ -607,7 +630,6 @@ namespace WindowsFormsApp
 
         private void TargetPanel_DragDrop(object sender, DragEventArgs e)
         {
-
             if (e.Data.GetDataPresent("PictureBoxImage") && e.Data.GetDataPresent("PictureBoxName"))
             {
                 // Unselect all
@@ -635,6 +657,7 @@ namespace WindowsFormsApp
                 var info_windown = new
                 {
                     name = "Windown " + lenght_list,
+                    path_windown = "",
                     list = list_object,
                     selected = list_selected
                 };
@@ -650,7 +673,7 @@ namespace WindowsFormsApp
                     windown = new ResizablePanel(destinationPanel)
                     {
                         Location = new Point(0, 0),
-                        Size = new Size(destinationPanel.Width - 2, destinationPanel.Height - 2),
+                        Size = new Size(max_app_width, max_app_height),
                         BackColor = Color.Transparent,
                         Name = JsonConvert.SerializeObject(info_windown),
                         AllowDrop = true
@@ -678,12 +701,7 @@ namespace WindowsFormsApp
                 }
 
                 windown.CustomEventMouseDown += (sender1, e1, X, Y, app_width, app_height, active_select) =>
-                {
-                    if(!active_select)
-                    {
-                        return;
-                    }
-
+                {           
                     this.panel70.Visible = true;
 
                     this.textBox1.Text = Math.Ceiling(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
@@ -691,15 +709,20 @@ namespace WindowsFormsApp
                     this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
                     this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
 
+                    if (!active_select)
+                    {
+                        return;
+                    }
+
                     // Check again
                     if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
                     {
-                        this.textBox1.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox4.Text)).ToString();
+                        this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
                     }
 
                     if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
                     {
-                        this.textBox2.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox3.Text)).ToString();
+                        this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
                     }
 
                     // Deserialize JSON data from the Name property
@@ -726,10 +749,11 @@ namespace WindowsFormsApp
                             resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
                         }
                     }
-
+           
                     foreach (Control control1 in this.list_windowns.Controls)
                     {
-                        control1.Refresh();
+                        if(control1.Name != null)
+                            control1.Refresh();
                     }
 
                     windown.InitializeResizeHandles();
@@ -755,6 +779,7 @@ namespace WindowsFormsApp
                         }
                     }
 
+                    // Update controlsList
                     foreach (Control control in controlsList)
                     {
                         if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
@@ -770,7 +795,7 @@ namespace WindowsFormsApp
                             }
                         }
                     }
-
+                    
                     // Draw windown list
                     draw_list_windown(controlsList);
                 };
@@ -783,25 +808,63 @@ namespace WindowsFormsApp
                     }
                 };
 
-                string extension = System.IO.Path.GetExtension(objectName).ToLower();
+                // Load the video file
+                windown.videoFileReader = new VideoFileReader();
 
-                // Is a video
-                if (extension == ".mp4" || extension == ".avi" ||
-                    extension == ".wmv" || extension == ".mpg" ||
-                    extension == ".rmvp" || extension == ".mov" ||
-                    extension == ".dat" || extension == ".flv")
+                int interval = 20;
+                long total_frame = 0;
+
+                // Create PictureBox for the image
+                PictureBox pictureBox = new PictureBox();
+                pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
+                pictureBox.Name = "0";
+                pictureBox.MouseDown += (sender1, e1) =>
                 {
-                    Console.WriteLine(objectName.Replace("\\", "\\\\"));
-                    AxWindowsMediaPlayer axWindowsMediaPlayer1 = new AxWindowsMediaPlayer();
-                    //axWindowsMediaPlayer1.Dock = DockStyle.Fill;
-                    //axWindowsMediaPlayer1.URL = objectName.Replace("\\", "\\\\");
-                    //windown.Controls.Add(axWindowsMediaPlayer1);
-                }
-                else if (extension == ".jpg" || extension == ".bmp" ||
-                    extension == ".png" || extension == ".gif")
+                    windown.maunalActiveMouseDown(sender1, e1);
+                };
+                pictureBox.MouseUp += (sender1, e1) =>
                 {
-                    
-                }
+                    windown.maunalActiveMouseUp(sender1, e1);
+                };
+                pictureBox.MouseMove += (sender1, e1) =>
+                {
+                    windown.maunalActiveMouseMove(sender1, e1);
+                };
+                windown.Controls.Add(pictureBox);
+
+                windown.updateTimer = new Timer();
+                windown.updateTimer.Interval = interval;
+                windown.updateTimer.Tick += (sender1, e1) =>
+                {
+                    if (InvokeRequired)
+                    {
+                        Invoke(new MethodInvoker(delegate { /* Công việc giao diện người dùng */ }));
+                    }
+                    else
+                    {
+                        if (total_frame != windown.videoFileReader.FrameCount)
+                        {
+                            total_frame = windown.videoFileReader.FrameCount;
+                            pictureBox.Name = "0";
+                        }
+                        else if (int.Parse(pictureBox.Name) > total_frame)
+                        {
+                            pictureBox.Name = "0";
+                        }
+
+                        // Get the first frame
+                        // Giải phóng hình ảnh cũ trước khi gán hình ảnh mới
+                        if (pictureBox.Image != null)
+                        {
+                            pictureBox.Image.Dispose();
+                        }
+                        pictureBox.Image = windown.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
+                        pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
+
+                    }
+                };
 
                 controlsList.Insert(0, windown);             
                 destinationPanel.Controls.AddRange(controlsList.ToArray());
@@ -823,9 +886,9 @@ namespace WindowsFormsApp
         {
             // Xóa tất cả các điều khiển con trong panel14
             this.list_windowns.Controls.Clear();
-
+  
             foreach (Control control in controlsList)
-            {
+            {          
                 if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                 {
                     // Deserialize JSON data from the Name property
@@ -862,17 +925,16 @@ namespace WindowsFormsApp
                     windown_name_label.ForeColor = System.Drawing.Color.White;
                     windown_name_label.Text = infoWindow.Name;
                     title_Panel.Controls.Add(windown_name_label);
-
+                    
                     for (int i = infoWindow.list.Count - 1; i >= 0; i--)
                     {
                         String selectfilePath = infoWindow.list[i];
                         if (!File.Exists(selectfilePath))
                             continue;
-
+                        
                         String typeFile = "Video";
                         string extension = System.IO.Path.GetExtension(selectfilePath).ToLower();
                         Image videoFrame = null;
-
 
                         Panel item_Panel = new Panel();
                         item_Panel.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
@@ -896,7 +958,7 @@ namespace WindowsFormsApp
                                         if (infoWindow1.selected[int.Parse((sender as Control).Name)])
                                         {
                                             initialBorderColor = Color.LightBlue;
-
+          
                                             this.panel70.Visible = true;
 
                                             int max_app_width = control1.Parent.Width - 2;
@@ -911,22 +973,74 @@ namespace WindowsFormsApp
                                             // Check again
                                             if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
                                             {
-                                                this.textBox1.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox4.Text)).ToString();
+                                                this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
                                             }
 
                                             if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
                                             {
-                                                this.textBox2.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox3.Text)).ToString();
+                                                this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
                                             }
 
                                             ResizablePanel panel_windown = control1 as ResizablePanel;
                                             panel_windown.InitializeResizeHandles();
-                                        }
-                            
-                                        // Draw a border with a different color and thickness
-                                        using (Pen pen = new Pen(initialBorderColor, 2)) // You can change Color.Red to your desired color
-                                        {
-                                            e.Graphics.DrawRectangle(pen, item_Panel.Padding.Left, 0, item_Panel.Width - 1 - item_Panel.Padding.Left, item_Panel.Height - 1);
+
+
+                                            String path_file = infoWindow1.list[int.Parse((sender as Control).Name)];
+                                            string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
+
+                                            // Is a video
+                                            if (extension_1 == ".mp4" || extension_1 == ".avi" ||
+                                                extension_1 == ".wmv" || extension_1 == ".mpg" ||
+                                                extension_1 == ".rmvp" || extension_1 == ".mov" ||
+                                                extension_1 == ".dat" || extension_1 == ".flv")
+                                            {
+                                                if (!infoWindow1.path_windown.Equals(path_file) || !panel_windown.updateTimer.Enabled)
+                                                {
+                                                    // update data
+                                                    infoWindow1.path_windown = path_file;
+                                                    resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+
+                                                    panel_windown.updateTimer.Stop();
+                                                    panel_windown.videoFileReader.Close();
+
+                                                    panel_windown.videoFileReader.Open(path_file);
+                                                    panel_windown.updateTimer.Interval = 1000 / (int)panel_windown.videoFileReader.FrameRate.Value;
+
+                                                    panel_windown.updateTimer.Start();
+                                                }
+
+                                            }
+                                            else if (extension_1 == ".jpg" || extension_1 == ".bmp" ||
+                                                extension_1 == ".png" || extension_1 == ".gif")
+                                            {
+                                                panel_windown.updateTimer.Stop();
+
+                                                // Iterate through each control in the panel
+                                                foreach (Control control_1 in panel_windown.Controls)
+                                                {
+                                                    // Check if the control is a PictureBox
+                                                    if (control_1 is PictureBox)
+                                                    {                                                  
+                                                        // You've found the PictureBox inside the Panel
+                                                        PictureBox pictureBoxInPanel = (PictureBox)control_1;
+
+                                                        // Now you can work with pictureBoxInPanel as needed
+                                                        if (pictureBoxInPanel.Image != null)
+                                                        {
+                                                            pictureBoxInPanel.Image.Dispose();
+                                                        }
+                                                        pictureBoxInPanel.Image = System.Drawing.Image.FromFile(path_file); // Set a new image
+
+                                                        // Break out of the loop if you only need the first PictureBox
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            // Draw a border with a different color and thickness
+                                            using (Pen pen = new Pen(initialBorderColor, 2)) // You can change Color.Red to your desired color
+                                            {
+                                                e.Graphics.DrawRectangle(pen, item_Panel.Padding.Left, 0, item_Panel.Width - 1 - item_Panel.Padding.Left, item_Panel.Height - 1);
+                                            }
                                         }
                                     }                        
                                 }
@@ -946,7 +1060,6 @@ namespace WindowsFormsApp
                             extension == ".rmvp" || extension == ".mov" ||
                             extension == ".dat" || extension == ".flv")
                         {
-
                             // Load the video file
                             VideoFileReader videoFileReader = new VideoFileReader();
                             videoFileReader.Open(selectfilePath);
@@ -960,11 +1073,7 @@ namespace WindowsFormsApp
                         else if (extension == ".jpg" || extension == ".bmp" ||
                             extension == ".png" || extension == ".gif")
                         {
-                            // Capture the entire screen
-                            Bitmap screenshot = CaptureScreen();
-                            screenshot.Save(selectfilePath, ImageFormat.Png);
-
-                            videoFrame = (Image)screenshot;
+                            videoFrame = System.Drawing.Image.FromFile(selectfilePath);
                             typeFile = "Image";
                         }
 
@@ -975,7 +1084,7 @@ namespace WindowsFormsApp
                         pictureBox.Name = selectfilePath;
                         pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
 
-                        pictureBox.MouseClick += (sender, e) =>
+                        pictureBox.MouseDown += (sender, e) =>
                         {                           
                             // Unselect all
                             foreach (Control control1 in controlsList)
@@ -1002,10 +1111,10 @@ namespace WindowsFormsApp
 
                             foreach (Control control1 in this.list_windowns.Controls)
                             {
-                                control1.Refresh();
+                                if (control1.Name != null)
+                                    control1.Refresh();
                             }
-                        };
-                       
+                        };                      
                         picture_Panel.Controls.Add(pictureBox);
 
                         Panel label_Panel = new Panel();
@@ -1048,7 +1157,8 @@ namespace WindowsFormsApp
 
                             foreach (Control control1 in this.list_windowns.Controls)
                             {
-                                control1.Refresh();
+                                if (control1.Name != null)
+                                    control1.Refresh();
                             }
                         };
 
@@ -1057,9 +1167,8 @@ namespace WindowsFormsApp
                         item_Panel.Controls.Add(label_Panel);
                         item_Panel.Controls.Add(picture_Panel);
                         this.list_windowns.Controls.Add(item_Panel);
-                    }
-
-                    this.list_windowns.Controls.Add(delta_Panel2);
+                    }                  
+                    this.list_windowns.Controls.Add(delta_Panel2);                
                     this.list_windowns.Controls.Add(title_Panel);
                     this.list_windowns.Controls.Add(delta_Panel1);
                 }
@@ -1392,23 +1501,7 @@ namespace WindowsFormsApp
                 }                
             }
         }
-        static Bitmap CaptureScreen()
-        {
-            // Get the primary screen's bounds
-            Rectangle screenBounds = Screen.PrimaryScreen.Bounds;
 
-            // Create a bitmap with the screen size
-            Bitmap screenshot = new Bitmap(screenBounds.Width, screenBounds.Height, PixelFormat.Format32bppArgb);
-
-            // Create a graphics object from the bitmap
-            using (Graphics graphics = Graphics.FromImage(screenshot))
-            {
-                // Capture the screen content to the bitmap
-                graphics.CopyFromScreen(screenBounds.X, screenBounds.Y, 0, 0, screenBounds.Size, CopyPixelOperation.SourceCopy);
-            }
-
-            return screenshot;
-        }
         private void PictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             // Bắt đầu quá trình kéo khi nhấn chuột trái
@@ -1526,14 +1619,10 @@ namespace WindowsFormsApp
             else if (extension == ".jpg" || extension == ".bmp" ||
                 extension == ".png" || extension == ".gif")
             {
-                // Capture the entire screen
-                Bitmap screenshot = CaptureScreen();
-                screenshot.Save(selectfilePath, ImageFormat.Png);
-
-                videoFrame = (Image)screenshot;
+                videoFrame = System.Drawing.Image.FromFile(selectfilePath);
 
                 typeFile = "Image";
-                resolution = screenshot.Width.ToString() + "*" + screenshot.Height.ToString();
+                resolution = System.Drawing.Image.FromFile(selectfilePath).Width.ToString() + "*" + System.Drawing.Image.FromFile(selectfilePath).Height.ToString();
             }
 
             Panel row_file = new Panel();
@@ -1562,7 +1651,6 @@ namespace WindowsFormsApp
             addTablePanel.MouseEnter += row_file_MouseEnter;
             addTablePanel.MouseLeave += row_file_MouseLeave;
             
-
             // Create PictureBox for the image
             PictureBox pictureBox = new PictureBox();
             pictureBox.Image = videoFrame;
@@ -1660,7 +1748,7 @@ namespace WindowsFormsApp
             }
         }
 
-        private void button15_Click(object sender, EventArgs e)
+        private void setting_program(object sender, EventArgs e)
         {
             foreach (Control control in this.panel43.Controls)
             {
@@ -1673,6 +1761,8 @@ namespace WindowsFormsApp
                     {
                         if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
                         {
+                            reinit();
+
                             var infoProgram = new
                             {
                                 name = e1.name,
@@ -1741,7 +1831,6 @@ namespace WindowsFormsApp
                     popup.set_resolution(info_program.width_resolution, info_program.height_resolution);
                     popup.set_resolution_real(info_program.width_real, info_program.height_real);
                     popup.set_bittrate(info_program.bittrate_select);
-                    //popup.StartPosition = FormStartPosition.CenterScreen;
 
                     popup.ShowDialog();
                     break;
@@ -1749,6 +1838,100 @@ namespace WindowsFormsApp
             }
 
             
+        }
+
+        private void delete_program(object sender, EventArgs e)
+        {            
+            reinit();
+        }
+
+        private void reinit()
+        {
+            foreach (Control control1 in controlsList)
+            {
+                ResizablePanel panel_windown = control1 as ResizablePanel;
+
+                if(panel_windown.updateTimer != null)
+                {
+                    panel_windown.updateTimer.Stop();
+                    panel_windown.updateTimer = null;
+                }
+
+                if (panel_windown.videoFileReader != null)
+                {
+                    panel_windown.videoFileReader.Close();
+                    panel_windown.videoFileReader = null;
+                }
+            }
+
+            controlsList.Clear();
+
+            this.list_windowns.Controls.Clear();
+            this.panel43.Controls.Clear();
+            this.panel47.Visible = false;
+        }
+
+        private void refresh_program_design()
+        {
+            // Resize child panels in program list (panel43)
+            var visiblePanels = this.panel43.Controls
+                .OfType<Panel>()
+                .Where(panel => panel.Visible);
+            
+            foreach (var panel_chill in visiblePanels)
+            {
+                int widthK1 = panel_chill.Width;
+                int heightK1 = panel_chill.Height;
+                var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
+            
+                // Get the maximum allowable width and height based on the mainPanel's size
+                int width_contain = this.panel43.Width;
+                int height_contain = this.panel43.Height;
+                int width_select = int.Parse(info_program.width_real);
+                int height_select = int.Parse(info_program.height_real);
+                float delta = (float)width_select / (float)height_select;
+                float width_config = 0;
+                float height_config = 0;
+                do
+                {
+                    height_config += 1;
+                    width_config += delta;
+                }
+                while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 70)));
+            
+                // Calculate the position to center the inner panel within the main panel
+                int x = (width_contain - (int)width_config) / 2;
+                int y = (height_contain - (int)height_config) / 2;
+            
+                panel_chill.Width = (int)width_config;
+                panel_chill.Height = (int)height_config;
+                panel_chill.Location = new Point(x, y);
+            
+                foreach (Control control1 in controlsList)
+                {
+                    control1.Left = (int)Math.Ceiling(Normalize(control1.Location.X, 0, widthK1, 0, panel_chill.Width));
+                    control1.Top = (int)Math.Ceiling(Normalize(control1.Location.Y, 0, heightK1, 0, panel_chill.Height));
+                    control1.Width = (int) Math.Ceiling(Normalize(control1.Width, 0, widthK1, 0, panel_chill.Width));
+                    control1.Height = (int)Math.Ceiling(Normalize(control1.Height, 0, heightK1, 0, panel_chill.Height));
+                }
+            }
+
+            unselect_object();
+        }
+
+        private void up_function(object sender, EventArgs e)
+        {
+
+        }
+
+        private void down_function(object sender, EventArgs e)
+        {
+
+        }
+
+        private void delete_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
@@ -1803,7 +1986,11 @@ namespace WindowsFormsApp
     public class Info_Window
     {
         public string Name { get; set; }
+        public string path_windown { get; set; }
         public List<string> list { get; set; }
         public List<bool> selected { get; set; }
     }
+
+
+
 }

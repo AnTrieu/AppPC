@@ -1947,6 +1947,7 @@
             this.button4.Size = new System.Drawing.Size(25, 28);
             this.button4.TabIndex = 3;
             this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.up_function);
             // 
             // button3
             // 
@@ -1959,6 +1960,7 @@
             this.button3.Size = new System.Drawing.Size(25, 28);
             this.button3.TabIndex = 2;
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.down_function);
             // 
             // button1
             // 
@@ -1971,6 +1973,7 @@
             this.button1.Size = new System.Drawing.Size(25, 28);
             this.button1.TabIndex = 1;
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.delete_Click);
             // 
             // panel6
             // 
@@ -2125,7 +2128,7 @@
             this.button15.Size = new System.Drawing.Size(25, 28);
             this.button15.TabIndex = 3;
             this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.button15_Click);
+            this.button15.Click += new System.EventHandler(this.setting_program);
             // 
             // button5
             // 
@@ -2138,6 +2141,7 @@
             this.button5.Size = new System.Drawing.Size(25, 28);
             this.button5.TabIndex = 2;
             this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.delete_program);
             // 
             // label23
             // 

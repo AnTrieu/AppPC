@@ -34,6 +34,7 @@ C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Accord.Video.FFMPE
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\AForge.dll
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\AForge.Video.DirectShow.dll
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\AForge.Video.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\AxInterop.WMPLib.dll
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\MediaInfo.DotNetWrapper.dll
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Newtonsoft.Json.dll
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Accord.xml
@@ -52,4 +53,7 @@ C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.cs
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.CopyComplete
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.exe
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.pdb
-C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\AxInterop.WMPLib.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\Interop.WMPLib.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\AxInterop.WMPLib.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.ResolveComReference.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\bin\Release\Interop.WMPLib.dll
