@@ -1,0 +1,10 @@
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.csproj.AssemblyReference.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\Interop.WMPLib.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\AxInterop.WMPLib.dll
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.csproj.ResolveComReference.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.Form1.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.process_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.Properties.Resources.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.setting_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.csproj.GenerateResource.cache
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\x64\Release\WindowsFormsApp.csproj.CoreCompileInputs.cache
