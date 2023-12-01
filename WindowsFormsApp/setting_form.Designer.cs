@@ -1,4 +1,6 @@
-﻿namespace WindowsFormsApp
+﻿using WindowsFormsApp.Properties;
+
+namespace WindowsFormsApp
 {
     partial class setting_form
     {
@@ -42,10 +44,10 @@
             this.close_button = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.width_real = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.height_real = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.width_real = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -96,12 +98,12 @@
             this.bittrate_select.ForeColor = System.Drawing.Color.White;
             this.bittrate_select.FormattingEnabled = true;
             this.bittrate_select.Items.AddRange(new object[] {
-            "256 kbps",
-            "512 kbps",
-            "1 Mbps",
-            "1.5 Mbps",
-            "2 Mbps",
-            "4 Mbps"});
+            "256k",
+            "512k",
+            "1M",
+            "1.5M",
+            "2M",
+            "4M"});
             this.bittrate_select.Location = new System.Drawing.Point(135, 77);
             this.bittrate_select.Name = "bittrate_select";
             this.bittrate_select.Size = new System.Drawing.Size(247, 28);
@@ -242,27 +244,16 @@
             this.panel2.Size = new System.Drawing.Size(410, 270);
             this.panel2.TabIndex = 11;
             // 
-            // label6
+            // height_real
             // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(12, 180);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(57, 22);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "Real:";
-            // 
-            // width_real
-            // 
-            this.width_real.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.width_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.width_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.width_real.ForeColor = System.Drawing.Color.White;
-            this.width_real.Location = new System.Drawing.Point(135, 172);
-            this.width_real.Name = "width_real";
-            this.width_real.Size = new System.Drawing.Size(99, 30);
-            this.width_real.TabIndex = 11;
+            this.height_real.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.height_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.height_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.height_real.ForeColor = System.Drawing.Color.White;
+            this.height_real.Location = new System.Drawing.Point(283, 172);
+            this.height_real.Name = "height_real";
+            this.height_real.Size = new System.Drawing.Size(99, 30);
+            this.height_real.TabIndex = 13;
             // 
             // label7
             // 
@@ -275,16 +266,27 @@
             this.label7.TabIndex = 12;
             this.label7.Text = "x";
             // 
-            // height_real
+            // width_real
             // 
-            this.height_real.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.height_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.height_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.height_real.ForeColor = System.Drawing.Color.White;
-            this.height_real.Location = new System.Drawing.Point(283, 172);
-            this.height_real.Name = "height_real";
-            this.height_real.Size = new System.Drawing.Size(99, 30);
-            this.height_real.TabIndex = 13;
+            this.width_real.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.width_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.width_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.width_real.ForeColor = System.Drawing.Color.White;
+            this.width_real.Location = new System.Drawing.Point(135, 172);
+            this.width_real.Name = "width_real";
+            this.width_real.Size = new System.Drawing.Size(99, 30);
+            this.width_real.TabIndex = 11;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Location = new System.Drawing.Point(12, 180);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(57, 22);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Real:";
             // 
             // setting_form
             // 

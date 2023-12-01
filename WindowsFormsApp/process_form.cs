@@ -62,12 +62,7 @@ namespace WindowsFormsApp
             
             // Clear the background.
             e.Graphics.Clear(obj.BackColor);
-            
-            // Draw the progress bar.
-            float fraction = (float)(ProgressValue - 0) / (100 - 0);
-            int wid = (int)(fraction * obj.ClientSize.Width);
-            e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
-            
+                        
             // Draw the text.
             e.Graphics.TextRenderingHint =
                 TextRenderingHint.AntiAliasGridFit;
@@ -75,17 +70,51 @@ namespace WindowsFormsApp
             {
                 sf.Alignment = StringAlignment.Center;
                 sf.LineAlignment = StringAlignment.Center;
-                int percent = (int)(fraction * 100);
-                if (percent == 200)
+                int percent = ProgressValue;
+
+                if (percent >= 500)
                 {
+                    // Draw the progress bar.
+                    float fraction = (float)((ProgressValue % 100) - 0) / (100 - 0);
+                    int wid = (int)(fraction * obj.ClientSize.Width);
+                    e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
+
+                    e.Graphics.DrawString("Converting... " + (percent - 500).ToString() + " %", this.Font, Brushes.Black, obj.ClientRectangle, sf);
+                }
+                else if (percent >= 300)
+                {
+                    // Draw the progress bar.
+                    float fraction = (float)((ProgressValue % 100) - 0) / (100 - 0);
+                    int wid = (int)(fraction * obj.ClientSize.Width);
+                    e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
+
+                    e.Graphics.DrawString("Split... " + (percent - 300).ToString() + " %", this.Font, Brushes.Black, obj.ClientRectangle, sf);
+                }
+                else if (percent == 200)
+                {
+                    // Draw the progress bar.
+                    float fraction = (float)(100 - 0) / (100 - 0);
+                    int wid = (int)(fraction * obj.ClientSize.Width);
+                    e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
+
                     e.Graphics.DrawString("Succeed", this.Font, Brushes.Black, obj.ClientRectangle, sf);
                 }
                 else if (percent == -1)
                 {
+                    // Draw the progress bar.
+                    float fraction = 0;
+                    int wid = (int)(fraction * obj.ClientSize.Width);
+                    e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
+
                     e.Graphics.DrawString("Failed", this.Font, Brushes.Black, obj.ClientRectangle, sf);
                 }
                 else
                 {
+                    // Draw the progress bar.
+                    float fraction = (float)((ProgressValue % 101) - 0) / (100 - 0);
+                    int wid = (int)(fraction * obj.ClientSize.Width);
+                    e.Graphics.FillRectangle(Brushes.Green, 0, 0, wid, obj.ClientSize.Height);
+
                     e.Graphics.DrawString(percent.ToString() + " %", this.Font, Brushes.Black, obj.ClientRectangle, sf);
                 }
                   
