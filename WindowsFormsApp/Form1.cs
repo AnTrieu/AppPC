@@ -30,6 +30,7 @@ namespace WindowsFormsApp
         private Boolean flagTermianlUDPThread = false;
         private String outputPath = "";
         private FormWindowState windowStateK1 = FormWindowState.Normal;
+        private bool force_edit = false;
 
         List<Control> controlsList = new List<Control>();
 
@@ -451,6 +452,107 @@ namespace WindowsFormsApp
             e.Graphics.DrawRectangle(dashedPen, 0, 0, button.Width - 1, button.Height - 1);
         }
 
+        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+
+            // Allow only numeric input (0-9) and control keys like Backspace
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true; // Mark the event as handled, preventing the character from being entered
+            }
+            else
+            {
+                force_edit = true;
+            }
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!force_edit)
+                return;
+
+            force_edit = false;
+
+            if (sender is TextBox objInput)
+            {
+                // Resize child panels in program list (panel43)
+                var visiblePanels = this.panel43.Controls
+                    .OfType<Panel>()
+                    .Where(panel => panel.Visible);
+
+                foreach (var panel_chill in visiblePanels)
+                {
+                    var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
+
+                    // Left
+                    int X = this.textBox1.Text.Length > 0 ? int.Parse(this.textBox1.Text) : 0;
+
+                    // Top
+                    int Y = this.textBox2.Text.Length > 0 ? int.Parse(this.textBox2.Text) : 0;
+
+                    // width
+                    int width = this.textBox4.Text.Length > 0 ? int.Parse(this.textBox4.Text) : 0;
+
+                    // height
+                    int height = this.textBox3.Text.Length > 0 ? int.Parse(this.textBox3.Text) : 0;
+
+                    foreach (Control control in controlsList)
+                    {
+                        if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                        {
+                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                            if(infoWindow.Name.Equals(this.panel70.Name))
+                            {
+                                int left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
+                                int top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+                                int width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
+                                int height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+
+                                if ((left_expect + width_expect) > panel_chill.Width - 2)
+                                {
+                                    
+                                    if (objInput.Name.Equals("textBox1"))
+                                        X = int.Parse(info_program.width_real) - int.Parse(this.textBox4.Text) + 0;
+
+                                    if (objInput.Name.Equals("textBox4"))
+                                        width = int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text) + 0;
+
+                                    left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
+                                    width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
+                                }
+                                resizablePanel.Left = left_expect;
+                                resizablePanel.Width = width_expect;
+
+                                if ((top_expect + height_expect) > (panel_chill.Height - 2))
+                                {
+                                    if (objInput.Name.Equals("textBox2"))
+                                        Y = int.Parse(info_program.height_real) - int.Parse(this.textBox3.Text) + 0;
+                                  
+                                        
+                                
+                                    if (objInput.Name.Equals("textBox3"))
+                                        height = int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text) + 0;
+                                                                                                      
+                                    top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+                                    height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+                                }
+                                resizablePanel.Height = height_expect;
+                                resizablePanel.Top = top_expect;
+
+                            }                          
+                        }
+                    }
+
+                    this.textBox1.Text = X.ToString();
+                    this.textBox2.Text = Y.ToString();
+                    this.textBox4.Text = width.ToString();
+                    this.textBox3.Text = height.ToString();
+                }
+
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -479,6 +581,15 @@ namespace WindowsFormsApp
 
             this.new_program_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
             this.new_resource.Paint += new PaintEventHandler(DashedBorderButton_Paint);
+
+            this.textBox1.KeyPress += NumericTextBox_KeyPress;
+            this.textBox1.TextChanged += TextBox_TextChanged;
+            this.textBox2.KeyPress += NumericTextBox_KeyPress;
+            this.textBox2.TextChanged += TextBox_TextChanged;
+            this.textBox3.KeyPress += NumericTextBox_KeyPress;
+            this.textBox3.TextChanged += TextBox_TextChanged;
+            this.textBox4.KeyPress += NumericTextBox_KeyPress;
+            this.textBox4.TextChanged += TextBox_TextChanged;
 
             this.General.BackgroundImageLayout = ImageLayout.Stretch;
             this.General.BackgroundImage = normal_button();
@@ -1510,8 +1621,6 @@ namespace WindowsFormsApp
             {
                 if (control is Panel panel_chill && panel_chill.Visible)
                 {
-                    this.panel70.Visible = false;
-
                     for (int panelIndex = control.Controls.Count - 1; panelIndex >= 0; panelIndex--)
                     {
                         Control panel = control.Controls[panelIndex];
@@ -1558,7 +1667,8 @@ namespace WindowsFormsApp
                 control1.Refresh();
             }
 
-            this.panel70.Visible = false;
+            this.panel70.Visible = false; 
+            this.panel70.Name = "";
         }
 
         public static double Normalize(double x, double minA, double maxA, double minB, double maxB)
@@ -1766,7 +1876,9 @@ namespace WindowsFormsApp
                     this.textBox2.Text = "0";
                     this.textBox4.Text = Math.Ceiling(Normalize(max_app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
                     this.textBox3.Text = Math.Ceiling(Normalize(max_app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
+
                     this.panel70.Visible = true;
+                    this.panel70.Name = info_windown.name;
                 }
                 else
                 {
@@ -1797,16 +1909,17 @@ namespace WindowsFormsApp
                 }
 
                 windown.CustomEventMouseDown += (sender1, e1, X, Y, app_width, app_height, active_select) =>
-                {           
+                {
+                    // Deserialize JSON data from the Name property
+                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown.Name);
+
                     this.panel70.Visible = true;
+                    this.panel70.Name = infoWindow.Name;
 
                     this.textBox1.Text = Math.Ceiling(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
                     this.textBox2.Text = Math.Ceiling(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
                     this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
                     this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
-
-                    // Deserialize JSON data from the Name property
-                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown.Name);
                 
                     // Select first item
                     foreach (Control control1 in controlsList)
@@ -2100,6 +2213,7 @@ namespace WindowsFormsApp
                                             initialBorderColor = Color.LightBlue;
 
                                             this.panel70.Visible = true;
+                                            this.panel70.Name = infoWindow.Name;
 
                                             int max_app_width = control1.Parent.Width - 2;
                                             int max_app_height = control1.Parent.Height - 2;
@@ -3459,16 +3573,18 @@ namespace WindowsFormsApp
 
                                         windown_load.CustomEventMouseDown += (sender1, e1, X1, Y1, app_width, app_height, active_select) =>
                                         {
+                                            // Deserialize JSON data from the Name property
+                                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown_load.Name);
+
                                             this.panel70.Visible = true;
+                                            this.panel70.Name = infoWindow.Name;
 
                                             this.textBox1.Text = Math.Ceiling(Normalize(X1, 0, max_app_width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
                                             this.textBox2.Text = Math.Ceiling(Normalize(Y1, 0, max_app_height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
                                             this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, max_app_width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
                                             this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, max_app_height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
 
-                                            // Deserialize JSON data from the Name property
-                                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown_load.Name);
-
+    
                                             // Select first item
                                             foreach (Control control1 in controlsList)
                                             {
@@ -3507,8 +3623,6 @@ namespace WindowsFormsApp
                                             {
                                                 this.textBox3.Text = (int.Parse(info_stored.info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
                                             }
-
-
 
                                             // Select first item
                                             foreach (Control control1 in controlsList)
@@ -3601,7 +3715,8 @@ namespace WindowsFormsApp
 
                                         // Load the video file
                                         windown_load.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
-                                        windown_load.videoFileReader.Open(objectName);
+                                        if (File.Exists(objectName))
+                                            windown_load.videoFileReader.Open(objectName);
 
                                         long total_frame = 0;
 
@@ -3626,9 +3741,9 @@ namespace WindowsFormsApp
                                         windown_load.Controls.Add(pictureBox);
 
 
-
                                         windown_load.updateTimer = new Timer();
-                                        windown_load.updateTimer.Interval = 1000 / (int)windown_load.videoFileReader.FrameRate.Value;
+                                        if (File.Exists(objectName))
+                                            windown_load.updateTimer.Interval = 1000 / (int)windown_load.videoFileReader.FrameRate.Value;
                                         windown_load.updateTimer.Tick += (sender1, e1) =>
                                         {
                                             if (InvokeRequired)
@@ -3658,7 +3773,8 @@ namespace WindowsFormsApp
 
                                             }
                                         };
-                                        windown_load.updateTimer.Start();
+                                        if (File.Exists(objectName))
+                                            windown_load.updateTimer.Start();
 
                                         controlsList.Insert(0, windown_load);
                                         destinationPanel.Controls.AddRange(controlsList.ToArray());
@@ -3687,7 +3803,6 @@ namespace WindowsFormsApp
 
                             // Draw windown list
                             draw_list_windown(controlsList);
-
                             unselect_object();
                         }
                     }
