@@ -13,11 +13,11 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Timer = System.Windows.Forms.Timer;
-//using Accord.Video.FFMPEG;
 using MediaInfo.DotNetWrapper.Enumerations;
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 using System.Text.RegularExpressions;
+using NAudio.Wave;
 
 namespace WindowsFormsApp
 {
@@ -454,7 +454,6 @@ namespace WindowsFormsApp
 
         private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-
             // Allow only numeric input (0-9) and control keys like Backspace
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
@@ -504,42 +503,50 @@ namespace WindowsFormsApp
 
                             if(infoWindow.Name.Equals(this.panel70.Name))
                             {
-                                int left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
-                                int top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
-                                int width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
-                                int height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+                                int left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                int top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+                                int width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                int height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
 
-                                if ((left_expect + width_expect) > panel_chill.Width - 2)
-                                {
-                                    
+                                if ((left_expect + width_expect) > panel_chill.Width - 0)
+                                {                                  
                                     if (objInput.Name.Equals("textBox1"))
                                         X = int.Parse(info_program.width_real) - int.Parse(this.textBox4.Text) + 0;
 
                                     if (objInput.Name.Equals("textBox4"))
                                         width = int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text) + 0;
 
-                                    left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
-                                    width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 2));
+                                    left_expect = (int)Math.Ceiling(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                    width_expect = (int)Math.Ceiling(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
                                 }
-                                resizablePanel.Left = left_expect;
-                                resizablePanel.Width = width_expect;
+                                if (objInput.Name.Equals("textBox1"))
+                                    resizablePanel.Left = left_expect;
+                                if(objInput.Name.Equals("textBox4"))
+                                    resizablePanel.Width = width_expect;
 
-                                if ((top_expect + height_expect) > (panel_chill.Height - 2))
+                                if ((top_expect + height_expect) > (panel_chill.Height - 0))
                                 {
                                     if (objInput.Name.Equals("textBox2"))
                                         Y = int.Parse(info_program.height_real) - int.Parse(this.textBox3.Text) + 0;
-                                  
-                                        
-                                
+                                                                                                        
                                     if (objInput.Name.Equals("textBox3"))
                                         height = int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text) + 0;
                                                                                                       
-                                    top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
-                                    height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 2));
+                                    top_expect = (int)Math.Ceiling(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+                                    height_expect = (int)Math.Ceiling(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
                                 }
-                                resizablePanel.Height = height_expect;
-                                resizablePanel.Top = top_expect;
+                                if (objInput.Name.Equals("textBox3"))
+                                    resizablePanel.Height = height_expect;
+                                if (objInput.Name.Equals("textBox2"))
+                                    resizablePanel.Top = top_expect;
 
+                                // update detail location
+                                infoWindow.windown_width = int.Parse(this.textBox4.Text);
+                                infoWindow.windown_height = int.Parse(this.textBox3.Text);
+                                infoWindow.windown_top = int.Parse(this.textBox2.Text);
+                                infoWindow.windown_left = int.Parse(this.textBox1.Text);
+
+                                resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
                             }                          
                         }
                     }
@@ -746,100 +753,193 @@ namespace WindowsFormsApp
             udpListenerThread.Start();
         }
 
-        private void SendFileThread(object parameter)
+        static bool HasAudioStream(string filePath)
         {
-            long total_size = 0;
-            bool flag_cancel = false;
-
-            process_form dialog = (process_form) parameter;
-            string IP_client = (string)dialog.Name;
-            dialog.Name = "File sent unsuccessfully";
-
-            // Buffer size for receiving video data
-            byte[] buffer = new byte[10240 + 256];
-            byte[] responseBuffer = new byte[256]; // Adjust the size according to your needs
-
-            // Set up client socket
-            TcpClient clientSocket = null;
-            NetworkStream networkStream = null;
-
-            dialog.CloseClick += (sender, e) =>
+            var processStartInfo = new ProcessStartInfo
             {
-                flag_cancel = true;
+                FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe",
+                Arguments = $"-i \"{filePath}\"",
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
             };
 
-            try
+            using (var process = new Process { StartInfo = processStartInfo })
             {
-                // Resize child panels in program list (panel43)
-                var visiblePanels = this.panel43.Controls
-                    .OfType<Panel>();
+                process.Start();
+                string output = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                // Check if the output contains an audio stream
+                return output.Contains("Audio:");
+            }
+        }
+
+        private void SendFileThread(object parameter)
+        {
+            using (StreamWriter fileStream = new StreamWriter(outputPath))
+            {
+                Console.SetOut(fileStream);
                 
-                foreach (var panel_chill in visiblePanels)
+                long total_size = 0;
+                bool flag_cancel = false;
+
+                process_form dialog = (process_form)parameter;
+                string IP_client = (string)dialog.Name;
+                dialog.Name = "File sent unsuccessfully";
+
+                // Buffer size for receiving video data
+                byte[] buffer = new byte[10240 + 256];
+                byte[] responseBuffer = new byte[256]; // Adjust the size according to your needs
+
+                // Set up client socket
+                TcpClient clientSocket = null;
+                NetworkStream networkStream = null;
+
+                dialog.CloseClick += (sender, e) =>
                 {
-                    var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
-                    var flag_convert = false;
+                    flag_cancel = true;
+                };
 
-                    // Create folder output
-                    String outputBackgroundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", $"{info_program.Name}_{info_program.bittrate_select}");
-                    string backgroundFilePath = Path.Combine(outputBackgroundPath, $"Background_{info_program.Name}.mp4");
-                    string devideFilePath = Path.Combine(outputBackgroundPath, $"Divide_{info_program.Name}.mp4");
-                    string contentFilePath = Path.Combine(outputBackgroundPath, $"{info_program.Name}.mp4");
+                try
+                {
+                    // Resize child panels in program list (panel43)
+                    var visiblePanels = this.panel43.Controls
+                        .OfType<Panel>();
 
-                    // Convert video
-                    if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                    foreach (var panel_chill in visiblePanels)
                     {
-                        long longestDuration = 0;
-                        int windown_left_expected = 0;
-                        int percentage = 0, percentageK1 = 0;
-                        int counter_windown_empty = 0;
-                        int entry_time = 0;
-                        int duration_time = 1;
-                        List<long> listDuration = new List<long>();
+                        var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
+                        var flag_convert = false;
 
-                        if (!Directory.Exists(outputBackgroundPath))
+                        // Create folder output
+                        String outputBackgroundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", $"{info_program.Name}_{info_program.bittrate_select}");
+                        string backgroundFilePath = Path.Combine(outputBackgroundPath, $"Background_{info_program.Name}.mp4");
+                        string devideFilePath = Path.Combine(outputBackgroundPath, $"Divide_{info_program.Name}.mp4");
+                        string contentFilePath = Path.Combine(outputBackgroundPath, $"{info_program.Name}.mp4");
+                        
+                        // Convert video
+                        if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                         {
-                            Directory.CreateDirectory(outputBackgroundPath);
-                        }
-                        else
-                        {
-                            if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
-                            {
-                                File.Delete(backgroundFilePath);
-                                File.Delete(contentFilePath);
-                            }
-                            else if (File.Exists(backgroundFilePath))
-                            {
-                                File.Delete(backgroundFilePath);
-                            }
-                            else if (File.Exists(contentFilePath))
-                            {
-                                File.Delete(contentFilePath);
-                            }
-                        }
+                            long longestDuration = 0;
+                            int windown_left_expected = 0;
+                            int percentage = 0, percentageK1 = 0;
+                            int counter_windown_empty = 0;
+                            int entry_time = 0;
+                            int duration_time = 1;
+                            List<long> listDuration = new List<long>();
 
-                        // Step 1: get all path video in program list
-                        foreach (Control control in controlsList)
-                        {
-                            if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                            if (!Directory.Exists(outputBackgroundPath))
                             {
-                                // Deserialize JSON data from the Name property
-                                Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                                long longestDurationWindown = 0;
-
-                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                Directory.CreateDirectory(outputBackgroundPath);
+                            }
+                            else
+                            {
+                                if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
                                 {
-                                    string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                                    File.Delete(backgroundFilePath);
+                                    File.Delete(contentFilePath);
+                                }
+                                else if (File.Exists(backgroundFilePath))
+                                {
+                                    File.Delete(backgroundFilePath);
+                                }
+                                else if (File.Exists(contentFilePath))
+                                {
+                                    File.Delete(contentFilePath);
+                                }
+                            }
+                            //Console.WriteLine($"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe");
+                            // Step 1: get all path video in program list
+                            foreach (Control control in controlsList)
+                            {
+                                if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                {
+                                    // Deserialize JSON data from the Name property
+                                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                                    long longestDurationWindown = 0;
 
-                                    // Is a video
-                                    if (extension == ".mp4" || extension == ".avi" ||
-                                        extension == ".wmv" || extension == ".mpg" ||
-                                        extension == ".rmvp" || extension == ".mov" ||
-                                        extension == ".dat" || extension == ".flv")
+                                    for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                    {
+                                        string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+
+                                        // Is a video
+                                        if (extension == ".mp4" || extension == ".avi" ||
+                                            extension == ".wmv" || extension == ".mpg" ||
+                                            extension == ".rmvp" || extension == ".mov" ||
+                                            extension == ".dat" || extension == ".flv")
+                                        {
+                                            using (Process process = new Process())
+                                            {
+                                                process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                                                process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
+                                                process.StartInfo.UseShellExecute = false;
+                                                process.StartInfo.RedirectStandardOutput = true;
+                                                process.StartInfo.RedirectStandardError = true;
+                                                process.StartInfo.CreateNoWindow = true;
+
+                                                process.OutputDataReceived += (sender, e) =>
+                                                {
+                                                    // Do nothing
+                                                };
+                                                process.ErrorDataReceived += (sender, e) =>
+                                                {
+                                                    if (!string.IsNullOrEmpty(e.Data))
+                                                    {
+                                                        // Variables for capturing duration
+                                                        string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
+                                                        Regex regex = new Regex(durationPattern);
+
+                                                        // Search for duration pattern in the output
+                                                        Match match = regex.Match(e.Data);
+
+                                                        if (match.Success)
+                                                        {
+                                                            // Extract the matched duration
+                                                            string durationString = match.Groups[1].Value;
+
+                                                            longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
+                                                        }
+                                                    }
+
+                                                };
+                                                process.Start();
+                                                process.BeginOutputReadLine();
+                                                process.BeginErrorReadLine();
+
+                                                process.WaitForExit();
+                                            }
+                                        }
+                                        else if (extension == ".jpg" || extension == ".bmp" ||
+                                                 extension == ".png" || extension == ".gif")
+                                        {
+                                            longestDurationWindown += (entry_time * 1000 + duration_time * 1000);
+                                        }
+                                    }
+
+                                    if (longestDuration < longestDurationWindown)
+                                    {
+                                        longestDuration = longestDurationWindown;
+                                    }
+
+                                    listDuration.Add(longestDurationWindown);
+                                }
+                            }
+
+                            // Step 2: convert video
+                            foreach (Control control in controlsList)
+                            {
+                                if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                {
+                                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                                    int idx_windown = controlsList.IndexOf(control);
+
+                                    if (idx_windown == 0)
                                     {
                                         using (Process process = new Process())
                                         {
                                             process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
-                                            process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
+                                            process.StartInfo.Arguments = $"-y -f lavfi -i anullsrc=r=44100:cl=stereo -f lavfi -i color=c=black:s={info_program.width_real}x{info_program.height_real}:d=0.1 -t 0.1 -shortest -c:v libx264 -b:v {info_program.bittrate_select} -tune stillimage -c:a aac -b:a 192k -strict experimental \"{backgroundFilePath}\"";
                                             process.StartInfo.UseShellExecute = false;
                                             process.StartInfo.RedirectStandardOutput = true;
                                             process.StartInfo.RedirectStandardError = true;
@@ -851,62 +951,129 @@ namespace WindowsFormsApp
                                             };
                                             process.ErrorDataReceived += (sender, e) =>
                                             {
-                                                if (!string.IsNullOrEmpty(e.Data))
-                                                {
-                                                    // Variables for capturing duration
-                                                    string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
-                                                    Regex regex = new Regex(durationPattern);
-
-                                                    // Search for duration pattern in the output
-                                                    Match match = regex.Match(e.Data);
-
-                                                    if (match.Success)
-                                                    {
-                                                        // Extract the matched duration
-                                                        string durationString = match.Groups[1].Value;
-
-                                                        longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
-                                                    }
-                                                }
-
+                                                // Do nothing
                                             };
                                             process.Start();
                                             process.BeginOutputReadLine();
                                             process.BeginErrorReadLine();
-
                                             process.WaitForExit();
                                         }
+
+                                        if (!File.Exists(backgroundFilePath))
+                                        {
+                                            return;
+                                        }
                                     }
-                                    else if (extension == ".jpg" || extension == ".bmp" ||
-                                             extension == ".png" || extension == ".gif")
-                                    {
-                                        longestDurationWindown += (entry_time*1000 + duration_time*1000);
-                                    }
-                                }
 
-                                if (longestDuration < longestDurationWindown)
-                                {
-                                    longestDuration = longestDurationWindown;
-                                }
-
-                                listDuration.Add(longestDurationWindown);
-                            }
-                        }
-                        
-                        // Step 2: convert video
-                        foreach (Control control in controlsList)
-                        {
-                            if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
-                            {
-                                Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                                int idx_windown = controlsList.IndexOf(control);
-
-                                if (idx_windown == 0)
-                                {
                                     using (Process process = new Process())
                                     {
+                                        // Init variable
+                                        String cmd_ffmpeg = "-y ";
+                                        String filter = "";
+                                        String overlay = "";
+                                        int width_check = (infoWindow.windown_width % 2) == 1 ? infoWindow.windown_width + 1 : infoWindow.windown_width;
+                                        int height_check = (infoWindow.windown_height % 2) == 1 ? infoWindow.windown_height + 1 : infoWindow.windown_height;
+
                                         process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
-                                        process.StartInfo.Arguments = $"-y -f lavfi -i anullsrc=r=44100:cl=stereo -f lavfi -i color=c=black:s={info_program.width_real}x{info_program.height_real}:d=0.1 -t 0.1 -shortest -c:v libx264 -b:v {info_program.bittrate_select} -tune stillimage -c:a aac -b:a 192k -strict experimental {backgroundFilePath}";
+
+                                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                        {
+                                            string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+
+
+                                            if (idx == 0)
+                                            {
+                                                cmd_ffmpeg += ($"-i \"{backgroundFilePath}\" ");
+                                            }
+
+                                            // Is a video
+                                            if (extension == ".mp4" || extension == ".avi" ||
+                                                extension == ".wmv" || extension == ".mpg" ||
+                                                extension == ".rmvp" || extension == ".mov" ||
+                                                extension == ".dat" || extension == ".flv")
+                                            {
+                                                cmd_ffmpeg += ($"-i \"{infoWindow.list[idx]}\" ");
+                                            }
+                                            else
+                                            {
+                                                cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
+                                            }
+                                        }
+
+                                        cmd_ffmpeg += "-f lavfi -t 0.1 -i anullsrc -filter_complex ";
+
+                                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                        {
+                                            filter += ("[" + (idx + 1) + ":v]scale=" + width_check + ":" + height_check + ":flags=lanczos,setsar=1:1[vid" + (idx + 1) + "];");
+                                            string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                                            if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
+                                            {
+                                                filter += ("color=c=black:s=" + width_check + "x" + height_check + ":d=" + infoWindow.list_entrytime[idx] + "[entry_time" + (idx + 1) + "];");
+                                            }
+                                        }
+
+                                        int counterImage = 0;
+
+                                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                        {
+                                            string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                                            if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
+                                            {
+                                                filter += ("[entry_time" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
+                                                filter += ("[vid" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
+
+                                                counterImage += 1;
+                                            }
+                                            else
+                                            {
+                                                if (HasAudioStream(infoWindow.list[idx]))
+                                                {
+                                                    filter += ("[vid" + (idx + 1) + "][" + (idx + 1) + ":a]");
+                                                }
+                                                else
+                                                {
+                                                    filter += ("[vid" + (idx + 1) + "][" + (infoWindow.list.Count + 1) + ":a]");
+                                                }
+                                            }
+                                        }
+                                        filter += ("concat=n=" + (infoWindow.list.Count + counterImage) + ":v=1:a=1:unsafe=1[windown" + (idx_windown + 1) + "];");
+
+                                        // Calculate "loop" for windown
+                                        int loop = 0;
+                                        if (longestDuration > listDuration[idx_windown])
+                                        {
+                                            loop = (int)((longestDuration / listDuration[idx_windown]) - 1);
+                                        }
+                                        if ((longestDuration % listDuration[idx_windown]) > 0)
+                                        {
+                                            loop++;
+                                        }
+
+                                        filter += ("[windown" + (idx_windown + 1) + "]" + "loop=" + loop + ":32767:0[looped_windown" + (idx_windown + 1) + "_timebase];");
+
+                                        // Add overlay video
+                                        if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                        {
+                                            if (windown_left_expected >= infoWindow.windown_left)
+                                            {
+                                                overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                                windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                            }
+                                            else
+                                            {
+                                                overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
+                                                windown_left_expected += infoWindow.windown_width;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                        }
+
+                                        cmd_ffmpeg += filter + overlay + " ";
+                                        cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {longestDuration / 1000} \"{contentFilePath}\"";
+                                        //Console.WriteLine(cmd_ffmpeg);
+                                        process.StartInfo.Arguments = cmd_ffmpeg;
                                         process.StartInfo.UseShellExecute = false;
                                         process.StartInfo.RedirectStandardOutput = true;
                                         process.StartInfo.RedirectStandardError = true;
@@ -918,131 +1085,81 @@ namespace WindowsFormsApp
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
-                                            // Do nothing
+                                            //Console.WriteLine(e.Data);
+                                            if (flag_cancel)
+                                            {
+                                                process.CancelErrorRead();
+                                                process.Kill();
+                                            }
+                                            else
+                                            {
+                                                //Console.WriteLine(e.Data);
+                                                if (!string.IsNullOrEmpty(e.Data))
+                                                {
+                                                    // Variables for capturing duration
+                                                    string timeProcessPattern = @"time=([0-9:.]+)";
+                                                    Regex regex = new Regex(timeProcessPattern);
+
+                                                    // Search for duration pattern in the output
+                                                    Match match = regex.Match(e.Data);
+
+                                                    if (match.Success)
+                                                    {
+                                                        // Extract the matched duration
+                                                        string time_str = match.Groups[1].Value;
+
+                                                        double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
+
+                                                        if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
+                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty) * 2));
+                                                        else
+                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+
+                                                        // set process bar
+                                                        dialog.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            // Your UI update code
+                                                            dialog.ProgressValue = percentage + 500;
+                                                            dialog.progressBar1.Refresh();
+                                                        });
+
+                                                    }
+                                                }
+                                            }
                                         };
                                         process.Start();
                                         process.BeginOutputReadLine();
                                         process.BeginErrorReadLine();
                                         process.WaitForExit();
-                                    }
 
-                                    if (!File.Exists(backgroundFilePath))
-                                    {
-                                        return;
+                                        if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
+                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty) * 2));
+                                        else
+                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+                           
+                                        if (((idx_windown + 1) >= controlsList.Count) && File.Exists(backgroundFilePath))
+                                        {
+                                            File.Delete(backgroundFilePath);
+                                        }
+                                        if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
+                                        {
+                                            File.Delete(backgroundFilePath);
+                                            File.Move(contentFilePath, backgroundFilePath);
+                                        }
                                     }
                                 }
+                            }
 
+                            if (File.Exists(contentFilePath) && ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.height_resolution))))
+                            {
+                                // Create background
                                 using (Process process = new Process())
                                 {
-                                    // Init variable
-                                    String cmd_ffmpeg = "-y ";
-                                    Boolean haveImage = false;
-                                    String filter = "";
-                                    String overlay = "";
-                                    int width_check = (infoWindow.windown_width % 2) == 1 ? infoWindow.windown_width + 1 : infoWindow.windown_width;
-                                    int height_check = (infoWindow.windown_height % 2) == 1 ? infoWindow.windown_height + 1 : infoWindow.windown_height;
-
-                                    process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
-
-                                    for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                                    {
-                                        string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
-
-
-                                        if (idx == 0)
-                                        {
-                                            cmd_ffmpeg += ($"-i {backgroundFilePath} ");
-                                        }
-
-                                        // Is a video
-                                        if (extension == ".mp4"  || extension == ".avi" ||
-                                            extension == ".wmv"  || extension == ".mpg" ||
-                                            extension == ".rmvp" || extension == ".mov" ||
-                                            extension == ".dat"  || extension == ".flv")
-                                        {
-                                            cmd_ffmpeg += ($"-i \"{infoWindow.list[idx]}\" ");
-                                        }
-                                        else
-                                        {
-                                            haveImage = true;
-                                            cmd_ffmpeg += ("-framerate 25 -t " + infoWindow.list_duration[idx] + " -loop 1 -i " + infoWindow.list[idx] + " ");
-                                        }
-                                    }
-
-                                    if (haveImage)
-                                    {
-                                        cmd_ffmpeg += "-f lavfi -t 0.1 -i anullsrc -filter_complex ";
-                                    }
-                                    else
-                                    {
-                                        cmd_ffmpeg += "-filter_complex ";
-                                    }
-
-                                    for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                                    {
-                                        filter += ("[" + (idx + 1) + ":v]scale=" + width_check + ":" + height_check + ":flags=lanczos,setsar=1:1[vid" + (idx + 1) + "];");
-                                        string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
-                                        if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
-                                        {
-                                            filter += ("color=c=black:s=" + width_check + "x" + height_check + ":d=" + infoWindow.list_entrytime[idx] + "[entry_time" + (idx + 1) + "];");
-                                        }
-                                    }
-
-                                    int counterImage = 0;
-
-                                    for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                                    {
-                                        string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
-                                        if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
-                                        {
-                                            filter += ("[entry_time" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
-                                            filter += ("[vid" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
-
-                                            counterImage += 1;
-                                        }
-                                        else
-                                        {
-                                            filter += ("[vid" + (idx + 1) + "]" + "[" + (idx + 1) + ":a]");
-                                        }
-                                    }
-                                    filter += ("concat=n=" + (infoWindow.list.Count + counterImage) + ":v=1:a=1:unsafe=1[windown" + (idx_windown + 1) + "];");
-
-                                    // Calculate "loop" for windown
-                                    int loop = 0;
-                                    if (longestDuration > listDuration[idx_windown])
-                                    {
-                                        loop = (int)((longestDuration / listDuration[idx_windown]) - 1);
-                                    }
-                                    if ((longestDuration % listDuration[idx_windown]) > 0)
-                                    {
-                                        loop++;
-                                    }
-
-                                    filter += ("[windown" + (idx_windown + 1) + "]" + "loop=" + loop + ":32767:0[looped_windown" + (idx_windown + 1) + "_timebase];");
-
-                                    // Add overlay video
+                                    process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
                                     if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
-                                    {
-                                        if (windown_left_expected >= infoWindow.windown_left)
-                                        {
-                                            overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
-                                            windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
-                                        }
-                                        else
-                                        {
-                                            overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
-                                            windown_left_expected += infoWindow.windown_width;
-                                        }
-                                    }
+                                        process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2}:d=0.1 -vf scale={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2} -t 0.1 \"{backgroundFilePath}\"";
                                     else
-                                    {
-                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
-                                    }
-
-                                    cmd_ffmpeg += filter + overlay + " ";
-                                    cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {longestDuration / 1000} {contentFilePath}";
-                                    //Console.WriteLine(cmd_ffmpeg);
-                                    process.StartInfo.Arguments = cmd_ffmpeg;
+                                        process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)}:d=0.1 -vf scale={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)} -t 0.1 \"{backgroundFilePath}\"";
                                     process.StartInfo.UseShellExecute = false;
                                     process.StartInfo.RedirectStandardOutput = true;
                                     process.StartInfo.RedirectStandardError = true;
@@ -1054,7 +1171,65 @@ namespace WindowsFormsApp
                                     };
                                     process.ErrorDataReceived += (sender, e) =>
                                     {
-                                        if(flag_cancel)
+                                        // Do nothing
+                                    };
+                                    process.Start();
+                                    process.BeginOutputReadLine();
+                                    process.BeginErrorReadLine();
+                                    process.WaitForExit();
+                                }
+
+                                if (!File.Exists(backgroundFilePath))
+                                {
+                                    return;
+                                }
+
+                                // slip file
+                                String filter = "";
+                                int idx_area = 1;
+                                using (Process process = new Process())
+                                {
+                                    process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
+                                    process.StartInfo.Arguments = $"-y -i \"{contentFilePath}\" -i \"{backgroundFilePath}\" -filter_complex ";
+                                    if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                    {
+                                        for (int step = 0; step < int.Parse(info_program.width_real); step += int.Parse(info_program.width_resolution))
+                                        {
+                                            if ((step + int.Parse(info_program.width_resolution)) > int.Parse(info_program.width_real))
+                                            {
+                                                filter += ($"[0:v]crop={int.Parse(info_program.width_real) - step}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
+                                            }
+                                            else
+                                            {
+                                                filter += ($"[0:v]crop={int.Parse(info_program.width_resolution)}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
+                                            }
+                                            idx_area++;
+                                        }
+
+                                        for (int step = 0; step < (idx_area - 1); step++)
+                                        {
+                                            filter += $"[area{step + 1}]";
+                                        }
+
+                                        filter += ($"vstack=inputs={idx_area - 1}[mux];[mux][0:a]concat=n=1:v=1:a=1:unsafe=1[out]");
+                                    }
+                                    else
+                                    {
+                                        // TODO
+                                    }
+                                    process.StartInfo.Arguments += $"{filter} -map [out] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film \"{devideFilePath}\"";
+                                    process.StartInfo.UseShellExecute = false;
+                                    process.StartInfo.RedirectStandardOutput = true;
+                                    process.StartInfo.RedirectStandardError = true;
+                                    process.StartInfo.CreateNoWindow = true;
+
+                                    process.OutputDataReceived += (sender, e) =>
+                                    {
+                                        // Do nothing
+                                    };
+                                    process.ErrorDataReceived += (sender, e) =>
+                                    {
+                                        if (flag_cancel)
                                         {
                                             process.CancelErrorRead();
                                             process.Kill();
@@ -1084,7 +1259,7 @@ namespace WindowsFormsApp
                                                     dialog.Invoke((MethodInvoker)delegate
                                                     {
                                                         // Your UI update code
-                                                        dialog.ProgressValue = percentage + 500;
+                                                        dialog.ProgressValue = percentage + 300;
                                                         dialog.progressBar1.Refresh();
                                                     });
 
@@ -1097,228 +1272,201 @@ namespace WindowsFormsApp
                                     process.BeginErrorReadLine();
                                     process.WaitForExit();
 
-                                    if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
-                                        percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty) * 2));
-                                    else
-                                        percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty + 1)));
+                                    // Delete root video
+                                    if (File.Exists(contentFilePath))
+                                    {
+                                        File.Delete(contentFilePath);
+                                    }
 
-                                    if (((idx_windown + 1) >= controlsList.Count) && File.Exists(backgroundFilePath))
+                                    // Delete background video
+                                    if (File.Exists(backgroundFilePath))
                                     {
                                         File.Delete(backgroundFilePath);
                                     }
-                                    if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
+
+                                    // Rename divide video
+                                    if (File.Exists(devideFilePath))
                                     {
-                                        File.Delete(backgroundFilePath);
-                                        File.Move(contentFilePath, backgroundFilePath);
+                                        File.Move(devideFilePath, contentFilePath);
                                     }
                                 }
                             }
+
+                            flag_convert = true;
+                            Console.WriteLine("Convert finish");
                         }
 
-                        if (File.Exists(contentFilePath) && ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.height_resolution))))
+                        // Carculator total size                          
+                        if (!flag_convert && controlsList[0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
                         {
-                            // Create background
-                            using (Process process = new Process())
-                            {
-                                process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
-                                if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
-                                    process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2}:d=0.1 -vf scale={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2} -t 0.1 {backgroundFilePath}";
-                                else
-                                    process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)}:d=0.1 -vf scale={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)} -t 0.1 {backgroundFilePath}";
-                                process.StartInfo.UseShellExecute = false;
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.StartInfo.RedirectStandardError = true;
-                                process.StartInfo.CreateNoWindow = true;
+                            // Deserialize JSON data from the Name property
+                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
 
-                                process.OutputDataReceived += (sender, e) =>
-                                {
-                                   // Do nothing
-                                };
-                                process.ErrorDataReceived += (sender, e) =>
-                                {
-                                    // Do nothing
-                                };
-                                process.Start();
-                                process.BeginOutputReadLine();
-                                process.BeginErrorReadLine();
-                                process.WaitForExit();
+                            for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                            {
+                                FileInfo fileInfo = new FileInfo(infoWindow.list[idx]);
+                                total_size += fileInfo.Length;
                             }
 
-                            if (!File.Exists(backgroundFilePath))
+                        }
+                        else if (flag_convert)
+                        {
+                            if (File.Exists(contentFilePath))
                             {
-                                return;
+                                FileInfo fileInfo = new FileInfo(contentFilePath);
+                                total_size += fileInfo.Length;
                             }
+                        }
+                        else
+                        {
 
-                            // slip file
-                            String filter = "";
-                            int idx_area = 1;
-                            using (Process process = new Process())
+                        }
+
+                        if (total_size == 0)
+                        {
+                            MessageBox.Show("File error, please try again", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            clientSocket = new TcpClient();
+                            clientSocket.Connect(IP_client, 12345); // Replace with the server's IP and port
+
+                            // Get the network stream for receiving data
+                            networkStream = clientSocket.GetStream();
+
+                            Boolean send_plan = false;
+                            long sended_size = 0;
+                            int percent = 0, percentK1 = -1;
+
+                            // Send file                        
+                            if (!flag_convert && controlsList[0] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                             {
-                                process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
-                                process.StartInfo.Arguments = $"-y -i {contentFilePath} -i {backgroundFilePath} -filter_complex ";
-                                if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                // Deserialize JSON data from the Name property
+                                Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
                                 {
-                                    for (int step = 0; step < int.Parse(info_program.width_real); step += int.Parse(info_program.width_resolution))
+                                    using (FileStream receivedVideoFile = new FileStream(infoWindow.list[idx], FileMode.Open, FileAccess.Read))
                                     {
-                                        if ((step + int.Parse(info_program.width_resolution)) > int.Parse(info_program.width_real))
+                                        int bytesRead = 0;
+                                        int idxChuck = 0;
+
+                                        long length_file = receivedVideoFile.Length;
+
+                                        // Active send plan
+                                        send_plan = true;
+
+                                        // Receive video data in chunks
+                                        while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
                                         {
-                                            filter += ($"[0:v]crop={int.Parse(info_program.width_real) - step}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
-                                        }
-                                        else
-                                        {
-                                            filter += ($"[0:v]crop={int.Parse(info_program.width_resolution)}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
-                                        }
-                                        idx_area++;
-                                    }
-
-                                    for (int step = 0; step < (idx_area - 1); step++)
-                                    {
-                                        filter += $"[area{step + 1}]";
-                                    }
-
-                                    filter += ($"vstack=inputs={idx_area - 1}[mux];[mux][0:a]concat=n=1:v=1:a=1:unsafe=1[out]");
-                                }
-                                else
-                                {
-                                    // TODO
-                                }
-                                process.StartInfo.Arguments += $"{filter} -map [out] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film {devideFilePath}";
-                                process.StartInfo.UseShellExecute = false;
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.StartInfo.RedirectStandardError = true;
-                                process.StartInfo.CreateNoWindow = true;
-
-                                process.OutputDataReceived += (sender, e) =>
-                                {
-                                    // Do nothing
-                                };
-                                process.ErrorDataReceived += (sender, e) =>
-                                {
-                                    if (flag_cancel)
-                                    {
-                                        process.CancelErrorRead();
-                                        process.Kill();
-                                    }
-                                    else
-                                    {
-                                        //Console.WriteLine(e.Data);
-                                        if (!string.IsNullOrEmpty(e.Data))
-                                        {
-                                            // Variables for capturing duration
-                                            string timeProcessPattern = @"time=([0-9:.]+)";
-                                            Regex regex = new Regex(timeProcessPattern);
-
-                                            // Search for duration pattern in the output
-                                            Match match = regex.Match(e.Data);
-
-                                            if (match.Success)
+                                            if (flag_cancel)
                                             {
-                                                // Extract the matched duration
-                                                string time_str = match.Groups[1].Value;
-
-                                                double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
-
-                                                percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
-
-                                                // set process bar
-                                                dialog.Invoke((MethodInvoker)delegate
+                                                var detailPacket = new
                                                 {
-                                                    // Your UI update code
-                                                    dialog.ProgressValue = percentage + 300;
-                                                    dialog.progressBar1.Refresh();
-                                                });
+                                                    command = "SEND_CANCEL",
+                                                    plan = ""
+                                                };
 
+                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                Array.Copy(jsonBytes, buffer, jsonBytes.Length);
+
+                                                networkStream.Write(buffer, 0, buffer.Length);
+                                                networkStream.Flush();
+
+                                                // Clean (reset) the buffer
+                                                Array.Clear(buffer, 0, buffer.Length);
+                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
+
+                                                // Release memory
+                                                jsonBytes = null;
+                                                detailPacket = null;
+
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                var detailPacket = new
+                                                {
+                                                    command = "SEND_FILE",
+                                                    chuck = idxChuck++,
+                                                    path = infoWindow.list[idx],
+                                                    sended = bytesRead,
+                                                    length = length_file,
+                                                    type = ""
+                                                };
+
+                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
+
+                                                networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
+                                                networkStream.Flush();
+
+                                                sended_size += bytesRead;
+                                                percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
+                                                if (percentK1 != percent)
+                                                {
+                                                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                                                    // set process bar
+                                                    dialog.Invoke((MethodInvoker)delegate
+                                                    {
+                                                        try
+                                                        {
+                                                            // Your UI update code
+                                                            dialog.ProgressValue = percent;
+                                                            dialog.progressBar1.Refresh();
+                                                        }
+                                                        finally
+                                                        {
+                                                            // Signal that the UI update is completed
+                                                            resetEvent.Set();
+                                                        }
+                                                    });
+
+                                                    // Block until the UI update is completed
+                                                    resetEvent.WaitOne();
+                                                    resetEvent = null;
+
+                                                    percentK1 = percent;
+                                                }
+
+                                                // Wait for the response in first time
+                                                if (idxChuck == 1)
+                                                {
+                                                    int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
+                                                    string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
+                                                    Console.WriteLine("Server Response: " + response);
+
+                                                    if (response.Equals("Exist file"))
+                                                    {
+                                                        sended_size = sended_size - bytesRead + length_file;
+                                                        break;
+                                                    }
+                                                }
+
+                                                // Release memory
+                                                jsonBytes = null;
+                                                detailPacket = null;
+
+                                                // Clean (reset) the buffer
+                                                Array.Clear(buffer, 0, buffer.Length);
+                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
                                             }
                                         }
                                     }
-                                };
-                                process.Start();
-                                process.BeginOutputReadLine();
-                                process.BeginErrorReadLine();
-                                process.WaitForExit();
-
-                                // Delete root video
-                                if (File.Exists(contentFilePath))
-                                {
-                                    File.Delete(contentFilePath);
-                                }
-                                
-                                // Delete background video
-                                if (File.Exists(backgroundFilePath))
-                                {
-                                    File.Delete(backgroundFilePath);
-                                }
-
-                                // Rename divide video
-                                if (File.Exists(devideFilePath))
-                                {
-                                    File.Move(devideFilePath, contentFilePath);
                                 }
                             }
-                        }
-                        
-                        flag_convert = true;
-                        Console.WriteLine("Convert finish");
-                    }
+                            else if (flag_convert)
+                            {
+                                // Active send plan
+                                send_plan = true;
 
-                    // Carculator total size                          
-                    if (!flag_convert && controlsList[0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
-                    {
-                        // Deserialize JSON data from the Name property
-                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
-                    
-                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                        {
-                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                            mediaInfo.Open(infoWindow.list[idx]);
-                    
-                            total_size += long.Parse(mediaInfo.Get(StreamKind.General, 0, "FileSize"));
-                        }
-                    
-                    }
-                    else if (flag_convert)
-                    {
-                        if(File.Exists(contentFilePath))
-                        {
-                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                            mediaInfo.Open(contentFilePath);
-                            total_size += long.Parse(mediaInfo.Get(StreamKind.General, 0, "FileSize"));
-                        }
-                    }
-
-                    if (total_size == 0)
-                    {
-                        MessageBox.Show("File error, please try again", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    }
-                    else
-                    {
-                        clientSocket = new TcpClient();
-                        clientSocket.Connect(IP_client, 12345); // Replace with the server's IP and port
-                    
-                        // Get the network stream for receiving data
-                        networkStream = clientSocket.GetStream();
-                    
-                        Boolean send_plan = false;
-                        long sended_size = 0;
-                        int percent = 0, percentK1 = -1;
-                    
-                        // Send file                        
-                        if (!flag_convert && controlsList[0] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
-                        {
-                            // Deserialize JSON data from the Name property
-                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                    
-                            for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                            {                    
-                                using (FileStream receivedVideoFile = new FileStream(infoWindow.list[idx], FileMode.Open, FileAccess.Read))
+                                using (FileStream receivedVideoFile = new FileStream(contentFilePath, FileMode.Open, FileAccess.Read))
                                 {
                                     int bytesRead = 0;
                                     int idxChuck = 0;
-                    
-                                    long length_file = receivedVideoFile.Length;
 
-                                    // Active send plan
-                                    send_plan = true;
+                                    long length_file = receivedVideoFile.Length;
 
                                     // Receive video data in chunks
                                     while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
@@ -1330,21 +1478,21 @@ namespace WindowsFormsApp
                                                 command = "SEND_CANCEL",
                                                 plan = ""
                                             };
-                    
+
                                             byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                             Array.Copy(jsonBytes, buffer, jsonBytes.Length);
-                    
+
                                             networkStream.Write(buffer, 0, buffer.Length);
                                             networkStream.Flush();
-                    
+
                                             // Clean (reset) the buffer
                                             Array.Clear(buffer, 0, buffer.Length);
                                             Array.Clear(responseBuffer, 0, responseBuffer.Length);
-                    
+
                                             // Release memory
                                             jsonBytes = null;
                                             detailPacket = null;
-                    
+
                                             break;
                                         }
                                         else
@@ -1353,24 +1501,24 @@ namespace WindowsFormsApp
                                             {
                                                 command = "SEND_FILE",
                                                 chuck = idxChuck++,
-                                                path = infoWindow.list[idx],
+                                                path = contentFilePath,
                                                 sended = bytesRead,
                                                 length = length_file,
-                                                type = ""
+                                                type = "Convert"
                                             };
-                    
+
                                             byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                             Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-                    
+
                                             networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
                                             networkStream.Flush();
-                    
+
                                             sended_size += bytesRead;
                                             percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
                                             if (percentK1 != percent)
                                             {
                                                 ManualResetEvent resetEvent = new ManualResetEvent(false);
-                    
+
                                                 // set process bar
                                                 dialog.Invoke((MethodInvoker)delegate
                                                 {
@@ -1386,32 +1534,32 @@ namespace WindowsFormsApp
                                                         resetEvent.Set();
                                                     }
                                                 });
-                    
+
                                                 // Block until the UI update is completed
                                                 resetEvent.WaitOne();
                                                 resetEvent = null;
-                    
+
                                                 percentK1 = percent;
                                             }
-                    
+
                                             // Wait for the response in first time
                                             if (idxChuck == 1)
                                             {
                                                 int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
                                                 string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
                                                 Console.WriteLine("Server Response: " + response);
-                    
+
                                                 if (response.Equals("Exist file"))
                                                 {
                                                     sended_size = sended_size - bytesRead + length_file;
                                                     break;
                                                 }
                                             }
-                    
+
                                             // Release memory
                                             jsonBytes = null;
                                             detailPacket = null;
-                    
+
                                             // Clean (reset) the buffer
                                             Array.Clear(buffer, 0, buffer.Length);
                                             Array.Clear(responseBuffer, 0, responseBuffer.Length);
@@ -1419,197 +1567,86 @@ namespace WindowsFormsApp
                                     }
                                 }
                             }
-                        }
-                        else if(flag_convert)
-                        {
-                            // Active send plan
-                            send_plan = true;
 
-                            using (FileStream receivedVideoFile = new FileStream(contentFilePath, FileMode.Open, FileAccess.Read))
+                            // Send plan for device
+                            if (send_plan)
                             {
-                                int bytesRead = 0;
-                                int idxChuck = 0;
+                                send_plan = false;
 
-                                long length_file = receivedVideoFile.Length;
-
-                                // Receive video data in chunks
-                                while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
+                                List<Info_Window> listWindown = new List<Info_Window>();
+                                foreach (Control control in controlsList)
                                 {
-                                    if (flag_cancel)
-                                    {
-                                        var detailPacket = new
-                                        {
-                                            command = "SEND_CANCEL",
-                                            plan = ""
-                                        };
-
-                                        byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
-                                        Array.Copy(jsonBytes, buffer, jsonBytes.Length);
-
-                                        networkStream.Write(buffer, 0, buffer.Length);
-                                        networkStream.Flush();
-
-                                        // Clean (reset) the buffer
-                                        Array.Clear(buffer, 0, buffer.Length);
-                                        Array.Clear(responseBuffer, 0, responseBuffer.Length);
-
-                                        // Release memory
-                                        jsonBytes = null;
-                                        detailPacket = null;
-
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        var detailPacket = new
-                                        {
-                                            command = "SEND_FILE",
-                                            chuck = idxChuck++,
-                                            path = contentFilePath,
-                                            sended = bytesRead,
-                                            length = length_file,
-                                            type = "Convert"
-                                        };
-                             
-                                        byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
-                                        Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-
-                                        networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
-                                        networkStream.Flush();
-
-                                        sended_size += bytesRead;
-                                        percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
-                                        if (percentK1 != percent)
-                                        {
-                                            ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-                                            // set process bar
-                                            dialog.Invoke((MethodInvoker)delegate
-                                            {
-                                                try
-                                                {
-                                                    // Your UI update code
-                                                    dialog.ProgressValue = percent;
-                                                    dialog.progressBar1.Refresh();
-                                                }
-                                                finally
-                                                {
-                                                    // Signal that the UI update is completed
-                                                    resetEvent.Set();
-                                                }
-                                            });
-
-                                            // Block until the UI update is completed
-                                            resetEvent.WaitOne();
-                                            resetEvent = null;
-
-                                            percentK1 = percent;
-                                        }
-
-                                        // Wait for the response in first time
-                                        if (idxChuck == 1)
-                                        {
-                                            int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
-                                            string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
-                                            Console.WriteLine("Server Response: " + response);
-
-                                            if (response.Equals("Exist file"))
-                                            {
-                                                sended_size = sended_size - bytesRead + length_file;
-                                                break;
-                                            }
-                                        }
-
-                                        // Release memory
-                                        jsonBytes = null;
-                                        detailPacket = null;
-
-                                        // Clean (reset) the buffer
-                                        Array.Clear(buffer, 0, buffer.Length);
-                                        Array.Clear(responseBuffer, 0, responseBuffer.Length);
-                                    }
+                                    listWindown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
                                 }
+
+                                var detailPacket = new
+                                {
+                                    command = "SEND_PLAN",
+                                    info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name),
+                                    listWindown = listWindown
+                                };
+
+                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                Array.Copy(jsonBytes, buffer, jsonBytes.Length);
+
+                                networkStream.Write(buffer, 0, buffer.Length);
+                                networkStream.Flush();
+
+                                // Clean (reset) the buffer
+                                Array.Clear(buffer, 0, buffer.Length);
+                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
+
+                                // Release memory
+                                jsonBytes = null;
+                                detailPacket = null;
                             }
-                        }
-
-                        // Send plan for device
-                        if (send_plan)
-                        {
-                            send_plan = false;
-
-                            List<Info_Window> listWindown = new List<Info_Window>();
-                            foreach (Control control in controlsList)
-                            {
-                                listWindown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
-                            }
-
-                            var detailPacket = new
-                            {
-                                command = "SEND_PLAN",
-                                info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name),
-                                listWindown = listWindown
-                            };
-
-                            byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
-                            Array.Copy(jsonBytes, buffer, jsonBytes.Length);
-
-                            networkStream.Write(buffer, 0, buffer.Length);
-                            networkStream.Flush();
-
-                            // Clean (reset) the buffer
-                            Array.Clear(buffer, 0, buffer.Length);
-                            Array.Clear(responseBuffer, 0, responseBuffer.Length);
-
-                            // Release memory
-                            jsonBytes = null;
-                            detailPacket = null;
                         }
                     }
+
+                    dialog.Name = "Send file successfully";
                 }
-
-                dialog.Name = "Send file successfully";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Lỗi: {ex}");
-            }
-            finally
-            {
-                buffer = null;
-
-                // Release memory
-                if (networkStream != null)
+                catch (Exception ex)
                 {
-                    networkStream.Close();
-                    networkStream = null;
+                    Console.WriteLine($"Lỗi: {ex}");
                 }
-
-                if (clientSocket != null && clientSocket.Connected)
+                finally
                 {
-                    clientSocket.Close();
-                    clientSocket = null;
-                }
+                    buffer = null;
 
-                if (dialog.Name.Equals("Send file successfully"))
-                {
-                    dialog.ProgressValue = 200;
-                    
-                }
-                else
-                {
-                    dialog.ProgressValue = -1;
-                }
-
-                Thread.Sleep(1000);
-
-                // Close the dialog on the dialog's thread
-                if (!flag_cancel)
-                {             
-                    dialog.Invoke((MethodInvoker)delegate
+                    // Release memory
+                    if (networkStream != null)
                     {
-                        dialog.progressBar1.Refresh();
-                        //dialog.Close();
-                    });
+                        networkStream.Close();
+                        networkStream = null;
+                    }
+
+                    if (clientSocket != null && clientSocket.Connected)
+                    {
+                        clientSocket.Close();
+                        clientSocket = null;
+                    }
+
+                    if (dialog.Name.Equals("Send file successfully"))
+                    {
+                        dialog.ProgressValue = 200;
+
+                    }
+                    else
+                    {
+                        dialog.ProgressValue = -1;
+                    }
+
+                    Thread.Sleep(1000);
+
+                    // Close the dialog on the dialog's thread
+                    if (!flag_cancel)
+                    {
+                        dialog.Invoke((MethodInvoker)delegate
+                        {
+                            dialog.progressBar1.Refresh();
+                            //dialog.Close();
+                        });
+                    }
                 }
             }
         }
@@ -1702,6 +1739,7 @@ namespace WindowsFormsApp
         {
             // Cancel the UDP listener thread
             flagTermianlUDPThread = true;
+
             udpListenerThread.Join();
 
             Application.Exit();
@@ -1845,8 +1883,8 @@ namespace WindowsFormsApp
                 ResizablePanel windown = null;
                 var info_program = JsonConvert.DeserializeObject<Info_Program>(destinationPanel.Name);
 
-                int max_app_width = destinationPanel.Width - 2;
-                int max_app_height = destinationPanel.Height - 2;
+                int max_app_width = destinationPanel.Width - 0;
+                int max_app_height = destinationPanel.Height - 0;
                 if (controlsList.Count == 0)
                 {
                     var info_windown = new
@@ -1909,7 +1947,7 @@ namespace WindowsFormsApp
                 }
 
                 windown.CustomEventMouseDown += (sender1, e1, X, Y, app_width, app_height, active_select) =>
-                {
+                {                 
                     // Deserialize JSON data from the Name property
                     Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown.Name);
 
@@ -1920,7 +1958,7 @@ namespace WindowsFormsApp
                     this.textBox2.Text = Math.Ceiling(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
                     this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
                     this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
-                
+
                     // Select first item
                     foreach (Control control1 in controlsList)
                     {
@@ -1936,9 +1974,9 @@ namespace WindowsFormsApp
                                 infoWindow1.windown_height = int.Parse(this.textBox3.Text);
                                 infoWindow1.windown_top = int.Parse(this.textBox2.Text);
                                 infoWindow1.windown_left = int.Parse(this.textBox1.Text);
-                            }
 
-                            resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+                                resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+                            }                           
                         }
                     }
            
@@ -1952,7 +1990,7 @@ namespace WindowsFormsApp
                     {
                         this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
                     }
-
+                    
                     if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
                     {
                         this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
@@ -1992,7 +2030,7 @@ namespace WindowsFormsApp
               
                     foreach (Control control1 in this.list_windowns.Controls)
                     {
-                        if(control1.Name != null)
+                        if(control1.Name.Length > 0)
                             control1.Refresh();
                     }
 
@@ -2215,14 +2253,14 @@ namespace WindowsFormsApp
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
 
-                                            int max_app_width = control1.Parent.Width - 2;
-                                            int max_app_height = control1.Parent.Height - 2;
+                                            int max_app_width = control1.Parent.Width - 0;
+                                            int max_app_height = control1.Parent.Height - 0;
                                             var info_program = JsonConvert.DeserializeObject<Info_Program>(control1.Parent.Name);
 
-                                            this.textBox1.Text = Math.Ceiling(Normalize(control1.Left, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
-                                            this.textBox2.Text = Math.Ceiling(Normalize(control1.Top, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
-                                            this.textBox4.Text = Math.Ceiling(Normalize(control1.Width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
-                                            this.textBox3.Text = Math.Ceiling(Normalize(control1.Height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
+                                            this.textBox1.Text = infoWindow1.windown_left.ToString();
+                                            this.textBox2.Text = infoWindow1.windown_top.ToString();
+                                            this.textBox4.Text = infoWindow1.windown_width.ToString();
+                                            this.textBox3.Text = infoWindow1.windown_height.ToString();
 
                                             // Check again
                                             if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
@@ -2411,7 +2449,7 @@ namespace WindowsFormsApp
 
                             foreach (Control control1 in this.list_windowns.Controls)
                             {
-                                if (control1.Name != null)
+                                if (control1.Name.Length > 0)
                                     control1.Refresh();
                             }
                         };
@@ -2483,7 +2521,7 @@ namespace WindowsFormsApp
 
         private void UdpListener(int udpPort)
         {
-            using (StreamWriter fileStream = new StreamWriter(outputPath))
+            //using (StreamWriter fileStream = new StreamWriter(outputPath))
             {
                 try
                 {
@@ -2504,14 +2542,14 @@ namespace WindowsFormsApp
                         {
                             try
                             {
+                                if(udpListener.Available < 256)
+                                {
+                                    Thread.Sleep(1000);
+                                    continue;
+                                }    
+
                                 // Use Task.Factory.StartNew to run the asynchronous operation with a cancellation token
                                 byte[] receivedBytes = udpListener.Receive(ref endPoint);
-
-                                if (receivedBytes.Length == 0)
-                                {
-                                    continue;
-                                }
-
                                 string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
 
                                 Boolean have_obj = false;
@@ -3538,13 +3576,13 @@ namespace WindowsFormsApp
                                     string[] list_object = {objectName};
                                     bool[] list_selected = {false};
 
-                                    int max_app_width = destinationPanel.Width - 2;
-                                    int max_app_height = destinationPanel.Height - 2;
+                                    int max_app_width = destinationPanel.Width - 0;
+                                    int max_app_height = destinationPanel.Height - 0;
                                     int X = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_left, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
                                     int Y = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_top, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
                                     int width_windown = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_width, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
                                     int height_windown = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_height, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
-                                    
+                     
                                     var info_windown = new
                                     {
                                         name = "Windown " + lenght_list,
@@ -3584,7 +3622,6 @@ namespace WindowsFormsApp
                                             this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, max_app_width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
                                             this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, max_app_height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
 
-    
                                             // Select first item
                                             foreach (Control control1 in controlsList)
                                             {
@@ -3650,15 +3687,15 @@ namespace WindowsFormsApp
                                                         infoWindow1.windown_top = int.Parse(this.textBox2.Text);
                                                         infoWindow1.windown_left = int.Parse(this.textBox1.Text);
                                                     }
-
+                                                    
                                                     resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
                                                 }
                                             }
 
-                                            foreach (Control control1 in this.list_windowns.Controls)
+                                            foreach (Control control2 in this.list_windowns.Controls)
                                             {
-                                                if (control1.Name != null)
-                                                    control1.Refresh();
+                                                if (control2.Name.Length > 0)
+                                                    control2.Refresh();
                                             }
 
                                             windown_load.InitializeResizeHandles();
@@ -3896,6 +3933,697 @@ namespace WindowsFormsApp
                 }
             }
         }
+
+        private void export_project(object sender, EventArgs e)
+        {
+            // Resize child panels in program list (panel43)
+            var visiblePanels = this.panel43.Controls
+                .OfType<Panel>()
+                .Where(panel => panel.Visible);
+
+            foreach (var panel_chill in visiblePanels)
+            {
+                export_form popup = new export_form();
+                Boolean flag_Action = false;
+
+                popup.ConfirmClick += (sender1, e1) =>
+                {
+                    flag_Action = true;
+                };
+
+                popup.ShowDialog();
+
+                if (flag_Action)
+                {
+                    var save_info = new
+                    {
+                        root_path = popup.textBox1.Text,
+                        info_program = panel_chill.Name
+                    };
+
+                    process_form popup_process = new process_form();
+                    popup_process.Name = JsonConvert.SerializeObject(save_info);
+
+                    // Start a new thread for the dialog with parameters
+                    Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileUSBThread));
+                    dialogThread.Start(popup_process);
+
+                    popup_process.ShowDialog();
+                }
+            }
+        }
+
+        private void SendFileUSBThread(object parameter)
+        {
+            //using (StreamWriter fileStream = new StreamWriter(outputPath))
+            {
+                //Console.SetOut(fileStream);
+
+                const int bufferSize = 1024 * 1024;
+                Boolean flag_succeed = true;
+                
+                process_form dialog = (process_form)parameter;
+                var info_packet = JsonConvert.DeserializeObject<export_packet>(dialog.Name);
+                
+                String folderPath = Path.Combine(info_packet.root_path, "ToanTrung_Project");
+                String subFolderPath = Path.Combine(info_packet.root_path, "ToanTrung_Project", "Material");
+                
+                // Delet old folder
+                if (Directory.Exists(folderPath))
+                    Directory.Delete(folderPath, true);
+                
+                for (int idx = 0; idx < 100; idx++)
+                {
+                    if (!Directory.Exists(folderPath))
+                        break;
+                    Thread.Sleep(100);
+                }
+                
+                Directory.CreateDirectory(folderPath);
+                Directory.CreateDirectory(subFolderPath);
+                
+                var info_program = JsonConvert.DeserializeObject<Info_Program>(info_packet.info_program);
+                List<Info_Window> info_windown = new List<Info_Window>();
+                long totalBytes = 0;
+                long totalBytesRead = 0;
+                
+                long longestDuration = 0;
+                int windown_left_expected = 0;
+                int percentage = 0, percentageK1 = 0;
+                int counter_windown_empty = 0;
+                int entry_time = 0;
+                int duration_time = 1;
+                List<long> listDuration = new List<long>();
+                bool flag_cancel = false;
+                
+                dialog.CloseClick += (sender, e) =>
+                {
+                    flag_cancel = true;
+                };
+                
+                // Create folder output
+                String outputBackgroundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", $"{info_program.Name}_{info_program.bittrate_select}");
+                string backgroundFilePath = Path.Combine(outputBackgroundPath, $"Background_{info_program.Name}.mp4");
+                string devideFilePath = Path.Combine(outputBackgroundPath, $"Divide_{info_program.Name}.mp4");
+                string contentFilePath = Path.Combine(outputBackgroundPath, $"{info_program.Name}.mp4");
+                
+                // Convert video
+                if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                {
+                    if (!Directory.Exists(outputBackgroundPath))
+                    {
+                        Directory.CreateDirectory(outputBackgroundPath);
+                    }
+                    else
+                    {
+                        if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
+                        {
+                            File.Delete(backgroundFilePath);
+                            File.Delete(contentFilePath);
+                        }
+                        else if (File.Exists(backgroundFilePath))
+                        {
+                            File.Delete(backgroundFilePath);
+                        }
+                        else if (File.Exists(contentFilePath))
+                        {
+                            File.Delete(contentFilePath);
+                        }
+                    }
+                    
+                    // Step 1: get all path video in program list
+                    foreach (Control control in controlsList)
+                    {
+                        if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                        {
+                            // Deserialize JSON data from the Name property
+                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                            long longestDurationWindown = 0;
+                
+                            for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                            {
+                                string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                
+                                // Is a video
+                                if (extension == ".mp4" || extension == ".avi" ||
+                                    extension == ".wmv" || extension == ".mpg" ||
+                                    extension == ".rmvp" || extension == ".mov" ||
+                                    extension == ".dat" || extension == ".flv")
+                                {
+                                    using (Process process = new Process())
+                                    {
+                                        process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                                        process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
+                                        process.StartInfo.UseShellExecute = false;
+                                        process.StartInfo.RedirectStandardOutput = true;
+                                        process.StartInfo.RedirectStandardError = true;
+                                        process.StartInfo.CreateNoWindow = true;
+                
+                                        process.OutputDataReceived += (sender, e) =>
+                                        {
+                                            // Do nothing
+                                        };
+                                        process.ErrorDataReceived += (sender, e) =>
+                                        {
+                                            if (!string.IsNullOrEmpty(e.Data))
+                                            {
+                                                // Variables for capturing duration
+                                                string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
+                                                Regex regex = new Regex(durationPattern);
+                
+                                                // Search for duration pattern in the output
+                                                Match match = regex.Match(e.Data);
+                
+                                                if (match.Success)
+                                                {
+                                                    // Extract the matched duration
+                                                    string durationString = match.Groups[1].Value;
+                
+                                                    longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
+                                                }
+                                            }
+                
+                                        };
+                                        process.Start();
+                                        process.BeginOutputReadLine();
+                                        process.BeginErrorReadLine();
+                
+                                        process.WaitForExit();
+                                    }
+                                }
+                                else if (extension == ".jpg" || extension == ".bmp" ||
+                                         extension == ".png" || extension == ".gif")
+                                {
+                                    longestDurationWindown += (entry_time * 1000 + duration_time * 1000);
+                                }
+                            }
+                
+                            if (longestDuration < longestDurationWindown)
+                            {
+                                longestDuration = longestDurationWindown;
+                            }
+                
+                            listDuration.Add(longestDurationWindown);
+                        }
+                    }
+                
+                    // Step 2: convert video
+                    foreach (Control control in controlsList)
+                    {
+                        if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                        {
+                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                            int idx_windown = controlsList.IndexOf(control);
+                
+                            if (idx_windown == 0)
+                            {
+                                using (Process process = new Process())
+                                {
+                                    process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                                    process.StartInfo.Arguments = $"-y -f lavfi -i anullsrc=r=44100:cl=stereo -f lavfi -i color=c=black:s={info_program.width_real}x{info_program.height_real}:d=0.1 -t 0.1 -shortest -c:v libx264 -b:v {info_program.bittrate_select} -tune stillimage -c:a aac -b:a 192k -strict experimental \"{backgroundFilePath}\"";
+                                    process.StartInfo.UseShellExecute = false;
+                                    process.StartInfo.RedirectStandardOutput = true;
+                                    process.StartInfo.RedirectStandardError = true;
+                                    process.StartInfo.CreateNoWindow = true;
+                
+                                    process.OutputDataReceived += (sender, e) =>
+                                    {
+                                        // Do nothing
+                                    };
+                                    process.ErrorDataReceived += (sender, e) =>
+                                    {
+                                        // Do nothing
+                                    };
+                                    process.Start();
+                                    process.BeginOutputReadLine();
+                                    process.BeginErrorReadLine();
+                                    process.WaitForExit();
+                                }
+                
+                                if (!File.Exists(backgroundFilePath))
+                                {
+                                    return;
+                                }
+                            }
+                
+                            using (Process process = new Process())
+                            {
+                                // Init variable
+                                String cmd_ffmpeg = "-y ";
+                                String filter = "";
+                                String overlay = "";
+                                int width_check = (infoWindow.windown_width % 2) == 1 ? infoWindow.windown_width + 1 : infoWindow.windown_width;
+                                int height_check = (infoWindow.windown_height % 2) == 1 ? infoWindow.windown_height + 1 : infoWindow.windown_height;
+                
+                                process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                
+                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                {
+                                    string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                
+                
+                                    if (idx == 0)
+                                    {
+                                        cmd_ffmpeg += ($"-i \"{backgroundFilePath}\" ");
+                                    }
+                
+                                    // Is a video
+                                    if (extension == ".mp4" || extension == ".avi" ||
+                                        extension == ".wmv" || extension == ".mpg" ||
+                                        extension == ".rmvp" || extension == ".mov" ||
+                                        extension == ".dat" || extension == ".flv")
+                                    {
+                                        cmd_ffmpeg += ($"-i \"{infoWindow.list[idx]}\" ");
+                                    }
+                                    else
+                                    {
+                                        cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
+                                    }
+                                }
+                
+                                cmd_ffmpeg += "-f lavfi -t 0.1 -i anullsrc -filter_complex ";
+                
+                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                {
+                                    filter += ("[" + (idx + 1) + ":v]scale=" + width_check + ":" + height_check + ":flags=lanczos,setsar=1:1[vid" + (idx + 1) + "];");
+                                    string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                                    if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
+                                    {
+                                        filter += ("color=c=black:s=" + width_check + "x" + height_check + ":d=" + infoWindow.list_entrytime[idx] + "[entry_time" + (idx + 1) + "];");
+                                    }
+                                }
+                
+                                int counterImage = 0;
+                
+                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                {
+                                    string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+                                    if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
+                                    {
+                                        filter += ("[entry_time" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
+                                        filter += ("[vid" + (idx + 1) + "]" + "[" + (infoWindow.list.Count + 1) + ":a]");
+                
+                                        counterImage += 1;
+                                    }
+                                    else
+                                    {
+                                        if (HasAudioStream(infoWindow.list[idx]))
+                                        {
+                                            filter += ("[vid" + (idx + 1) + "][" + (idx + 1) + ":a]");
+                                        }
+                                        else
+                                        {
+                                            filter += ("[vid" + (idx + 1) + "][" + (infoWindow.list.Count + 1) + ":a]");
+                                        }
+                                    }
+                                }
+                                filter += ("concat=n=" + (infoWindow.list.Count + counterImage) + ":v=1:a=1:unsafe=1[windown" + (idx_windown + 1) + "];");
+                
+                                // Calculate "loop" for windown
+                                int loop = 0;
+                                if (longestDuration > listDuration[idx_windown])
+                                {
+                                    loop = (int)((longestDuration / listDuration[idx_windown]) - 1);
+                                }
+                                if ((longestDuration % listDuration[idx_windown]) > 0)
+                                {
+                                    loop++;
+                                }
+                
+                                filter += ("[windown" + (idx_windown + 1) + "]" + "loop=" + loop + ":32767:0[looped_windown" + (idx_windown + 1) + "_timebase];");
+                
+                                // Add overlay video
+                                if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                {
+                                    if (windown_left_expected >= infoWindow.windown_left)
+                                    {
+                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                        windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                    }
+                                    else
+                                    {
+                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
+                                        windown_left_expected += infoWindow.windown_width;
+                                    }
+                                }
+                                else
+                                {
+                                    overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                }
+                
+                                cmd_ffmpeg += filter + overlay + " ";
+                                cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {longestDuration / 1000} \"{contentFilePath}\"";
+                                //Console.WriteLine(cmd_ffmpeg);
+                                process.StartInfo.Arguments = cmd_ffmpeg;
+                                process.StartInfo.UseShellExecute = false;
+                                process.StartInfo.RedirectStandardOutput = true;
+                                process.StartInfo.RedirectStandardError = true;
+                                process.StartInfo.CreateNoWindow = true;
+                
+                                process.OutputDataReceived += (sender, e) =>
+                                {
+                                    // Do nothing
+                                };
+                                process.ErrorDataReceived += (sender, e) =>
+                                {
+                                    if (flag_cancel)
+                                    {
+                                        process.CancelErrorRead();
+                                        process.Kill();
+                                    }
+                                    else
+                                    {
+                                        //Console.WriteLine(e.Data);
+                                        if (!string.IsNullOrEmpty(e.Data))
+                                        {
+                                            // Variables for capturing duration
+                                            string timeProcessPattern = @"time=([0-9:.]+)";
+                                            Regex regex = new Regex(timeProcessPattern);
+                
+                                            // Search for duration pattern in the output
+                                            Match match = regex.Match(e.Data);
+                
+                                            if (match.Success)
+                                            {
+                                                // Extract the matched duration
+                                                string time_str = match.Groups[1].Value;
+                
+                                                double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
+                
+                                                percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+                
+                                                // set process bar
+                                                dialog.Invoke((MethodInvoker)delegate
+                                                {
+                                                    // Your UI update code
+                                                    dialog.ProgressValue = percentage + 500;
+                                                    dialog.progressBar1.Refresh();
+                                                });
+                
+                                            }
+                                        }
+                                    }
+                                };
+                                process.Start();
+                                process.BeginOutputReadLine();
+                                process.BeginErrorReadLine();
+                                process.WaitForExit();
+
+                                percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+
+
+                                if (((idx_windown + 1) >= controlsList.Count) && File.Exists(backgroundFilePath))
+                                {
+                                    File.Delete(backgroundFilePath);
+                                }
+                                if (File.Exists(backgroundFilePath) && File.Exists(contentFilePath))
+                                {
+                                    File.Delete(backgroundFilePath);
+                                    File.Move(contentFilePath, backgroundFilePath);
+                                }
+                            }
+                        }
+                    }
+                
+                    if (File.Exists(contentFilePath) && ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.height_resolution))))
+                    {
+                        // Create background
+                        using (Process process = new Process())
+                        {
+                            process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
+                            if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2}:d=0.1 -vf scale={int.Parse(info_program.width_resolution)}x{int.Parse(info_program.height_real) + 2} -t 0.1 \"{backgroundFilePath}\"";
+                            else
+                                process.StartInfo.Arguments = $"-y -f lavfi -i color=c=black:s={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)}:d=0.1 -vf scale={int.Parse(info_program.width_real) + 2}x{int.Parse(info_program.height_resolution)} -t 0.1 \"{backgroundFilePath}\"";
+                            process.StartInfo.UseShellExecute = false;
+                            process.StartInfo.RedirectStandardOutput = true;
+                            process.StartInfo.RedirectStandardError = true;
+                            process.StartInfo.CreateNoWindow = true;
+                
+                            process.OutputDataReceived += (sender, e) =>
+                            {
+                                // Do nothing
+                            };
+                            process.ErrorDataReceived += (sender, e) =>
+                            {
+                                // Do nothing
+                            };
+                            process.Start();
+                            process.BeginOutputReadLine();
+                            process.BeginErrorReadLine();
+                            process.WaitForExit();
+                        }
+                
+                        if (!File.Exists(backgroundFilePath))
+                        {
+                            return;
+                        }
+                
+                        // slip file
+                        String filter = "";
+                        int idx_area = 1;
+                        using (Process process = new Process())
+                        {
+                            process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe";
+                            process.StartInfo.Arguments = $"-y -i \"{contentFilePath}\" -i \"{backgroundFilePath}\" -filter_complex ";
+                            if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                            {
+                                for (int step = 0; step < int.Parse(info_program.width_real); step += int.Parse(info_program.width_resolution))
+                                {
+                                    if ((step + int.Parse(info_program.width_resolution)) > int.Parse(info_program.width_real))
+                                    {
+                                        filter += ($"[0:v]crop={int.Parse(info_program.width_real) - step}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
+                                    }
+                                    else
+                                    {
+                                        filter += ($"[0:v]crop={int.Parse(info_program.width_resolution)}:{int.Parse(info_program.height_real)}:{step}:0[raw_area{idx_area}];[1:v][raw_area{idx_area}]overlay=0:0[area{idx_area}];");
+                                    }
+                                    idx_area++;
+                                }
+                
+                                for (int step = 0; step < (idx_area - 1); step++)
+                                {
+                                    filter += $"[area{step + 1}]";
+                                }
+                
+                                filter += ($"vstack=inputs={idx_area - 1}[mux];[mux][0:a]concat=n=1:v=1:a=1:unsafe=1[out]");
+                            }
+                            else
+                            {
+                                // TODO
+                            }
+                            process.StartInfo.Arguments += $"{filter} -map [out] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film \"{devideFilePath}\"";
+                            process.StartInfo.UseShellExecute = false;
+                            process.StartInfo.RedirectStandardOutput = true;
+                            process.StartInfo.RedirectStandardError = true;
+                            process.StartInfo.CreateNoWindow = true;
+                
+                            process.OutputDataReceived += (sender, e) =>
+                            {
+                                // Do nothing
+                            };
+                            process.ErrorDataReceived += (sender, e) =>
+                            {
+                                if (flag_cancel)
+                                {
+                                    process.CancelErrorRead();
+                                    process.Kill();
+                                }
+                                else
+                                {
+                                    //Console.WriteLine(e.Data);
+                                    if (!string.IsNullOrEmpty(e.Data))
+                                    {
+                                        // Variables for capturing duration
+                                        string timeProcessPattern = @"time=([0-9:.]+)";
+                                        Regex regex = new Regex(timeProcessPattern);
+                
+                                        // Search for duration pattern in the output
+                                        Match match = regex.Match(e.Data);
+                
+                                        if (match.Success)
+                                        {
+                                            // Extract the matched duration
+                                            string time_str = match.Groups[1].Value;
+                
+                                            double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
+                
+                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+                
+                                            // set process bar
+                                            dialog.Invoke((MethodInvoker)delegate
+                                            {
+                                                // Your UI update code
+                                                dialog.ProgressValue = percentage + 300;
+                                                dialog.progressBar1.Refresh();
+                                            });
+                
+                                        }
+                                    }
+                                }
+                            };
+                            process.Start();
+                            process.BeginOutputReadLine();
+                            process.BeginErrorReadLine();
+                            process.WaitForExit();
+                
+                            // Delete root video
+                            if (File.Exists(contentFilePath))
+                            {
+                                File.Delete(contentFilePath);
+                            }
+                
+                            // Delete background video
+                            if (File.Exists(backgroundFilePath))
+                            {
+                                File.Delete(backgroundFilePath);
+                            }
+                
+                            // Rename divide video
+                            if (File.Exists(devideFilePath))
+                            {
+                                File.Move(devideFilePath, contentFilePath);
+                            }
+                        }
+                    }
+                }
+                
+                
+                foreach (Control control1 in controlsList)
+                {
+                    ResizablePanel panel_windown = control1 as ResizablePanel;
+                    Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>(panel_windown.Name);
+                    info_windown.Add(Info_Window);
+                
+                    if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                    {
+                        if (totalBytes == 0)
+                        {
+                            FileInfo fileInfo = new FileInfo(contentFilePath);
+                            totalBytes = fileInfo.Length;
+                        }
+                    }
+                    else
+                    {
+                        foreach (String filePath in Info_Window.list)
+                        {
+                            FileInfo fileInfo = new FileInfo(filePath);
+                            if (fileInfo.Exists)
+                            {
+                                totalBytes += fileInfo.Length;
+                            }
+                        }
+                    }
+                }
+                info_windown.Reverse();
+                
+                if (totalBytes > 0)
+                {
+                    if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                    {
+                        using (var sourceStream = new FileStream(contentFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, true))
+                        using (var destinationStream = new FileStream(Path.Combine(subFolderPath, Path.GetFileName(contentFilePath)), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, true))
+                        {
+                            var buffer = new byte[bufferSize];
+                            int bytesRead;
+                
+                            while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
+                                destinationStream.Write(buffer, 0, bytesRead);
+                
+                                totalBytesRead += bytesRead;
+                
+                                if (!flag_cancel)
+                                {
+                                    dialog.Invoke((MethodInvoker)delegate
+                                    {
+                                        // Your UI update code
+                                        dialog.ProgressValue = (int)((double)totalBytesRead / totalBytes * 100);
+                                        dialog.progressBar1.Refresh();
+                                    });
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (Control control1 in controlsList)
+                        {
+                            ResizablePanel panel_windown = control1 as ResizablePanel;
+                            Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>(panel_windown.Name);
+                
+                            foreach (String filePath in Info_Window.list)
+                            {
+                                using (var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, true))
+                                using (var destinationStream = new FileStream(Path.Combine(subFolderPath, Path.GetFileName(filePath)), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, true))
+                                {
+                                    var buffer = new byte[bufferSize];
+                                    int bytesRead;
+                
+                                    while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                                    {
+                                        destinationStream.Write(buffer, 0, bytesRead);
+                
+                                        totalBytesRead += bytesRead;
+                
+                                        if (!flag_cancel)
+                                        {
+                                            dialog.Invoke((MethodInvoker)delegate
+                                            {
+                                                // Your UI update code
+                                                dialog.ProgressValue = (int)((double)totalBytesRead / totalBytes * 100);
+                                                dialog.progressBar1.Refresh();
+                                            });
+                                        }
+                
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                var save_info = new
+                {
+                    info_program = info_program,
+                    info_windown = info_windown
+                };
+                
+                // Save the program string to the selected file path
+                File.WriteAllText(Path.Combine(folderPath, "info.txt"), JsonConvert.SerializeObject(save_info, Formatting.None));
+                
+                if (!flag_cancel)
+                {
+                    dialog.Invoke((MethodInvoker)delegate
+                    {
+                        if (flag_succeed)
+                        {
+                            dialog.ProgressValue = 200;
+                            dialog.progressBar1.Refresh();
+                            Thread.Sleep(500);
+                            dialog.Close();
+                        }
+                        else
+                        {
+                            dialog.ProgressValue = -1;
+                            dialog.progressBar1.Refresh();
+                        }
+                    });
+                }
+
+            }
+        }
+    }
+
+    public class export_packet
+    {
+        public string root_path { get; set; }
+        public string info_program { get; set; }
     }
 
     public class getScreenParams_packet

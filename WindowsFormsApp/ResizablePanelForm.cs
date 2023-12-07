@@ -113,27 +113,27 @@ public class ResizablePanel : Panel
             if (control != this && control is ResizablePanel)
             {
                 ResizablePanel otherPanel = (ResizablePanel)control;
-   
-
+        
+        
                 bool isColliding = !(this.Right + deltaX < otherPanel.Left - snapDistance ||
                                      this.Left + deltaX > otherPanel.Right + snapDistance ||
                                      this.Bottom + deltaY < otherPanel.Top - snapDistance ||
                                      this.Top + deltaY > otherPanel.Bottom + snapDistance);
-
+        
                 bool isCollidingRight = Math.Abs((this.Right + deltaX) - (otherPanel.Left - snapDistance)) <= snapDistance &&
                                         this.Left + deltaX < otherPanel.Left - snapDistance;
-
-
+        
+        
                 bool isCollidingLeft = Math.Abs((this.Left + deltaX) - (otherPanel.Right + snapDistance)) <= snapDistance &&
                                        this.Right + deltaX > otherPanel.Right + snapDistance;
-
+        
                 bool isCollidingTop = Math.Abs((this.Bottom + deltaY) - (otherPanel.Top - snapDistance)) <= snapDistance &&
                                       this.Top + deltaY < otherPanel.Top - snapDistance;
-
+        
                 bool isCollidingBottom = Math.Abs((this.Top + deltaY) - (otherPanel.Bottom + snapDistance)) <= snapDistance &&
                                          this.Bottom + deltaY > otherPanel.Bottom + snapDistance;
-
-
+        
+        
                 if (isColliding)
                 {
                     // Điều chỉnh vị trí của this và otherPanel để chúng nằm sát nhau mà không chồng lên nhau
@@ -157,7 +157,7 @@ public class ResizablePanel : Panel
                         this.Top = otherPanel.Bottom;
                         ret = true;
                     }
-
+        
                     // Event callback
                     OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
                 }
@@ -263,7 +263,6 @@ public class ResizablePanel : Panel
         Label bottom_right_point = CreateResizeHandle(Width - ResizeHandleSize, Height - ResizeHandleSize, "bottom-right");
         Controls.Add(bottom_right_point); // Bottom-right
         Controls.SetChildIndex(bottom_right_point, 0);
-
     }
 
     private Label CreateResizeHandle(int x, int y, String Name)
@@ -301,8 +300,10 @@ public class ResizablePanel : Panel
             else if (activeResizeHandle.Name.Equals("top-right")) // Top-right
             {
                 this.Top += deltaY;
-                this.Width += deltaX;
                 this.Height -= deltaY;
+
+                if (DestinationPanel.Width >= (this.Left + this.Width + deltaX))
+                    this.Width += deltaX;                              
             }
             else if (activeResizeHandle.Name.Equals("bottom-left")) // Bottom-left
             {
@@ -312,10 +313,10 @@ public class ResizablePanel : Panel
             }
             else if (activeResizeHandle.Name.Equals("bottom-right")) // Bottom-right
             {
-                if (DestinationPanel.Width > (this.Width + deltaX))
+                if (DestinationPanel.Width >= (this.Left + this.Width + deltaX))
                     this.Width += deltaX;
 
-                if (DestinationPanel.Height > (this.Height + deltaY))
+                if (DestinationPanel.Height >= (this.Top + this.Height + deltaY))
                     this.Height += deltaY;              
             }
 

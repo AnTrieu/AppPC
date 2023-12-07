@@ -506,7 +506,7 @@
             this.button8.Text = "USB";
             this.button8.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.Visible = false;
+            this.button8.Click += new System.EventHandler(this.export_project);
             // 
             // Save
             // 
