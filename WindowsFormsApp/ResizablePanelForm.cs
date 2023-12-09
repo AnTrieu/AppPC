@@ -33,6 +33,7 @@ public class ResizablePanel : Panel
     public event CustomEventHandler CustomEventDragEnter;
     public event CustomEventHandler CustomEventDragDrop;
     public event CustomMouseEventHandler CustomEventMouseDown;
+    public event CustomMouseEventHandler CustomEventMouseMove;
     // Method to raise the custom event
     protected virtual void OnCustomDragOverEvent(DragEventArgs e)
     {
@@ -55,6 +56,12 @@ public class ResizablePanel : Panel
     protected virtual void OnCustomMouseDownEvent(EventArgs e, int X, int y, int real_width, int real_height, bool active_select)
     {
         CustomMouseEventHandler handler = CustomEventMouseDown;
+        handler?.Invoke(this, e, X, y, real_width, real_height, active_select);
+    }
+
+    protected virtual void OnCustomMouseMoveEvent(EventArgs e, int X, int y, int real_width, int real_height, bool active_select)
+    {
+        CustomMouseEventHandler handler = CustomEventMouseMove;
         handler?.Invoke(this, e, X, y, real_width, real_height, active_select);
     }
 
@@ -157,9 +164,9 @@ public class ResizablePanel : Panel
                         this.Top = otherPanel.Bottom;
                         ret = true;
                     }
-        
+
                     // Event callback
-                    OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
+                    OnCustomMouseMoveEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
                 }
             }
         }
@@ -206,10 +213,13 @@ public class ResizablePanel : Panel
             // Kiểm tra va chạm với các đối tượng khác
             if (isAutoMove && !CheckCollision(deltaX, deltaY))
             {
-                // Event callback
-                OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
+                if(deltaX != 0 || deltaY != 0)
+                {
+                    // Event callback
+                    OnCustomMouseMoveEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
 
-                this.Location = new Point(newLeft, newTop);
+                    this.Location = new Point(newLeft, newTop);
+                }
             }
             else if (!isAutoMove)
             {
@@ -320,9 +330,12 @@ public class ResizablePanel : Panel
                     this.Height += deltaY;              
             }
 
-            // Event callback
-            OnCustomMouseDownEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false);
-
+            if (deltaX != 0 || deltaY != 0)
+            {
+                // Event callback
+                OnCustomMouseMoveEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, true);
+            }
+            Console.WriteLine(this.Width);
             lastMousePosition = currentMousePosition;
         }
         else

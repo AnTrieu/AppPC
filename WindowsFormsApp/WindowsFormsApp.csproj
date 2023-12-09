@@ -232,6 +232,7 @@
     <None Include="Resources\clock_icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\plus-icon.png" />
     <None Include="Resources\tools-icon.png" />
     <None Include="Resources\net_bk.png" />
     <None Include="Resources\desktop_icon.png" />

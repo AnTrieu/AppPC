@@ -141,6 +141,9 @@
             this.main_program = new System.Windows.Forms.Panel();
             this.drappPictureBox = new System.Windows.Forms.PictureBox();
             this.panel43 = new System.Windows.Forms.Panel();
+            this.panel79 = new System.Windows.Forms.Panel();
+            this.ZoomOut = new System.Windows.Forms.Button();
+            this.ZoomIn = new System.Windows.Forms.Button();
             this.show_file = new System.Windows.Forms.Panel();
             this.panel46 = new System.Windows.Forms.Panel();
             this.panel42 = new System.Windows.Forms.Panel();
@@ -248,6 +251,7 @@
             this.panel66.SuspendLayout();
             this.main_program.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).BeginInit();
+            this.panel79.SuspendLayout();
             this.show_file.SuspendLayout();
             this.panel46.SuspendLayout();
             this.panel42.SuspendLayout();
@@ -335,7 +339,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "v1.0.0";
+            this.label1.Text = "v1.0.1";
             // 
             // panel2
             // 
@@ -1591,6 +1595,7 @@
             this.main_program.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.main_program.Controls.Add(this.drappPictureBox);
             this.main_program.Controls.Add(this.panel43);
+            this.main_program.Controls.Add(this.panel79);
             this.main_program.Controls.Add(this.show_file);
             this.main_program.Controls.Add(this.panel40);
             this.main_program.Controls.Add(this.panel14);
@@ -1615,12 +1620,54 @@
             // 
             // panel43
             // 
+            this.panel43.AutoScroll = true;
             this.panel43.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.panel43.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel43.Location = new System.Drawing.Point(350, 0);
+            this.panel43.Location = new System.Drawing.Point(350, 40);
             this.panel43.Name = "panel43";
-            this.panel43.Size = new System.Drawing.Size(698, 413);
+            this.panel43.Size = new System.Drawing.Size(698, 373);
             this.panel43.TabIndex = 4;
+            // 
+            // panel79
+            // 
+            this.panel79.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panel79.Controls.Add(this.ZoomOut);
+            this.panel79.Controls.Add(this.ZoomIn);
+            this.panel79.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel79.Location = new System.Drawing.Point(350, 0);
+            this.panel79.Name = "panel79";
+            this.panel79.Size = new System.Drawing.Size(698, 40);
+            this.panel79.TabIndex = 0;
+            // 
+            // ZoomOut
+            // 
+            this.ZoomOut.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ZoomOut.FlatAppearance.BorderSize = 0;
+            this.ZoomOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZoomOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomOut.ForeColor = System.Drawing.Color.White;
+            this.ZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ZoomOut.Image")));
+            this.ZoomOut.Location = new System.Drawing.Point(35, 0);
+            this.ZoomOut.Name = "ZoomOut";
+            this.ZoomOut.Size = new System.Drawing.Size(35, 40);
+            this.ZoomOut.TabIndex = 1;
+            this.ZoomOut.UseVisualStyleBackColor = true;
+            this.ZoomOut.Click += new System.EventHandler(this.zoom_function);
+            // 
+            // ZoomIn
+            // 
+            this.ZoomIn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ZoomIn.FlatAppearance.BorderSize = 0;
+            this.ZoomIn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZoomIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomIn.ForeColor = System.Drawing.Color.White;
+            this.ZoomIn.Image = global::WindowsFormsApp.Properties.Resources.plus_icon_16;
+            this.ZoomIn.Location = new System.Drawing.Point(0, 0);
+            this.ZoomIn.Name = "ZoomIn";
+            this.ZoomIn.Size = new System.Drawing.Size(35, 40);
+            this.ZoomIn.TabIndex = 0;
+            this.ZoomIn.UseVisualStyleBackColor = true;
+            this.ZoomIn.Click += new System.EventHandler(this.zoom_function);
             // 
             // show_file
             // 
@@ -2580,6 +2627,7 @@
             this.panel66.PerformLayout();
             this.main_program.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).EndInit();
+            this.panel79.ResumeLayout(false);
             this.show_file.ResumeLayout(false);
             this.panel46.ResumeLayout(false);
             this.panel42.ResumeLayout(false);
@@ -2813,6 +2861,9 @@
         private System.Windows.Forms.Label label49;
         private System.Windows.Forms.Button General;
         private System.Windows.Forms.Button Advanced;
+        private System.Windows.Forms.Panel panel79;
+        private System.Windows.Forms.Button ZoomIn;
+        private System.Windows.Forms.Button ZoomOut;
     }
 }
 
