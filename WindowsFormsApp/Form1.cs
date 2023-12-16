@@ -17,6 +17,12 @@ using MediaInfo.DotNetWrapper.Enumerations;
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 using System.Text.RegularExpressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
+using System.Runtime.InteropServices.ComTypes;
+using System.Timers;
+using Newtonsoft.Json.Linq;
+using System.Collections;
+
 
 namespace WindowsFormsApp
 {
@@ -33,6 +39,9 @@ namespace WindowsFormsApp
         private float currentScale = 1.0f;
         private int width_panel = 0;
         private int height_panel = 0;
+        private long current_time_box = 0;
+        private long running_time_box = 0;
+        private string device_select = "";
 
         List<Control> controlsList = new List<Control>();
 
@@ -66,8 +75,8 @@ namespace WindowsFormsApp
 
             this.panel7.Width = (this.Width - 548) / 2;
             this.panel8.Width = (this.Width - 548) / 2;
-            this.panel37.Width = (this.panel36.Width - 600) / 2;
-            this.panel38.Width = (this.panel36.Width - 600) / 2;
+            this.panel37.Width = (this.panel36.Width - 500) / 2;
+            this.panel38.Width = (this.panel36.Width - 500) / 2;
 
             if (this.WindowState == FormWindowState.Maximized)
             {
@@ -90,7 +99,7 @@ namespace WindowsFormsApp
             {
                 this.panel6.Width = 250;
                 this.panel14.Width = 100;
-                this.panel40.Width = 250;
+                this.panel40.Width = 260;
 
                 this.show_file.Height = 250;
 
@@ -105,6 +114,9 @@ namespace WindowsFormsApp
             }
 
             this.Advanced.Left = this.panel71.Width + this.panel78.Width - 50;
+
+            // Refresh design area
+            refresh_program_design(currentScale);
 
             // Select screen
             this.main_program.Visible = false;
@@ -123,9 +135,6 @@ namespace WindowsFormsApp
                 this.main_program.Visible = true;
             }
 
-            // Refresh design area
-            refresh_program_design();
-
             windowStateK1 = this.WindowState;
         }
 
@@ -136,6 +145,18 @@ namespace WindowsFormsApp
 
             switch (m.Msg)
             {
+                case 0x0021: // Move down
+
+                    // Remove text box
+                    foreach (Control control1 in this.main_terminal.Controls)
+                    {
+                        if (control1 is TextBox && control1.Name.Equals("edit"))
+                        {
+                            control1.Dispose();
+                        }
+                    }
+
+                    break;
                 case 0x0084/*NCHITTEST*/ :
                     base.WndProc(ref m);
 
@@ -275,18 +296,15 @@ namespace WindowsFormsApp
                     if (control is Panel panel_chill)
                     {                       
                         // Now, check if there is a TableLayoutPanel within panel_chill
-                        TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
-                        if (tableLayoutPanel != null && tableLayoutPanel.Name.Equals(label.Name))
+                        TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();                      
+                        if (tableLayoutPanel != null)
                         {
-                            tableLayoutPanel.BackColor = System.Drawing.Color.SteelBlue;
+                            Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                            if(infoDevice.deviceName.Equals(label.Name))
+                                tableLayoutPanel.BackColor = System.Drawing.Color.SteelBlue;
                         }
                     }
                 }
-            }
-            else if (sender is TableLayoutPanel)
-            {
-                TableLayoutPanel tablePanel = (TableLayoutPanel)sender;
-                tablePanel.BackColor = System.Drawing.Color.SteelBlue;
             }
         }
 
@@ -302,17 +320,339 @@ namespace WindowsFormsApp
                     {
                         // Now, check if there is a TableLayoutPanel within panel_chill
                         TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
-                        if (tableLayoutPanel != null && tableLayoutPanel.Name.Equals(label.Name))
+                        
+                        if (tableLayoutPanel != null)
                         {
-                            tableLayoutPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                            Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                            if(infoDevice.deviceName.Equals(label.Name) && !infoDevice.selected)
+                                tableLayoutPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                         }
                     }
                 }
             }
-            else if (sender is TableLayoutPanel)
+        }
+
+        private void row_device_MouseClick(object sender, EventArgs e)
+        {
+            // Unselect all
+            foreach (Control control in this.panel35.Controls)
             {
-                TableLayoutPanel tablePanel = (TableLayoutPanel)sender;
-                tablePanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                if (control is Panel panel_chill)
+                {
+                    // Now, check if there is a TableLayoutPanel within panel_chill
+                    TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                    if (tableLayoutPanel != null)
+                    {
+                        Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                        infoDevice.selected = false;
+                        tableLayoutPanel.Name = JsonConvert.SerializeObject(infoDevice);
+
+                        if (sender is Label)
+                        {
+                            Label label = (Label)sender;
+                            if (!infoDevice.deviceName.Equals(label.Name))
+                            {
+                                tableLayoutPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (sender is Label)
+            {
+                Label label = (Label)sender;
+
+                foreach (Control control in this.panel35.Controls)
+                {
+                    if (control is Panel panel_chill)
+                    {
+                        // Now, check if there is a TableLayoutPanel within panel_chill
+                        TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                       
+                        if (tableLayoutPanel != null)
+                        {
+                            Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                            if(infoDevice.deviceName.Equals(label.Name))
+                            {
+                                infoDevice.selected = true;
+                                tableLayoutPanel.Name = JsonConvert.SerializeObject(infoDevice);
+
+                                if(!device_select.Equals(infoDevice.deviceName))
+                                {
+                                    device_select = infoDevice.deviceName;
+
+                                    // Clear data
+                                    infoDevice.session_id = "";
+                                    infoDevice.password = "";
+                                    tableLayoutPanel.Name = JsonConvert.SerializeObject(infoDevice);
+
+                                    this.screenshort_label.Visible = true;
+                                    if (this.panel12.Controls.Count > 1)
+                                    {
+                                        this.panel12.Controls.RemoveAt(1);
+                                    }
+
+                                    // Get password
+                                    var cmd_for_device = new
+                                    {
+                                        deviceName = infoDevice.deviceName,
+                                        type = "SOCKET",
+                                        command = "GET_INFO",
+                                        ip_address = infoDevice.ip_address
+                                    };
+
+                                    // Start a new thread for the dialog with parameters
+                                    Thread dialogThread = new Thread(new ParameterizedThreadStart(communicationThread));
+                                    dialogThread.Start(JsonConvert.SerializeObject(cmd_for_device));                                   
+                                }
+                                else if (infoDevice.session_id.Length > 0)
+                                {
+                                    HttpWebRequest request_logo = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/logo");
+                                    request_logo.Method = "POST";
+                                    request_logo.Headers.Add("Cookie", $"{infoDevice.session_id}");
+
+                                    using (HttpWebResponse response_logo = (HttpWebResponse)request_logo.GetResponse())
+                                    {
+                                        if (response_logo.StatusCode == HttpStatusCode.OK)
+                                        {
+                                            using (Stream responseStream = response_logo.GetResponseStream())
+                                            {
+                                                // Use Invoke to update the UI control from the UI thread
+                                                this.panel12.Invoke((MethodInvoker)delegate
+                                                {
+                                                    this.screenshort_label.Visible = false;
+
+                                                    if (this.panel12.Controls.Count > 1)
+                                                    {
+                                                        PictureBox screen_shot = this.panel12.Controls[1] as PictureBox;
+                                                        screen_shot.Image = new Bitmap(responseStream);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void communicationThread(object parameter)
+        {
+            Command_device cmd_packet = JsonConvert.DeserializeObject<Command_device>((string)parameter);
+
+            if(cmd_packet.type.Equals("SOCKET"))
+            {
+                byte[] data = new byte[10240 + 256];
+
+                // Get info from device
+                TcpClient client = new TcpClient();
+                NetworkStream stream = null;
+                try
+                {
+                    client.Connect(cmd_packet.ip_address, 12345);
+       
+                    // Convert the JSON string to bytes
+                    byte[] byteArray = Encoding.UTF8.GetBytes((string)parameter);
+                    Array.Copy(byteArray, data, byteArray.Length);
+
+                    // Get the network stream from the TcpClient
+                    stream = client.GetStream();
+                
+                    // Send the data
+                    stream.Write(data, 0, data.Length);
+                    stream.Flush();
+                    
+                    for (int delay = 0; delay < 30; delay++)
+                    {
+                        Thread.Sleep(100);
+                        
+                        if (stream.DataAvailable)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (stream.DataAvailable)
+                    {
+                        Array.Clear(data,0, data.Length);
+                        int read_bytes = stream.Read(data, 0, data.Length);
+
+                        Command_response_device response_device = JsonConvert.DeserializeObject<Command_response_device>(Encoding.UTF8.GetString(data));
+
+                        // Login
+                        HttpWebRequest request_login = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/login");
+                        request_login.Method = "POST";
+
+                        // Add parameters to the request body
+                        string postData = $"password={response_device.password}"; 
+                        request_login.ContentType = "application/x-www-form-urlencoded";
+                        request_login.ContentLength = Encoding.UTF8.GetBytes(postData).Length;
+
+                        using (Stream dataStream = request_login.GetRequestStream())
+                        {
+                            dataStream.Write(Encoding.UTF8.GetBytes(postData), 0, Encoding.UTF8.GetBytes(postData).Length);
+                        }
+
+                        using (HttpWebResponse response_login = (HttpWebResponse)request_login.GetResponse())
+                        {
+                            if (response_login.StatusCode == HttpStatusCode.OK)
+                            {
+                                string session_id = response_login.Headers["Set-Cookie"];
+                              
+                                // Get current time
+                                HttpWebRequest request_cur_time = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/getCurTime");
+                                request_cur_time.Method = "POST";
+                                request_cur_time.Headers.Add("Cookie", $"{session_id}");
+                                using (HttpWebResponse response_signnal_input = (HttpWebResponse)request_cur_time.GetResponse())
+                                {
+                                    if (response_signnal_input.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response_signnal_input.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                getCurTime data_parse = JsonConvert.DeserializeObject<getCurTime>(reader.ReadToEnd());
+                                                current_time_box = data_parse.curTimeMills;
+                                                //Console.WriteLine(reader.ReadToEnd());
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Get screen status
+                                HttpWebRequest request_screen = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/getScreenParams");
+                                request_screen.Method = "POST";
+                                request_screen.Headers.Add("Cookie", $"{session_id}");
+                                using (HttpWebResponse response = (HttpWebResponse)request_screen.GetResponse())
+                                {
+                                    if (response.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                this.screen_status.Invoke((MethodInvoker)delegate
+                                                {
+                                                    getScreenParams data_parse = JsonConvert.DeserializeObject<getScreenParams>(reader.ReadToEnd());
+                                                    if(data_parse.screenOn)
+                                                    {
+                                                        this.screen_status.Text = $"Open";
+                                                        this.screen_status.ForeColor = Color.Green;
+                                                    }                                                      
+                                                    else
+                                                    {
+                                                        this.screen_status.Text = $"Close";
+                                                        this.screen_status.ForeColor = Color.Red;
+                                                    }
+                                                       
+                                                    this.screen_status.Left = 276;
+                                                });
+
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Get screenshot
+                                if (!this.screen_status.Text.Equals("Close"))
+                                {
+                                    HttpWebRequest request_logo = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/logo");
+                                    request_logo.Method = "POST";
+                                    request_logo.Headers.Add("Cookie", $"{session_id}");
+
+                                    using (HttpWebResponse response_logo = (HttpWebResponse)request_logo.GetResponse())
+                                    {
+                                        if (response_logo.StatusCode == HttpStatusCode.OK)
+                                        {
+                                            using (Stream responseStream = response_logo.GetResponseStream())
+                                            {
+                                                // Use Invoke to update the UI control from the UI thread
+                                                this.panel12.Invoke((MethodInvoker)delegate
+                                                {
+                                                    this.screenshort_label.Visible = false;
+                                                    PictureBox screen_shot = null;
+                                                    Bitmap bm = new Bitmap(responseStream);
+
+                                                    if (this.panel12.Controls.Count == 1)
+                                                    {
+                                                        screen_shot = new PictureBox();
+                                                        screen_shot.Image = bm;
+                                                        screen_shot.Dock = DockStyle.Fill;
+                                                        screen_shot.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                                                        // Add the PictureBox to the panel's Controls collection
+                                                        this.panel12.Controls.Add(screen_shot);
+                                                    }
+                                                    else
+                                                    {
+                                                        screen_shot = this.panel12.Controls[1] as PictureBox;
+                                                        screen_shot.Image = bm;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Save password and session ID
+                                foreach (Control control in this.panel35.Controls)
+                                {
+                                    if (control is Panel panel_chill)
+                                    {
+                                        // Now, check if there is a TableLayoutPanel within panel_chill
+                                        TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+
+                                        if (tableLayoutPanel != null)
+                                        {
+                                            Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                                            if (infoDevice.ip_address.Equals(cmd_packet.ip_address))
+                                            {
+                                                infoDevice.password = response_device.password;
+                                                infoDevice.session_id = session_id;
+                                                tableLayoutPanel.Name = JsonConvert.SerializeObject(infoDevice);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                this.resolution_device.Invoke((MethodInvoker)delegate
+                                {
+                                    this.resolution_device.Text = $"{response_device.width} x {response_device.height}";
+                                });
+
+                                this.name_device.Invoke((MethodInvoker)delegate
+                                {
+                                    this.name_device.Text = response_device.UUID;
+                                    this.name_device.Left = 70;
+                                });
+
+                                this.ip_device.Invoke((MethodInvoker)delegate
+                                {
+                                    this.ip_device.Text = cmd_packet.ip_address;
+                                    this.ip_device.Left = 246;
+                                });
+                            }
+                        }
+                    }
+
+                   
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+                finally
+                {
+                    if (stream != null)
+                        stream.Close();
+                    if (client != null)
+                        client.Close();
+                    data = null;
+                }
             }
         }
 
@@ -526,11 +866,11 @@ namespace WindowsFormsApp
 
                             if(infoWindow.Name.Equals(this.panel70.Name))
                             {
-                                int left_expect = (int)(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
-                                int top_expect = (int)(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
-                                int width_expect = (int)(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
-                                int height_expect = (int)(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
-                                
+                                int left_expect = (int)Math.Round(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                int top_expect = (int)Math.Round(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+                                int width_expect = (int)Math.Round(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                int height_expect = (int)Math.Round(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+
                                 if ((left_expect + width_expect) > panel_chill.Width - 0)
                                 {                                  
                                     if (objInput.Name.Equals("textBox1"))
@@ -539,8 +879,8 @@ namespace WindowsFormsApp
                                     if (objInput.Name.Equals("textBox4"))
                                         width = int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text) + 0;
 
-                                    left_expect = (int)(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
-                                    width_expect = (int)(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                    left_expect = (int)Math.Round(Normalize(X, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
+                                    width_expect = (int)Math.Round(Normalize(width, 0, int.Parse(info_program.width_real), 0, panel_chill.Width - 0));
                                 }
                                 if (objInput.Name.Equals("textBox1"))
                                     resizablePanel.Left = left_expect;
@@ -555,8 +895,8 @@ namespace WindowsFormsApp
                                     if (objInput.Name.Equals("textBox3"))
                                         height = int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text) + 0;
                                                                                                       
-                                    top_expect = (int)(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
-                                    height_expect = (int)(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+                                    top_expect = (int)Math.Round(Normalize(Y, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
+                                    height_expect = (int)Math.Round(Normalize(height, 0, int.Parse(info_program.height_real), 0, panel_chill.Height - 0));
                                 }
                                 if (objInput.Name.Equals("textBox3"))
                                     resizablePanel.Height = height_expect;
@@ -564,11 +904,26 @@ namespace WindowsFormsApp
                                     resizablePanel.Top = top_expect;
 
                                 // update detail location
-                                infoWindow.windown_width = int.Parse(this.textBox4.Text);
-                                infoWindow.windown_height = int.Parse(this.textBox3.Text);
-                                infoWindow.windown_top = int.Parse(this.textBox2.Text);
-                                infoWindow.windown_left = int.Parse(this.textBox1.Text);
+                                if (this.textBox4.Text.Length > 0)
+                                    infoWindow.windown_width = int.Parse(this.textBox4.Text);
+                                else
+                                    infoWindow.windown_width = 0;
 
+                                if (this.textBox3.Text.Length > 0)
+                                    infoWindow.windown_height = int.Parse(this.textBox3.Text);
+                                else
+                                    infoWindow.windown_height = 0;
+
+                                if (this.textBox2.Text.Length > 0)
+                                    infoWindow.windown_top = int.Parse(this.textBox2.Text);
+                                else
+                                    infoWindow.windown_top = 0;
+
+                                if (this.textBox1.Text.Length > 0)
+                                    infoWindow.windown_left = int.Parse(this.textBox1.Text);
+                                else
+                                    infoWindow.windown_left = 0;
+                               
                                 resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
                             }                          
                         }
@@ -579,7 +934,6 @@ namespace WindowsFormsApp
                     this.textBox4.Text = width.ToString();
                     this.textBox3.Text = height.ToString();
                 }
-
             }
         }
 
@@ -620,6 +974,78 @@ namespace WindowsFormsApp
             this.textBox3.TextChanged += TextBox_TextChanged;
             this.textBox4.KeyPress += NumericTextBox_KeyPress;
             this.textBox4.TextChanged += TextBox_TextChanged;
+
+            this.entrytime_select.KeyPress += (sender1, e1) =>
+            {
+                // Kiểm tra nếu ký tự không phải là số hoặc không phải là ký tự điều khiển (ví dụ: backspace)
+                if (!char.IsControl(e1.KeyChar) && !char.IsDigit(e1.KeyChar))
+                {
+                    // Không cho phép nhập ký tự không phải số
+                    e1.Handled = true;
+                }
+            };
+            this.entrytime_select.TextChanged += (sender1, e1) =>
+            {
+                TextBox obj = sender1 as TextBox;
+                obj.Text = obj.Text.Length > 0 ? int.Parse(obj.Text).ToString() : "0";
+                obj.Select(obj.Text.Length, 0);
+
+                foreach (Control control in controlsList)
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                // Update value
+                                infoWindow.list_entrytime[index] = obj.Text;
+                                resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+                            }
+                        }                      
+                    }
+                }
+            };
+
+            this.duration_select.KeyPress += (sender1, e1) =>
+            {
+                // Kiểm tra nếu ký tự không phải là số hoặc không phải là ký tự điều khiển (ví dụ: backspace)
+                if (!char.IsControl(e1.KeyChar) && !char.IsDigit(e1.KeyChar))
+                {
+                    // Không cho phép nhập ký tự không phải số
+                    e1.Handled = true;
+                }
+            };
+            this.duration_select.TextChanged += (sender1, e1) =>
+            {
+                TextBox obj = sender1 as TextBox;
+                obj.Text = obj.Text.Length > 0 ? int.Parse(obj.Text).ToString() : "0";
+                obj.Select(obj.Text.Length, 0);
+
+                foreach (Control control in controlsList)
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                // Update value
+                                infoWindow.list_duration[index] = obj.Text;
+                                resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+                            }
+                        }
+                    }
+                }
+            };
 
             this.General.BackgroundImageLayout = ImageLayout.Stretch;
             this.General.BackgroundImage = normal_button();
@@ -774,7 +1200,32 @@ namespace WindowsFormsApp
             // Tạo một luồng riêng cho việc lắng nghe UDP
             udpListenerThread = new Thread(() => UdpListener(45454));
             udpListenerThread.Start();
+
+
+            // Create a timer with a 1000ms (1 second) interval
+            Timer timer = new Timer();
+            timer.Interval = 100;
+            // Hook up the Elapsed event for the timer
+            timer.Tick += (sender1, e1) =>
+            {
+                if(current_time_box > 0)
+                {
+                    DateTimeOffset dateTimeOffset = DateTimeOffset.FromFileTime(current_time_box * 10000);
+
+                    this.current_time.Text = dateTimeOffset.ToString($"dd/MM/{DateTime.Now.Year} HH:mm:ss");
+
+                    current_time_box += 100;
+                }
+                else
+                {
+                    this.current_time.Text = "--/--/-- --:--:--";
+                }
+            };
+
+            // Start the timer
+            timer.Start();
         }
+
 
         static bool HasAudioStream(string filePath)
         {
@@ -800,9 +1251,9 @@ namespace WindowsFormsApp
 
         private void SendFileThread(object parameter)
         {
-            using (StreamWriter fileStream = new StreamWriter(outputPath))
+            //using (StreamWriter fileStream = new StreamWriter(outputPath))
             {
-                Console.SetOut(fileStream);
+                //Console.SetOut(fileStream);
                 
                 long total_size = 0;
                 bool flag_cancel = false;
@@ -848,8 +1299,8 @@ namespace WindowsFormsApp
                             int windown_left_expected = 0;
                             int percentage = 0, percentageK1 = 0;
                             int counter_windown_empty = 0;
-                            int entry_time = 0;
-                            int duration_time = 1;
+                            //int entry_time = 0;
+                            //int duration_time = 1;
                             List<long> listDuration = new List<long>();
 
                             if (!Directory.Exists(outputBackgroundPath))
@@ -872,7 +1323,7 @@ namespace WindowsFormsApp
                                     File.Delete(contentFilePath);
                                 }
                             }
-                            //Console.WriteLine($"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe");
+
                             // Step 1: get all path video in program list
                             foreach (Control control in controlsList)
                             {
@@ -936,7 +1387,7 @@ namespace WindowsFormsApp
                                         else if (extension == ".jpg" || extension == ".bmp" ||
                                                  extension == ".png" || extension == ".gif")
                                         {
-                                            longestDurationWindown += (entry_time * 1000 + duration_time * 1000);
+                                            longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
                                         }
                                     }
 
@@ -950,13 +1401,15 @@ namespace WindowsFormsApp
                             }
 
                             // Step 2: convert video
-                            foreach (Control control in controlsList)
+                            for (int i = controlsList.Count - 1; i >= 0; i--)
                             {
+                                Control control = controlsList[i];
                                 if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                                 {
+                                    //Console.WriteLine(resizablePanel.Name);
                                     Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                                    int idx_windown = controlsList.IndexOf(control);
-
+                                    int idx_windown = controlsList.Count - i - 1;
+                                    
                                     if (idx_windown == 0)
                                     {
                                         using (Process process = new Process())
@@ -1173,7 +1626,7 @@ namespace WindowsFormsApp
                                 }
                             }
 
-                            if (File.Exists(contentFilePath) && ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.height_resolution))))
+                            if (true && File.Exists(contentFilePath) && ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.height_resolution))))
                             {
                                 // Create background
                                 using (Process process = new Process())
@@ -1240,6 +1693,7 @@ namespace WindowsFormsApp
                                     {
                                         // TODO
                                     }
+                                    //Console.WriteLine(filter);
                                     process.StartInfo.Arguments += $"{filter} -map [out] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film \"{devideFilePath}\"";
                                     process.StartInfo.UseShellExecute = false;
                                     process.StartInfo.RedirectStandardOutput = true;
@@ -1352,8 +1806,8 @@ namespace WindowsFormsApp
                         else
                         {
                             clientSocket = new TcpClient();
-                            clientSocket.Connect(IP_client, 12345); // Replace with the server's IP and port
-
+                            clientSocket.Connect(IP_client, 12345);
+                            
                             // Get the network stream for receiving data
                             networkStream = clientSocket.GetStream();
 
@@ -1407,7 +1861,7 @@ namespace WindowsFormsApp
                                                 break;
                                             }
                                             else
-                                            {
+                                            {                                                
                                                 var detailPacket = new
                                                 {
                                                     command = "SEND_FILE",
@@ -1420,7 +1874,7 @@ namespace WindowsFormsApp
 
                                                 byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                                 Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-
+                                                //Console.WriteLine("-------------- " + Math.Max(bytesRead + 256, buffer.Length));
                                                 networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
                                                 networkStream.Flush();
 
@@ -1600,8 +2054,9 @@ namespace WindowsFormsApp
                                 foreach (Control control in controlsList)
                                 {
                                     info_windown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
+                                    //Console.WriteLine((control as ResizablePanel).Name);
                                 }
-
+                                
                                 var detailPacket = new
                                 {
                                     command = "SEND_PLAN",
@@ -1630,7 +2085,7 @@ namespace WindowsFormsApp
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Lỗi: {ex}");
+                    Console.WriteLine($"Error 1: {ex}");
                 }
                 finally
                 {
@@ -1791,8 +2246,8 @@ namespace WindowsFormsApp
                         this.panel43.Controls.Clear();
 
                         // Get the maximum allowable width and height based on the mainPanel's size
-                        int width_contain = this.panel43.Width;
-                        int height_contain = this.panel43.Height;
+                        int width_contain = this.show.Width;
+                        int height_contain = this.show.Height;
                         int width_select = width;
                         int height_select = height;
                         float delta = (float)width_select / (float)height_select;
@@ -1803,7 +2258,7 @@ namespace WindowsFormsApp
                             height_config += 1;
                             width_config += delta;
                         }
-                        while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 70)));
+                        while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 50)));
 
                         width_panel = (int)width_config;
                         height_panel = (int)height_config;
@@ -1819,9 +2274,8 @@ namespace WindowsFormsApp
                         };
  
                         // Calculate the position to center the inner panel within the main panel
-                        int x = (width_contain - (int)width_config) / 2;
-                        int y = (height_contain - (int)height_config) / 2;
-
+                        int x = (this.panel43.Width - (int)width_config) / 2;
+                        int y = (this.panel43.Height - (int)height_config) / 2;
 
                         // Set the location of the inner panel
                         innerPanel.Location = new Point(x, y);
@@ -1835,9 +2289,11 @@ namespace WindowsFormsApp
                             unselect_object();
                         };
 
+                        this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+ 
                         // Add the inner panel to the main panel
                         this.panel43.Controls.Add(innerPanel);
-
+                    
                         // Create list program
                         this.panel47.Visible = true;
                         label36.Text = $"{width}(W) x {height}(H)";
@@ -1847,6 +2303,8 @@ namespace WindowsFormsApp
                         this.panel72.Visible = true;
                         label43.Text = $"{width}(W) x {height}(H)";
                         label44.Text = e1.name;
+
+                        currentScale = 1.0f;
                     }
                 };
 
@@ -1897,12 +2355,14 @@ namespace WindowsFormsApp
                 string[] list_duration = { "" };
                 string[] list_entrytime = { "" };
                 bool[] list_selected = { true };
+                bool have_image = false;
 
                 // Is a video
                 if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
                 {
                     list_entrytime[0] = "0";
-                    list_duration[0] = "1";
+                    list_duration[0] = "10";
+                    have_image = true;
                 }
 
                 Panel destinationPanel = sender as Panel;
@@ -1938,11 +2398,18 @@ namespace WindowsFormsApp
                     
                     this.textBox1.Text = "0";
                     this.textBox2.Text = "0";
-                    this.textBox4.Text = Math.Ceiling(Normalize(max_app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
-                    this.textBox3.Text = Math.Ceiling(Normalize(max_app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
+                    this.textBox4.Text = Math.Round(Normalize(max_app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
+                    this.textBox3.Text = Math.Round(Normalize(max_app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
 
                     this.panel70.Visible = true;
                     this.panel70.Name = info_windown.name;
+                    this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(objectName);
+                    if (have_image)
+                    {
+                        this.panel80.Visible = true;
+                        this.entrytime_select.Text = list_entrytime[0];
+                        this.duration_select.Text = list_duration[0];
+                    }
                 }
                 else
                 {
@@ -1952,10 +2419,10 @@ namespace WindowsFormsApp
                     {
                         name = "Windown " + lenght_list,
                         path_windown = "",
-                        windown_height = (int) Math.Ceiling(Normalize(50, 0, max_app_height, 0, int.Parse(info_program.height_real))),
-                        windown_width = (int) Math.Ceiling(Normalize(100, 0, max_app_width, 0, int.Parse(info_program.width_real))),
-                        windown_top = (int) Math.Ceiling(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))),
-                        windown_left = (int) Math.Ceiling(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))),
+                        windown_height = (int) Math.Round(Normalize(50, 0, max_app_height, 0, int.Parse(info_program.height_real))),
+                        windown_width = (int) Math.Round(Normalize(100, 0, max_app_width, 0, int.Parse(info_program.width_real))),
+                        windown_top = (int) Math.Round(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))),
+                        windown_left = (int) Math.Round(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))),
                         list = list_object,
                         list_duration = list_duration,
                         list_entrytime = list_entrytime,
@@ -1971,7 +2438,7 @@ namespace WindowsFormsApp
                         AllowDrop = true
                     };
                 }
-                windown.CustomEventMouseMove += (sender1, e1, X, Y, app_width, app_height, active_select) =>
+                windown.CustomEventMouseMove += (sender1, e1, X, Y, app_width, app_height, active_select, info_other_panel, direction) =>
                 {
                     // Resize child panels in program list (panel43)
                     var visiblePanels = this.panel43.Controls
@@ -1982,16 +2449,28 @@ namespace WindowsFormsApp
                     {
                         // Deserialize JSON data from the Name property
                         Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(windown.Name);
-
+                        //Console.WriteLine(info_other_panel);
                         this.panel70.Visible = true;
                         this.panel70.Name = infoWindow.Name;
-
-                        this.textBox1.Text = Math.Ceiling(Normalize(X, 0, showPanel.Width, 0, int.Parse(info_program.width_real))).ToString();
-                        this.textBox2.Text = Math.Ceiling(Normalize(Y, 0, showPanel.Height, 0, int.Parse(info_program.height_real))).ToString();
+                        //Console.WriteLine((Normalize(X, 0, showPanel.Width, 0, int.Parse(info_program.width_real))));
+                        this.textBox1.Text = Math.Round(Normalize(X, 0, showPanel.Width, 0, int.Parse(info_program.width_real))).ToString();
+                        this.textBox2.Text = Math.Round(Normalize(Y, 0, showPanel.Height, 0, int.Parse(info_program.height_real))).ToString();
                         if(active_select)
                         {
-                            this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, showPanel.Width, 0, int.Parse(info_program.width_real))).ToString();
-                            this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, showPanel.Height, 0, int.Parse(info_program.height_real))).ToString();
+                            this.textBox4.Text = Math.Round(Normalize(app_width, 0, showPanel.Width, 0, int.Parse(info_program.width_real))).ToString();
+                            this.textBox3.Text = Math.Round(Normalize(app_height, 0, showPanel.Height, 0, int.Parse(info_program.height_real))).ToString();
+                        }
+
+                        // Event Collision
+                        if (direction == 1)
+                        {
+                            Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
+                            this.textBox1.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
+                        }
+                        else if (direction == 3)
+                        {
+                            Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
+                            this.textBox2.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
                         }
 
                         // Select first item
@@ -2017,7 +2496,7 @@ namespace WindowsFormsApp
                     }
                 };
 
-                windown.CustomEventMouseDown += (sender1, e1, X, Y, app_width, app_height, active_select) =>
+                windown.CustomEventMouseDown += (sender1, e1, X, Y, app_width, app_height, active_select, info_other_panel, direction) =>
                 {
                     // Resize child panels in program list (panel43)
                     var visiblePanels = this.panel43.Controls
@@ -2123,8 +2602,7 @@ namespace WindowsFormsApp
                                 infoWindow.selected[i] = false;
                             }
 
-                            resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
-                            
+                            resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);                           
                         }
                     }
 
@@ -2140,17 +2618,20 @@ namespace WindowsFormsApp
                             {
                                 String name_file = e1.Data.GetData("PictureBoxName") as string;
                                 string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
+                                this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
+
                                 // Is a video
                                 if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                 {
                                     infoWindow.list_entrytime.Add("0");
-                                    infoWindow.list_duration.Add("1");
+                                    infoWindow.list_duration.Add("10");
                                 }
                                 else
                                 {
                                     infoWindow.list_entrytime.Add("");
                                     infoWindow.list_duration.Add("");
                                 }
+
                                 infoWindow.list.Add(name_file);
                                 infoWindow.selected.Add(true);
                                 resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
@@ -2317,12 +2798,27 @@ namespace WindowsFormsApp
                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                     {
                                         Color initialBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64))))); // Set to your initial color
-                                        if (infoWindow1.selected[int.Parse((sender as Control).Name)])
+                                        int index = int.Parse((sender as Control).Name);
+                                        if (infoWindow1.selected[index])
                                         {
+                                            String path_file = infoWindow1.list[int.Parse((sender as Control).Name)];
+                                            string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
+                                            
                                             initialBorderColor = Color.LightBlue;
 
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
+                                            this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(infoWindow1.list[index]);
+                                            if (extension_1 == ".jpg" || extension_1 == ".bmp" || extension_1 == ".png" || extension_1 == ".gif")
+                                            {
+                                                this.panel80.Visible = true;
+                                                this.entrytime_select.Text = infoWindow1.list_entrytime[index];
+                                                this.duration_select.Text = infoWindow1.list_duration[index];
+                                            }
+                                            else
+                                            {
+                                                this.panel80.Visible = false;
+                                            }
 
                                             int max_app_width = control1.Parent.Width - 0;
                                             int max_app_height = control1.Parent.Height - 0;
@@ -2347,10 +2843,6 @@ namespace WindowsFormsApp
                                             ResizablePanel panel_windown = control1 as ResizablePanel;
                                             panel_windown.InitializeResizeHandles();
                                             
-
-                                            String path_file = infoWindow1.list[int.Parse((sender as Control).Name)];
-                                            string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
-
                                             // Is a video
                                             if (extension_1 == ".mp4" || extension_1 == ".avi" ||
                                                 extension_1 == ".wmv" || extension_1 == ".mpg" ||
@@ -2375,6 +2867,13 @@ namespace WindowsFormsApp
                                             else if (extension_1 == ".jpg" || extension_1 == ".bmp" ||
                                                 extension_1 == ".png" || extension_1 == ".gif")
                                             {
+                                                if (!infoWindow1.path_windown.Equals(path_file))
+                                                {
+                                                    // update data
+                                                    infoWindow1.path_windown = path_file;
+                                                    resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);                                                  
+                                                }
+
                                                 panel_windown.updateTimer.Stop();
 
                                                 // Iterate through each control in the panel
@@ -2398,6 +2897,8 @@ namespace WindowsFormsApp
                                                     }
                                                 }
                                             }
+
+
                                             // Draw a border with a different color and thickness
                                             using (Pen pen = new Pen(initialBorderColor, 2)) // You can change Color.Red to your desired color
                                             {
@@ -2486,10 +2987,12 @@ namespace WindowsFormsApp
                         label_Panel.Dock = System.Windows.Forms.DockStyle.Fill;
 
                         Label name_label = new Label();
+                        name_label.AutoSize = false;
+                        name_label.AutoEllipsis = true;
                         name_label.Padding = new System.Windows.Forms.Padding(5, 15, 0, 0);
                         name_label.Dock = System.Windows.Forms.DockStyle.Fill;
                         name_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                        name_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                        name_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         name_label.ForeColor = System.Drawing.Color.White;
                         name_label.Text = typeFile;
                         name_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
@@ -2581,13 +3084,133 @@ namespace WindowsFormsApp
             this.total_pc.Text = "Total 0";
             this.online_pc.Text = "Total 0";
 
+            this.screenshort_label.Visible = true;
+            if(this.panel12.Controls.Count > 1)
+            {
+                this.panel12.Controls.RemoveAt(1);
+            }
+            this.name_device.Text = "--";
+            this.name_device.Left = 112;
+            this.ip_device.Text = "--";
+            this.ip_device.Left = 306;
+            this.resolution_device.Text = "--";
+            this.screen_status.Text = "--";
+            this.screen_status.Left = 306;
+            this.screen_status.ForeColor = Color.White;
+
+            running_time_box = 0;
+            current_time_box = 0;
+
             // Tạo một luồng riêng cho việc lắng nghe UDP
-            if(udpListenerThread == null || (udpListenerThread != null && !udpListenerThread.IsAlive))
+            if (udpListenerThread == null || (udpListenerThread != null && !udpListenerThread.IsAlive))
             {
                 udpListenerThread = new Thread(() => UdpListener(45454));
                 udpListenerThread.Start();
             }
-           
+
+            device_select = "";
+        }
+
+        private void getInfoThread(object parameter)
+        {
+            try
+            {
+                byte[] buffer = new byte[10240 + 256];
+                Command_device cmd_packet = JsonConvert.DeserializeObject<Command_device>((string)parameter);
+
+                // Create a Stopwatch instance
+                Stopwatch stopwatch = new Stopwatch();
+
+                // Start the stopwatch
+                stopwatch.Start();
+
+                // Get resolution device
+                TcpClient client = new TcpClient();
+                client.Connect(cmd_packet.ip_address, 12345);
+                NetworkStream stream = client.GetStream();
+
+
+                // Send the data
+                byte[] byteArray = Encoding.UTF8.GetBytes((string)parameter);
+                Array.Copy(byteArray, buffer, byteArray.Length);
+                stream.Write(buffer, 0, buffer.Length);
+                stream.Flush();
+
+                for (int delay = 0; delay < 300; delay++)
+                {
+                    Thread.Sleep(10);
+
+                    if (stream.DataAvailable)
+                    {
+                        Array.Clear(buffer, 0, buffer.Length);
+                        stream.Read(buffer, 0, buffer.Length);
+
+
+                        Command_response_device response_device = JsonConvert.DeserializeObject<Command_response_device>(Encoding.UTF8.GetString(buffer));
+
+                        panel35.Invoke((MethodInvoker)delegate
+                        {
+                            // Update list data
+                            foreach (Control control in this.panel35.Controls)
+                            {
+                                if (control is Panel panel_chill)
+                                {
+                                    // Now, check if there is a TableLayoutPanel within panel_chill
+                                    TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                                    if (tableLayoutPanel != null)
+                                    {
+                                        // Get the control in the first cell of the first column (assuming it's a Label)
+                                        Control controlInFirstColumn = tableLayoutPanel.GetControlFromPosition(0, 0);
+
+                                        if (response_device.UUID.Equals(controlInFirstColumn.Text))
+                                        {
+                                            if (response_device.password.Length > 0)
+                                            {
+                                                Label device_name_label = controlInFirstColumn as Label;
+                                                device_name_label.Image = global::WindowsFormsApp.Properties.Resources.lock_icon;
+                                                device_name_label.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+                                            }
+
+                                            if (response_device.width != null && response_device.height != null)
+                                            {
+                                                Label resolution_label = tableLayoutPanel.GetControlFromPosition(3, 0) as Label;
+                                                resolution_label.Text = $"{response_device.width} x {response_device.height}";
+                                            }
+
+                                            if (response_device.voice != null)
+                                            {
+                                                Label brightness_label = tableLayoutPanel.GetControlFromPosition(4, 0) as Label;
+                                                brightness_label.Text = $"{response_device.bright}";
+                                            }
+
+                                            if (response_device.voice != null)
+                                            {
+                                                Label voice_label = tableLayoutPanel.GetControlFromPosition(5, 0) as Label;
+                                                voice_label.Text = $"{response_device.voice}";
+                                            }
+
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+                        break;
+                    }
+                }
+
+                stream.Close();
+                client.Close();
+
+                // Display the elapsed time
+                Console.WriteLine($"Execution Time: {stopwatch.ElapsedMilliseconds} ms");
+
+            }
+            catch (Exception e1)
+            {
+                Console.WriteLine($"e1");
+            }
         }
 
         private void UdpListener(int udpPort)
@@ -2606,8 +3229,8 @@ namespace WindowsFormsApp
 
                         // Reinit
                         flagTermianlUDPThread = false;
-                        int counter_break = 0;
-                        String first_device = "";
+
+                        Stopwatch time_finish = new Stopwatch();
 
                         while (!flagTermianlUDPThread)
                         {
@@ -2615,20 +3238,33 @@ namespace WindowsFormsApp
                             {
                                 if(udpListener.Available < 256)
                                 {
-                                    Thread.Sleep(1000);
-                                    continue;
+                                    if (time_finish.ElapsedMilliseconds > 1000)
+                                    {
+                                        time_finish.Stop();                                    
+                                        Console.WriteLine($"Scan device finished with \"{time_finish.ElapsedMilliseconds} ms\"");
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }                                    
                                 }    
 
                                 // Use Task.Factory.StartNew to run the asynchronous operation with a cancellation token
                                 byte[] receivedBytes = udpListener.Receive(ref endPoint);
                                 string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
+                                //Console.WriteLine(receivedMessage);
+                                //Console.WriteLine("First device");
+                                time_finish.Start();
 
                                 Boolean have_obj = false;
                                 int counter_device = 1;
 
-
                                 adv_packet data = JsonConvert.DeserializeObject<adv_packet>(receivedMessage);
 
+                                // Replace
+                                data.deviceId = data.deviceId.Replace("K", "TT");
+                                
                                 // Check list device
                                 foreach (Control control in this.panel35.Controls)
                                 {
@@ -2640,76 +3276,45 @@ namespace WindowsFormsApp
                                         {
                                             // Get the control in the first cell of the first column (assuming it's a Label)
                                             Control controlInFirstColumn = tableLayoutPanel.GetControlFromPosition(0, 0);
-
                                             if (controlInFirstColumn != null && controlInFirstColumn is Label device_name_label_in_list)
                                             {
                                                 // Device have added
                                                 if (device_name_label_in_list.Text.Length > 0)
                                                 {
                                                     counter_device++;
-
-                                                    if (device_name_label_in_list.Text.Equals(data.deviceName))
+                              
+                                                    if (device_name_label_in_list.Text.Equals(data.deviceId))
                                                     {
-                                                        have_obj = true;
-
-                                                        if (first_device.Length == 0)
-                                                        {
-                                                            first_device = data.deviceName;
-                                                        }
-                                                        else if (first_device.Equals(data.deviceName))
-                                                        {
-                                                            counter_break--;
-                                                        }
+                                                        have_obj = true;                                                     
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-          
+                               
                                 if (!have_obj)
                                 {
-                                    if (panel35.InvokeRequired)
+                                    String resolution_str = "--";
+                                    String brightness = "--";
+                                    String voice = "--";
+                                    try
                                     {
+                                        var cmd_for_device = new
+                                        {
+                                            deviceName = data.deviceId,
+                                            type = "SOCKET",
+                                            command = "GET_INFO",
+                                            ip_address = endPoint.Address.ToString()
+                                        };
+
+                                        // Start a new thread for the dialog with parameters
+                                        Thread dialogThread = new Thread(new ParameterizedThreadStart(getInfoThread));
+                                        dialogThread.Start(JsonConvert.SerializeObject(cmd_for_device));
+
                                         // Add new device
                                         panel35.Invoke((MethodInvoker)delegate
                                         {
-                                            bool flag_lock = false;
-                                            
-                                            // Get data from device
-                                            getScreenParams_packet data_getScreenParams = null;
-                                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create($"http://{endPoint.Address.ToString()}:18080/getScreenParams");
-                                            request.Method = "GET";
-
-                                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                                            {
-
-                                                if (response.StatusCode == HttpStatusCode.OK)
-                                                {
-                                                    using (Stream responseStream = response.GetResponseStream())
-                                                    {
-                                                        using (StreamReader reader = new StreamReader(responseStream))
-                                                        {
-                                                            // Deserialize the JSON data into a C# object
-                                                            data_getScreenParams = JsonConvert.DeserializeObject<getScreenParams_packet>(reader.ReadToEnd());
-                                                            if (data_getScreenParams.code != 200)
-                                                            {
-                                                                if (data_getScreenParams.code == 401)
-                                                                {
-                                                                    // Show clock icon
-                                                                    flag_lock = true;
-                                                                }
-                                                                data_getScreenParams = null;
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine("HTTP request failed with status code: " + response.StatusCode);
-                                                }
-                                            }
-
                                             // Create the add panel
                                             Panel addPanel = new Panel();
                                             addPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2718,22 +3323,29 @@ namespace WindowsFormsApp
                                             addPanel.Size = new System.Drawing.Size(946, 60);
                                             addPanel.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
 
+                                            var info_device = new
+                                            {
+                                                deviceName = data.deviceId,
+                                                selected = false,
+                                                password = "",
+                                                session_id = "",
+                                                ip_address = endPoint.Address.ToString()
+                                            };
+
                                             // Create the add table panel
                                             TableLayoutPanel addTablePanel = new TableLayoutPanel();
                                             addTablePanel.BorderStyle = BorderStyle.None;
                                             addTablePanel.Dock = System.Windows.Forms.DockStyle.Fill;
                                             addTablePanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                                             addTablePanel.ColumnCount = 7;
-                                            addTablePanel.Name = data.deviceName;
+                                            addTablePanel.Name = JsonConvert.SerializeObject(info_device);
                                             addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
                                             addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
                                             addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14F));
+                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8F));
+                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8F));
                                             addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-                                            addTablePanel.MouseEnter += row_device_MouseEnter;
-                                            addTablePanel.MouseLeave += row_device_MouseLeave;
 
                                             Label device_name_label = new Label();
                                             device_name_label.AutoSize = true;
@@ -2742,19 +3354,14 @@ namespace WindowsFormsApp
                                             device_name_label.Location = new System.Drawing.Point(0, 0);
                                             device_name_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             device_name_label.Size = new System.Drawing.Size(283, 30);
-                                            if (flag_lock)
-                                            {
-                                                device_name_label.Image = global::WindowsFormsApp.Properties.Resources.lock_icon;
-                                                device_name_label.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-                                            }
                                             device_name_label.TabIndex = 0;
-                                            device_name_label.Name = data.deviceName;
-                                            device_name_label.Text = data.deviceName;
+                                            device_name_label.Name = data.deviceId;
+                                            device_name_label.Text = data.deviceId;
                                             device_name_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
                                             device_name_label.MouseEnter += row_device_MouseEnter;
                                             device_name_label.MouseLeave += row_device_MouseLeave;
+                                            device_name_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(device_name_label, 0, 0);
-
 
                                             Label method_label = new Label();
                                             method_label.AutoSize = true;
@@ -2764,11 +3371,12 @@ namespace WindowsFormsApp
                                             method_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             method_label.Size = new System.Drawing.Size(283, 30);
                                             method_label.TabIndex = 0;
-                                            method_label.Name = data.deviceName;
+                                            method_label.Name = data.deviceId;
                                             method_label.Text = "LAN";
                                             method_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             method_label.MouseEnter += row_device_MouseEnter;
                                             method_label.MouseLeave += row_device_MouseLeave;
+                                            method_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(method_label, 1, 0);
 
                                             Label address_label = new Label();
@@ -2779,11 +3387,12 @@ namespace WindowsFormsApp
                                             address_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             address_label.Size = new System.Drawing.Size(283, 30);
                                             address_label.TabIndex = 0;
-                                            address_label.Name = data.deviceName;
+                                            address_label.Name = data.deviceId;
                                             address_label.Text = endPoint.Address.ToString();
                                             address_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             address_label.MouseEnter += row_device_MouseEnter;
                                             address_label.MouseLeave += row_device_MouseLeave;
+                                            address_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(address_label, 2, 0);
 
                                             Label resolution_label = new Label();
@@ -2794,11 +3403,12 @@ namespace WindowsFormsApp
                                             resolution_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             resolution_label.Size = new System.Drawing.Size(283, 30);
                                             resolution_label.TabIndex = 0;
-                                            resolution_label.Name = data.deviceName;
-                                            resolution_label.Text = data.screenWidth.ToString() + "*" + data.screenHeight.ToString();
+                                            resolution_label.Name = data.deviceId;
+                                            resolution_label.Text = resolution_str;
                                             resolution_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             resolution_label.MouseEnter += row_device_MouseEnter;
                                             resolution_label.MouseLeave += row_device_MouseLeave;
+                                            resolution_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(resolution_label, 3, 0);
 
                                             Label brightness_label = new Label();
@@ -2809,11 +3419,12 @@ namespace WindowsFormsApp
                                             brightness_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             brightness_label.Size = new System.Drawing.Size(283, 30);
                                             brightness_label.TabIndex = 0;
-                                            brightness_label.Name = data.deviceName;
-                                            brightness_label.Text = data_getScreenParams != null ? data_getScreenParams.bright.ToString() : "--";
+                                            brightness_label.Name = data.deviceId;
+                                            brightness_label.Text = brightness;
                                             brightness_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             brightness_label.MouseEnter += row_device_MouseEnter;
                                             brightness_label.MouseLeave += row_device_MouseLeave;
+                                            brightness_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(brightness_label, 4, 0);
 
                                             Label voice_label = new Label();
@@ -2824,11 +3435,12 @@ namespace WindowsFormsApp
                                             voice_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             voice_label.Size = new System.Drawing.Size(283, 30);
                                             voice_label.TabIndex = 0;
-                                            voice_label.Name = data.deviceName;
-                                            voice_label.Text = data_getScreenParams != null ? (data_getScreenParams.voice.Equals("1.0") ? "100" : data_getScreenParams.voice.TrimStart('0').Replace(".", "")) : "--"; ;
+                                            voice_label.Name = data.deviceId;
+                                            voice_label.Text = voice;
                                             voice_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             voice_label.MouseEnter += row_device_MouseEnter;
                                             voice_label.MouseLeave += row_device_MouseLeave;
+                                            voice_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(voice_label, 5, 0);
 
                                             Label version_label = new Label();
@@ -2839,11 +3451,12 @@ namespace WindowsFormsApp
                                             version_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             version_label.Size = new System.Drawing.Size(283, 30);
                                             version_label.TabIndex = 0;
-                                            version_label.Name = data.deviceName;
+                                            version_label.Name = data.deviceId;
                                             version_label.Text = "v" + data.systemVersion + "-" + data.appVersion;
                                             version_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             version_label.MouseEnter += row_device_MouseEnter;
                                             version_label.MouseLeave += row_device_MouseLeave;
+                                            version_label.MouseClick += row_device_MouseClick;
                                             addTablePanel.Controls.Add(version_label, 6, 0);
 
                                             addTablePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -2880,7 +3493,7 @@ namespace WindowsFormsApp
                                             addPanelRelease.Dock = System.Windows.Forms.DockStyle.Top;
                                             addPanelRelease.Location = new System.Drawing.Point(0, 0);
                                             addPanelRelease.Size = new System.Drawing.Size(946, 60);
-                                            addPanelRelease.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+                                            addPanelRelease.Padding = new System.Windows.Forms.Padding(30, 0, 8, 8);
 
                                             // Create the add table panel
                                             TableLayoutPanel addTablePanelRelease = new TableLayoutPanel();
@@ -2888,7 +3501,7 @@ namespace WindowsFormsApp
                                             addTablePanelRelease.Dock = System.Windows.Forms.DockStyle.Fill;
                                             addTablePanelRelease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                                             addTablePanelRelease.ColumnCount = 4;
-                                            addTablePanelRelease.Name = data.deviceName;
+                                            addTablePanelRelease.Name = data.deviceId;
                                             addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5F));
                                             addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
                                             addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
@@ -2905,7 +3518,7 @@ namespace WindowsFormsApp
                                             //radioButton1.ForeColor = System.Drawing.Color.White;
                                             radioButton1.Location = new System.Drawing.Point(0, 0);
                                             radioButton1.Margin = new System.Windows.Forms.Padding(0);
-                                            radioButton1.Name = data.deviceName;
+                                            radioButton1.Name = data.deviceId;
                                             radioButton1.Size = new System.Drawing.Size(100, 70);
                                             radioButton1.TabIndex = 0;
                                             radioButton1.TabStop = true;
@@ -2940,8 +3553,8 @@ namespace WindowsFormsApp
                                             device_name_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             device_name_release_label.Size = new System.Drawing.Size(283, 30);
                                             device_name_release_label.TabIndex = 0;
-                                            device_name_release_label.Name = data.deviceName;
-                                            device_name_release_label.Text = data.deviceName;
+                                            device_name_release_label.Name = data.deviceId;
+                                            device_name_release_label.Text = data.deviceId;
                                             device_name_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
                                             device_name_release_label.MouseEnter += row_device_release_MouseEnter;
                                             device_name_release_label.MouseLeave += row_device_release_MouseLeave;
@@ -2955,7 +3568,7 @@ namespace WindowsFormsApp
                                             address_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             address_release_label.Size = new System.Drawing.Size(283, 30);
                                             address_release_label.TabIndex = 0;
-                                            address_release_label.Name = data.deviceName;
+                                            address_release_label.Name = data.deviceId;
                                             address_release_label.Text = endPoint.Address.ToString();
                                             address_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
                                             address_release_label.MouseEnter += row_device_release_MouseEnter;
@@ -2970,7 +3583,7 @@ namespace WindowsFormsApp
                                             remain_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
                                             remain_release_label.Size = new System.Drawing.Size(283, 30);
                                             remain_release_label.TabIndex = 0;
-                                            remain_release_label.Name = data.deviceName;
+                                            remain_release_label.Name = data.deviceId;
                                             remain_release_label.Text = Math.Round(((float)data.usableSpace / 1024), 2).ToString();
                                             remain_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             remain_release_label.MouseEnter += row_device_release_MouseEnter;
@@ -3009,12 +3622,10 @@ namespace WindowsFormsApp
                                             this.online_pc.Text = "Total " + counter_device.ToString();
                                         });
                                     }
-
-                                }
-                                else if (counter_break < 0)
-                                {
-                                    Console.WriteLine("Scan device finished");
-                                    break;
+                                    catch(Exception e)
+                                    {
+                                        Console.WriteLine("Error {e}");
+                                    }
                                 }
                             }
                             catch (Exception e)
@@ -3099,6 +3710,8 @@ namespace WindowsFormsApp
 
                                 // Hide image
                                 drappPictureBox.Visible = false;
+
+                                this.show.AutoScrollPosition = new System.Drawing.Point(Math.Abs(this.show.AutoScrollPosition.X), Math.Abs(this.show.AutoScrollPosition.Y));
                             }
                         }
                     }
@@ -3452,9 +4065,14 @@ namespace WindowsFormsApp
             this.panel47.Visible = false;
             this.panel72.Visible = false;
 
+            this.panel70.Visible = false;
+            this.panel70.Name = "";
+            this.panel80.Visible = false;
+
+            currentScale = 1.0f;
         }
 
-        private void refresh_program_design()
+        private void refresh_program_design(float scale)
         {
             // Resize child panels in program list (panel43)
             var visiblePanels = this.panel43.Controls
@@ -3468,8 +4086,8 @@ namespace WindowsFormsApp
                 var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
             
                 // Get the maximum allowable width and height based on the mainPanel's size
-                int width_contain = this.panel43.Width;
-                int height_contain = this.panel43.Height;
+                int width_contain = this.show.Width;
+                int height_contain = this.show.Height;
                 int width_select = int.Parse(info_program.width_real);
                 int height_select = int.Parse(info_program.height_real);
                 float delta = (float)width_select / (float)height_select;
@@ -3480,17 +4098,17 @@ namespace WindowsFormsApp
                     height_config += 1;
                     width_config += delta;
                 }
-                while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 70)));
+                while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 50)));
             
                 // Calculate the position to center the inner panel within the main panel
-                int x = (width_contain - (int)width_config) / 2;
-                int y = (height_contain - (int)height_config) / 2;
+                int x = (this.panel43.Width - (int)width_config) / 2;
+                int y = (this.panel43.Height - (int)height_config) / 2;
 
                 width_panel = (int)width_config;
                 height_panel = (int)height_config;
 
-                panel_chill.Width = (int)width_config;
-                panel_chill.Height = (int)height_config;
+                panel_chill.Width = (int)(width_config * scale);
+                panel_chill.Height = (int)(height_config * scale);
                 panel_chill.Location = new Point(x, y);
 
                 int max_app_width = panel_chill.Width - 0;
@@ -3499,11 +4117,13 @@ namespace WindowsFormsApp
                 foreach (Control control1 in controlsList)
                 {
                     // Resize 
-                    control1.Left = (int)Math.Ceiling(Normalize(control1.Location.X, 0, widthK1, 0, panel_chill.Width));
-                    control1.Top = (int)Math.Ceiling(Normalize(control1.Location.Y, 0, heightK1, 0, panel_chill.Height));
-                    control1.Width = (int)Math.Ceiling(Normalize(control1.Width, 0, widthK1, 0, panel_chill.Width));
-                    control1.Height = (int)Math.Ceiling(Normalize(control1.Height, 0, heightK1, 0, panel_chill.Height));
+                    control1.Left = (int)Math.Round(Normalize(control1.Location.X, 0, widthK1, 0, panel_chill.Width));
+                    control1.Top = (int)Math.Round(Normalize(control1.Location.Y, 0, heightK1, 0, panel_chill.Height));
+                    control1.Width = (int)Math.Round(Normalize(control1.Width, 0, widthK1, 0, panel_chill.Width));
+                    control1.Height = (int)Math.Round(Normalize(control1.Height, 0, heightK1, 0, panel_chill.Height));
                 }
+
+                this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - (width_config * scale)) / 2), y - (int)((this.show.Height - (height_config * scale)) / 4));
             }
 
             unselect_object();
@@ -3587,8 +4207,8 @@ namespace WindowsFormsApp
                         // Get the maximum allowable width and height based on the mainPanel's size
                         int width = int.Parse(info_stored.info_program.width_real);
                         int height = int.Parse(info_stored.info_program.height_real);
-                        int width_contain = this.panel43.Width;
-                        int height_contain = this.panel43.Height;
+                        int width_contain = this.show.Width;
+                        int height_contain = this.show.Height;
                         int width_select = width;
                         int height_select = height;
                         float delta = (float)width_select / (float)height_select;
@@ -3612,13 +4232,15 @@ namespace WindowsFormsApp
                         };
                         
                         // Calculate the position to center the inner panel within the main panel
-                        int x = (width_contain - (int)width_config) / 2;
-                        int y = (height_contain - (int)height_config) / 2;
+                        int x = (this.panel43.Width - (int)width_config) / 2;
+                        int y = (this.panel43.Height - (int)height_config) / 2;
                         
                         
                         // Set the location of the inner panel
                         innerPanel.Location = new Point(x, y);
-                        
+
+                        this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+
                         // Đăng ký sự kiện DragDrop và DragEnter cho Panel
                         innerPanel.DragDrop += TargetPanel_DragDrop;
                         innerPanel.DragEnter += TargetPanel_DragEnter;
@@ -3633,9 +4255,13 @@ namespace WindowsFormsApp
 
                         // Create list program
                         this.panel47.Visible = true;
-                        this.panel72.Visible = true;
                         label36.Text = int.Parse(info_stored.info_program.width_real) + "*" + height;
                         label35.Text = info_stored.info_program.Name;
+
+                        // Create list program
+                        this.panel72.Visible = true;
+                        label43.Text = int.Parse(info_stored.info_program.width_real) + "*" + height;
+                        label44.Text = info_stored.info_program.Name;
 
                         var visiblePanels = this.panel43.Controls
                             .OfType<Panel>()
@@ -3656,10 +4282,10 @@ namespace WindowsFormsApp
 
                                     int max_app_width = destinationPanel.Width - 0;
                                     int max_app_height = destinationPanel.Height - 0;
-                                    int X = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_left, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
-                                    int Y = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_top, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
-                                    int width_windown = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_width, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
-                                    int height_windown = (int)Math.Ceiling(Normalize(info_stored.info_windown[idx_window].windown_height, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
+                                    int X = (int)Math.Round(Normalize(info_stored.info_windown[idx_window].windown_left, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
+                                    int Y = (int)Math.Round(Normalize(info_stored.info_windown[idx_window].windown_top, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
+                                    int width_windown = (int)Math.Round(Normalize(info_stored.info_windown[idx_window].windown_width, 0, int.Parse(info_stored.info_program.width_real), 0, max_app_width));
+                                    int height_windown = (int)Math.Round(Normalize(info_stored.info_windown[idx_window].windown_height, 0, int.Parse(info_stored.info_program.height_real), 0, max_app_height));
                      
                                     var info_windown = new
                                     {
@@ -3687,7 +4313,7 @@ namespace WindowsFormsApp
                                             AllowDrop = true
                                         };
 
-                                        windown_load.CustomEventMouseMove += (sender1, e1, X1, Y1, app_width, app_height, active_select) =>
+                                        windown_load.CustomEventMouseMove += (sender1, e1, X1, Y1, app_width, app_height, active_select, info_other_panel, direction) =>
                                         {
                                             // Resize child panels in program list (panel43)
                                             var visiblePanels1 = this.panel43.Controls
@@ -3702,10 +4328,24 @@ namespace WindowsFormsApp
                                                 this.panel70.Visible = true;
                                                 this.panel70.Name = infoWindow.Name;
 
-                                                this.textBox1.Text = Math.Ceiling(Normalize(X1, 0, showPanel.Width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
-                                                this.textBox2.Text = Math.Ceiling(Normalize(Y1, 0, showPanel.Height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
-                                                this.textBox4.Text = Math.Ceiling(Normalize(app_width, 0, showPanel.Width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
-                                                this.textBox3.Text = Math.Ceiling(Normalize(app_height, 0, showPanel.Height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
+                                                this.textBox1.Text = Math.Round(Normalize(X1, 0, showPanel.Width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
+                                                this.textBox2.Text = Math.Round(Normalize(Y1, 0, showPanel.Height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
+                                                if (active_select)
+                                                {
+                                                    this.textBox4.Text = Math.Round(Normalize(app_width, 0, showPanel.Width, 0, int.Parse(info_stored.info_program.width_real))).ToString();
+                                                    this.textBox3.Text = Math.Round(Normalize(app_height, 0, showPanel.Height, 0, int.Parse(info_stored.info_program.height_real))).ToString();
+                                                }
+
+                                                if (direction == 1)
+                                                {
+                                                    Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
+                                                    this.textBox1.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
+                                                }
+                                                else if (direction == 3)
+                                                {
+                                                    Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
+                                                    this.textBox2.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
+                                                }
 
                                                 // Select first item
                                                 foreach (Control control1 in controlsList)
@@ -3732,7 +4372,7 @@ namespace WindowsFormsApp
                                             }
                                         };
 
-                                        windown_load.CustomEventMouseDown += (sender1, e1, X1, Y1, app_width, app_height, active_select) =>
+                                        windown_load.CustomEventMouseDown += (sender1, e1, X1, Y1, app_width, app_height, active_select, info_other_panel, direction) =>
                                         {
                                             // Resize child panels in program list (panel43)
                                             var visiblePanels1 = this.panel43.Controls
@@ -3762,7 +4402,6 @@ namespace WindowsFormsApp
                                                             this.textBox2.Text = infoWindow1.windown_top.ToString();
                                                             this.textBox4.Text = infoWindow1.windown_width.ToString();
                                                             this.textBox3.Text = infoWindow1.windown_height.ToString();
-                                                            Console.WriteLine(infoWindow1.windown_width);
                                                         }
 
                                                         resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -3856,7 +4495,23 @@ namespace WindowsFormsApp
 
                                                     if (infoWindow.Name.Equals("Windown " + lenght_list.ToString()))
                                                     {
-                                                        infoWindow.list.Add(e1.Data.GetData("PictureBoxName") as string);
+                                                        String name_file = e1.Data.GetData("PictureBoxName") as string;
+                                                        string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
+                                                        this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
+
+                                                        // Is a video
+                                                        if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                                        {
+                                                            infoWindow.list_entrytime.Add("0");
+                                                            infoWindow.list_duration.Add("10");
+                                                        }
+                                                        else
+                                                        {
+                                                            infoWindow.list_entrytime.Add("");
+                                                            infoWindow.list_duration.Add("");
+                                                        }
+
+                                                        infoWindow.list.Add(name_file);
                                                         infoWindow.selected.Add(true);
                                                         resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
                                                     }
@@ -4083,6 +4738,7 @@ namespace WindowsFormsApp
                     var save_info = new
                     {
                         root_path = popup.textBox1.Text,
+                        name_folder = popup.textBox3.Text,
                         info_program = panel_chill.Name
                     };
 
@@ -4110,8 +4766,8 @@ namespace WindowsFormsApp
                 process_form dialog = (process_form)parameter;
                 var info_packet = JsonConvert.DeserializeObject<export_packet>(dialog.Name);
                 
-                String folderPath = Path.Combine(info_packet.root_path, "ToanTrung_Project");
-                String subFolderPath = Path.Combine(info_packet.root_path, "ToanTrung_Project", "Material");
+                String folderPath = Path.Combine(info_packet.root_path, info_packet.name_folder);
+                String subFolderPath = Path.Combine(info_packet.root_path, info_packet.name_folder, "Material");
                 
                 // Delet old folder
                 if (Directory.Exists(folderPath))
@@ -4763,7 +5419,366 @@ namespace WindowsFormsApp
                 }
                 currentScale = Math.Max(0.1f, Math.Min(3.0f, currentScale));
 
-                panel_chill.Scale(new SizeF(currentScale, currentScale));
+                refresh_program_design(currentScale);
+            }
+        }
+
+        private void screen_function(object sender, EventArgs e)
+        {
+            Boolean flag_error = true;
+            Button obj = sender as Button;
+
+            // Find device select
+            // Save password and session ID
+            foreach (Control control in this.panel35.Controls)
+            {
+                if (control is Panel panel_chill)
+                {
+                    // Now, check if there is a TableLayoutPanel within panel_chill
+                    TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+
+                    if (tableLayoutPanel != null)
+                    {
+                        Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                        if(infoDevice.selected)
+                        {
+                            flag_error = false;
+
+                            if (obj.Name.Equals("brightness_button"))
+                            {
+
+                                TextBox edit = new TextBox();
+                                edit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                edit.Name = "edit";
+                                edit.Size = new System.Drawing.Size(50, 26);
+                                edit.TabIndex = 0;
+                                edit.Text = "0";
+                                edit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+                                edit.Top = this.panel36.Location.Y - 30;
+                                edit.Left = this.panel36.Location.X + (this.panel36.Width - 500) / 2 + 30;
+                                edit.Visible = false;
+                                edit.MaxLength = 3;
+                                edit.MouseEnter += (sender1, e1) =>
+                                {
+                                    edit.Name = "";
+                                };
+                                edit.MouseLeave += (sender1, e1) =>
+                                {
+                                    edit.Name = "edit";
+                                };
+                                edit.TextChanged += (sender1, e1) =>
+                                {
+                                    if (!edit.Visible)
+                                        return;
+
+                                    String value = int.Parse(edit.Text) >= 100 ? "100" : int.Parse(edit.Text) >= 0 ? edit.Text : "0";
+
+                                    // Get params
+                                    HttpWebRequest request_set_bright = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/setting/bright");
+                                    request_set_bright.Method = "POST";
+                                    request_set_bright.Headers.Add("Cookie", $"{infoDevice.session_id}");
+
+                                    // Add parameters to the request body
+                                    string postData = $"bright={value}";
+                                    request_set_bright.ContentType = "application/x-www-form-urlencoded";
+                                    request_set_bright.ContentLength = Encoding.UTF8.GetBytes(postData).Length;
+
+                                    using (Stream dataStream = request_set_bright.GetRequestStream())
+                                    {
+                                        dataStream.Write(Encoding.UTF8.GetBytes(postData), 0, Encoding.UTF8.GetBytes(postData).Length);
+                                    }
+
+                                    using (HttpWebResponse response_set_bright = (HttpWebResponse)request_set_bright.GetResponse())
+                                    {
+                                        if (response_set_bright.StatusCode == HttpStatusCode.OK)
+                                        {
+                                            using (Stream responseStream = response_set_bright.GetResponseStream())
+                                            {
+                                                using (StreamReader reader = new StreamReader(responseStream))
+                                                {
+                                                    //Console.WriteLine(reader.ReadToEnd());
+                                                }
+                                            }
+                                        }
+                                    }
+                                };
+                                this.main_terminal.Controls.Add(edit);
+                                edit.BringToFront();
+
+                                // Get params
+                                HttpWebRequest request_param = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/getScreenParams");
+                                request_param.Method = "POST";
+                                request_param.Headers.Add("Cookie", $"{infoDevice.session_id}");
+                                using (HttpWebResponse response_signnal_input = (HttpWebResponse)request_param.GetResponse())
+                                {
+                                    if (response_signnal_input.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response_signnal_input.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                getScreenParams data_parse = JsonConvert.DeserializeObject<getScreenParams>(reader.ReadToEnd());
+
+                                                edit.Text = data_parse.bright.ToString();
+                                                edit.Visible = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (obj.Name.Equals("volume_button"))
+                            {
+                                TextBox edit = new TextBox();
+                                edit.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                edit.Name = "edit";
+                                edit.Size = new System.Drawing.Size(50, 26);
+                                edit.TabIndex = 0;
+                                edit.Text = "0";
+                                edit.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+                                edit.Top = this.panel36.Location.Y - 30;
+                                edit.Left = this.panel36.Location.X + (this.panel36.Width - 500) / 2 + 130;
+                                edit.Visible = false;
+                                edit.MaxLength = 3;
+                                edit.MouseEnter += (sender1, e1) =>
+                                {
+                                    edit.Name = "";
+                                };
+                                edit.MouseLeave += (sender1, e1) =>
+                                {
+                                    edit.Name = "edit";
+                                };
+                                edit.TextChanged += (sender1, e1) =>
+                                {
+                                    if (!edit.Visible)
+                                        return;
+
+                                    String value = int.Parse(edit.Text) >= 100 ? "100" : int.Parse(edit.Text) >= 0 ? edit.Text : "0";
+
+                                    // Get params
+                                    HttpWebRequest request_set_bright = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/setting/voice");
+                                    request_set_bright.Method = "POST";
+                                    request_set_bright.Headers.Add("Cookie", $"{infoDevice.session_id}");
+                                    
+                                    // Add parameters to the request body
+                                    string postData = $"voice={float.Parse(value) / 100}";
+                                    request_set_bright.ContentType = "application/x-www-form-urlencoded";
+                                    request_set_bright.ContentLength = Encoding.UTF8.GetBytes(postData).Length;
+                                    
+                                    using (Stream dataStream = request_set_bright.GetRequestStream())
+                                    {
+                                        dataStream.Write(Encoding.UTF8.GetBytes(postData), 0, Encoding.UTF8.GetBytes(postData).Length);
+                                    }
+                                    
+                                    using (HttpWebResponse response_set_bright = (HttpWebResponse)request_set_bright.GetResponse())
+                                    {
+                                        if (response_set_bright.StatusCode == HttpStatusCode.OK)
+                                        {
+                                            using (Stream responseStream = response_set_bright.GetResponseStream())
+                                            {
+                                                using (StreamReader reader = new StreamReader(responseStream))
+                                                {
+                                                    //Console.WriteLine(reader.ReadToEnd());
+                                                }
+                                            }
+                                        }
+                                    }
+                                };
+
+                                this.main_terminal.Controls.Add(edit);
+                                edit.BringToFront();
+
+                                // Get params
+                                HttpWebRequest request_param = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/getScreenParams");
+                                request_param.Method = "POST";
+                                request_param.Headers.Add("Cookie", $"{infoDevice.session_id}");
+                                using (HttpWebResponse response_signnal_input = (HttpWebResponse)request_param.GetResponse())
+                                {
+                                    if (response_signnal_input.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response_signnal_input.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                getScreenParams data_parse = JsonConvert.DeserializeObject<getScreenParams>(reader.ReadToEnd());
+
+                                                edit.Text = (data_parse.voice * 100).ToString();
+                                                edit.Visible = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if ((obj.Name.Equals("open_button")) || (obj.Name.Equals("close_button")))
+                            {
+                                // Get params
+                                HttpWebRequest request_set_bright = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/setting/screen");
+                                request_set_bright.Method = "POST";
+                                request_set_bright.Headers.Add("Cookie", $"{infoDevice.session_id}");
+
+                                // Add parameters to the request body
+                                string postData = $"screen=true";
+                                if (obj.Name.Equals("close_button"))
+                                    postData = $"screen=false";
+
+                                request_set_bright.ContentType = "application/x-www-form-urlencoded";
+                                request_set_bright.ContentLength = Encoding.UTF8.GetBytes(postData).Length;
+
+                                using (Stream dataStream = request_set_bright.GetRequestStream())
+                                {
+                                    dataStream.Write(Encoding.UTF8.GetBytes(postData), 0, Encoding.UTF8.GetBytes(postData).Length);
+                                }
+
+                                using (HttpWebResponse response_set_bright = (HttpWebResponse)request_set_bright.GetResponse())
+                                {
+                                    if (response_set_bright.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response_set_bright.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                setting data_parse = JsonConvert.DeserializeObject<setting>(reader.ReadToEnd());
+
+                                                if(data_parse.code == 200)
+                                                {
+                                                    if(!this.screen_status.Text.Equals("--"))
+                                                    {
+                                                        this.screen_status.Text = "Open";
+                                                        this.screen_status.ForeColor = Color.Green;
+                                                        if (obj.Name.Equals("close_button"))
+                                                        {
+                                                            this.screen_status.Text = "Close";
+                                                            this.screen_status.ForeColor = Color.Red;
+
+                                                            this.screenshort_label.Visible = true;
+                                                            if (this.panel12.Controls.Count > 1)
+                                                            {
+                                                                this.panel12.Controls.RemoveAt(1);
+                                                            }
+                                                        }
+                                                    }
+                        
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if (obj.Name.Equals("restart_button"))
+                            {
+                                // Get params
+                                HttpWebRequest request_param = (HttpWebRequest)WebRequest.Create($"http://{infoDevice.ip_address}:18080/reboot");
+                                request_param.Method = "POST";
+                                request_param.Headers.Add("Cookie", $"{infoDevice.session_id}");
+                                using (HttpWebResponse response_signnal_input = (HttpWebResponse)request_param.GetResponse())
+                                {
+                                    if (response_signnal_input.StatusCode == HttpStatusCode.OK)
+                                    {
+                                        using (Stream responseStream = response_signnal_input.GetResponseStream())
+                                        {
+                                            using (StreamReader reader = new StreamReader(responseStream))
+                                            {
+                                                Console.WriteLine(reader.ReadToEnd());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(flag_error)
+            {
+                flag_error = false;
+                MessageBox.Show("No device is chosen.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void usb_popup_Click(object sender, EventArgs e)
+        {
+            // Find device select
+            // Save password and session ID
+            foreach (Control control in this.panel35.Controls)
+            {
+                if (control is Panel panel_chill)
+                {
+                    // Now, check if there is a TableLayoutPanel within panel_chill
+                    TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+
+                    if (tableLayoutPanel != null)
+                    {
+                        Info_device infoDevice = JsonConvert.DeserializeObject<Info_device>(tableLayoutPanel.Name);
+                        if (infoDevice.selected)
+                        {
+                            byte[] buffer = new byte[10240 + 256];
+                            TcpClient client = new TcpClient();
+                            client.Connect(infoDevice.ip_address, 12345);
+                            NetworkStream stream = client.GetStream();
+
+                            usb_form popup = new usb_form();
+                            popup.ConfirmClick += (sender1, e1) =>
+                            {
+                                TcpClient client1 = new TcpClient();
+                                client1.Connect(infoDevice.ip_address, 12345);
+                                NetworkStream stream1 = client1.GetStream();
+
+                                var cmd_for_device1 = new
+                                {
+                                    deviceName = infoDevice.deviceName,
+                                    type = "SOCKET",
+                                    command = "SET_NAME_FOLDER",
+                                    value = popup.textBox1.Text
+                                };
+
+                                // Send the data
+                                byte[] byteArray1 = Encoding.UTF8.GetBytes((string)JsonConvert.SerializeObject(cmd_for_device1));
+                                Array.Clear(buffer, 0, buffer.Length);
+                                Array.Copy(byteArray1, buffer, byteArray1.Length);
+                                stream1.Write(buffer, 0, buffer.Length);
+                                stream1.Flush();
+
+                                stream1.Close();
+                                client1.Close();
+                            };
+                            var cmd_for_device = new
+                            {
+                                deviceName = infoDevice.deviceName,
+                                type = "SOCKET",
+                                command = "GET_INFO",
+                                ip_address = infoDevice.ip_address.ToString()
+                            };
+
+                            // Send the data
+                            byte[] byteArray = Encoding.UTF8.GetBytes((string)JsonConvert.SerializeObject(cmd_for_device));
+                            Array.Clear(buffer, 0, buffer.Length);
+                            Array.Copy(byteArray, buffer, byteArray.Length);
+                            stream.Write(buffer, 0, buffer.Length);
+                            stream.Flush();
+
+                            for (int delay = 0; delay < 100; delay++)
+                            {
+                                Thread.Sleep(10);
+
+                                if (stream.DataAvailable)
+                                {
+                                    Array.Clear(buffer, 0, buffer.Length);
+                                    stream.Read(buffer, 0, buffer.Length);
+                                    Command_response_device response_device = JsonConvert.DeserializeObject<Command_response_device>(Encoding.UTF8.GetString(buffer));
+
+                                    popup.textBox1.Text = response_device.name_folder;
+                                    break;
+                                }
+                            }
+
+                            stream.Close();
+                            client.Close();
+
+                            if (popup.textBox1.Text.Length > 0)
+                                popup.ShowDialog();
+                        }
+                    }
+                }
             }
         }
     }
@@ -4771,6 +5786,7 @@ namespace WindowsFormsApp
     public class export_packet
     {
         public string root_path { get; set; }
+        public string name_folder { get; set; }
         public string info_program { get; set; }
     }
 
@@ -4841,4 +5857,67 @@ namespace WindowsFormsApp
         public List<Info_Window> info_windown { get; set; }
     }
 
+    public class Info_device
+    {
+        public string deviceName { get; set; }
+        public Boolean selected { get; set; }
+        public string password { get; set; }
+        public string session_id { get; set; }
+        public string ip_address { get; set; }
+    }
+
+    public class Command_device
+    {
+        public string deviceName { get; set; }
+        public string type { get; set; }
+        public string command { get; set; }
+        public string ip_address { get; set; }
+    }
+
+    public class Command_response_device
+    {
+        public string command { get; set; }
+        public string password { get; set; }
+        public string width { get; set; }
+        public string height { get; set; }
+        public string name_folder { get; set; }
+        public string UUID { get; set; }
+        public string bright { get; set; }
+        public string voice { get; set; }
+    }
+
+    public class getCurTime
+    {
+        public long curTimeMills { get; set; }
+        public Boolean isInternetTime { get; set; }
+        public String timeZoneId { get; set; }
+        public int code { get; set; }
+        public String message { get; set; }
+    }
+
+    public class getResolution
+    {
+        public int height { get; set; }
+        public int hz { get; set; }
+        public int width { get; set; }
+        public int code { get; set; }
+        public String message { get; set; }
+    }
+
+    public class getScreenParams
+    {
+        public int bright { get; set; }
+        public int contrast { get; set; }
+        public Boolean screenOn { get; set; }
+        public int screenType { get; set; }
+        public float voice { get; set; }
+        public int code { get; set; }
+        public String message { get; set; }
+    }
+
+    public class setting
+    {
+        public int code { get; set; }
+        public String message { get; set; }
+    }
 }

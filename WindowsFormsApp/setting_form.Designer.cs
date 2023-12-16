@@ -44,6 +44,8 @@ namespace WindowsFormsApp
             this.close_button = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.height_real = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.width_real = new System.Windows.Forms.TextBox();
@@ -73,7 +75,7 @@ namespace WindowsFormsApp
             this.name_program.HideSelection = false;
             this.name_program.Location = new System.Drawing.Point(135, 28);
             this.name_program.Name = "name_program";
-            this.name_program.Size = new System.Drawing.Size(247, 30);
+            this.name_program.Size = new System.Drawing.Size(235, 30);
             this.name_program.TabIndex = 5;
             this.name_program.WordWrap = false;
             // 
@@ -106,7 +108,7 @@ namespace WindowsFormsApp
             "4M"});
             this.bittrate_select.Location = new System.Drawing.Point(135, 77);
             this.bittrate_select.Name = "bittrate_select";
-            this.bittrate_select.Size = new System.Drawing.Size(247, 28);
+            this.bittrate_select.Size = new System.Drawing.Size(235, 28);
             this.bittrate_select.TabIndex = 3;
             this.bittrate_select.Tag = "";
             this.bittrate_select.ValueMember = "256 kbps";
@@ -116,7 +118,7 @@ namespace WindowsFormsApp
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(12, 130);
+            this.label3.Location = new System.Drawing.Point(11, 151);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(111, 22);
             this.label3.TabIndex = 4;
@@ -128,7 +130,8 @@ namespace WindowsFormsApp
             this.width_resolution.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.width_resolution.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.width_resolution.ForeColor = System.Drawing.Color.White;
-            this.width_resolution.Location = new System.Drawing.Point(135, 128);
+            this.width_resolution.Location = new System.Drawing.Point(135, 149);
+            this.width_resolution.MaxLength = 4;
             this.width_resolution.Name = "width_resolution";
             this.width_resolution.Size = new System.Drawing.Size(99, 30);
             this.width_resolution.TabIndex = 5;
@@ -139,7 +142,8 @@ namespace WindowsFormsApp
             this.height_resolution.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.height_resolution.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.height_resolution.ForeColor = System.Drawing.Color.White;
-            this.height_resolution.Location = new System.Drawing.Point(283, 128);
+            this.height_resolution.Location = new System.Drawing.Point(271, 149);
+            this.height_resolution.MaxLength = 4;
             this.height_resolution.Name = "height_resolution";
             this.height_resolution.Size = new System.Drawing.Size(99, 30);
             this.height_resolution.TabIndex = 6;
@@ -149,7 +153,7 @@ namespace WindowsFormsApp
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label4.ForeColor = System.Drawing.Color.White;
-            this.label4.Location = new System.Drawing.Point(245, 130);
+            this.label4.Location = new System.Drawing.Point(245, 151);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(20, 22);
             this.label4.TabIndex = 7;
@@ -161,7 +165,7 @@ namespace WindowsFormsApp
             this.confirm_vutton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.confirm_vutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.confirm_vutton.ForeColor = System.Drawing.Color.White;
-            this.confirm_vutton.Location = new System.Drawing.Point(89, 227);
+            this.confirm_vutton.Location = new System.Drawing.Point(85, 249);
             this.confirm_vutton.Name = "confirm_vutton";
             this.confirm_vutton.Size = new System.Drawing.Size(100, 30);
             this.confirm_vutton.TabIndex = 8;
@@ -175,7 +179,7 @@ namespace WindowsFormsApp
             this.cancel_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cancel_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cancel_button.ForeColor = System.Drawing.Color.White;
-            this.cancel_button.Location = new System.Drawing.Point(230, 227);
+            this.cancel_button.Location = new System.Drawing.Point(224, 249);
             this.cancel_button.Name = "cancel_button";
             this.cancel_button.Size = new System.Drawing.Size(100, 30);
             this.cancel_button.TabIndex = 9;
@@ -193,7 +197,7 @@ namespace WindowsFormsApp
             this.panel1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(410, 30);
+            this.panel1.Size = new System.Drawing.Size(398, 30);
             this.panel1.TabIndex = 10;
             // 
             // close_button
@@ -203,7 +207,7 @@ namespace WindowsFormsApp
             this.close_button.Dock = System.Windows.Forms.DockStyle.Right;
             this.close_button.FlatAppearance.BorderSize = 0;
             this.close_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.close_button.Location = new System.Drawing.Point(378, 0);
+            this.close_button.Location = new System.Drawing.Point(366, 0);
             this.close_button.Name = "close_button";
             this.close_button.Size = new System.Drawing.Size(30, 28);
             this.close_button.TabIndex = 1;
@@ -224,6 +228,8 @@ namespace WindowsFormsApp
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.label9);
+            this.panel2.Controls.Add(this.label8);
             this.panel2.Controls.Add(this.height_real);
             this.panel2.Controls.Add(this.label7);
             this.panel2.Controls.Add(this.width_real);
@@ -241,8 +247,30 @@ namespace WindowsFormsApp
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 30);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(410, 270);
+            this.panel2.Size = new System.Drawing.Size(398, 294);
             this.panel2.TabIndex = 11;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.Color.White;
+            this.label9.Location = new System.Drawing.Point(302, 120);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(38, 22);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "(H)";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.Color.White;
+            this.label8.Location = new System.Drawing.Point(165, 120);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(42, 22);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "(W)";
             // 
             // height_real
             // 
@@ -250,7 +278,8 @@ namespace WindowsFormsApp
             this.height_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.height_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.height_real.ForeColor = System.Drawing.Color.White;
-            this.height_real.Location = new System.Drawing.Point(283, 172);
+            this.height_real.Location = new System.Drawing.Point(271, 192);
+            this.height_real.MaxLength = 4;
             this.height_real.Name = "height_real";
             this.height_real.Size = new System.Drawing.Size(99, 30);
             this.height_real.TabIndex = 13;
@@ -260,7 +289,7 @@ namespace WindowsFormsApp
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(245, 174);
+            this.label7.Location = new System.Drawing.Point(245, 198);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(20, 22);
             this.label7.TabIndex = 12;
@@ -272,7 +301,8 @@ namespace WindowsFormsApp
             this.width_real.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.width_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.width_real.ForeColor = System.Drawing.Color.White;
-            this.width_real.Location = new System.Drawing.Point(135, 172);
+            this.width_real.Location = new System.Drawing.Point(135, 190);
+            this.width_real.MaxLength = 4;
             this.width_real.Name = "width_real";
             this.width_real.Size = new System.Drawing.Size(99, 30);
             this.width_real.TabIndex = 11;
@@ -282,7 +312,7 @@ namespace WindowsFormsApp
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(12, 180);
+            this.label6.Location = new System.Drawing.Point(11, 192);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(57, 22);
             this.label6.TabIndex = 10;
@@ -293,7 +323,7 @@ namespace WindowsFormsApp
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(410, 300);
+            this.ClientSize = new System.Drawing.Size(398, 324);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -330,5 +360,7 @@ namespace WindowsFormsApp
         private System.Windows.Forms.TextBox height_real;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox width_real;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
     }
 }

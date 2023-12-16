@@ -57,6 +57,15 @@ namespace WindowsFormsApp
         // Định nghĩa sự kiện bằng delegate ở trên
         public event EventHandler<ConfirmEventArgs> ConfirmClick;
 
+        private void textBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Kiểm tra nếu ký tự không phải là số hoặc không phải là ký tự điều khiển (ví dụ: backspace)
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                // Không cho phép nhập ký tự không phải số
+                e.Handled = true;
+            }
+        }
         public setting_form()
         {
             InitializeComponent();
@@ -73,6 +82,20 @@ namespace WindowsFormsApp
             this.height_real.Text = "1080";
 
             this.bittrate_select.SelectedIndex = 5;
+
+            this.width_resolution.KeyPress += textBox_KeyPress;
+            this.height_resolution.KeyPress += textBox_KeyPress;
+            this.width_real.KeyPress += textBox_KeyPress;
+            this.height_real.KeyPress += textBox_KeyPress;
+
+            this.width_resolution.TextChanged += (sender, e) =>
+            {
+                this.width_real.Text = (sender as System.Windows.Forms.TextBox).Text;
+            };
+            this.height_resolution.TextChanged += (sender, e) =>
+            {
+                this.height_real.Text = (sender as System.Windows.Forms.TextBox).Text;
+            };
         }
 
         public void set_name_program(string name)
