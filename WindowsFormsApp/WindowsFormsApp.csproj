@@ -114,6 +114,9 @@
     <Compile Include="export_form.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="device_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="usb_form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -136,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="export_form.resx">
       <DependentUpon>export_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="device_form.resx">
+      <DependentUpon>device_form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="usb_form.resx">
       <DependentUpon>usb_form.cs</DependentUpon>

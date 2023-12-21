@@ -50,6 +50,7 @@
             this.Save = new System.Windows.Forms.Button();
             this.Open = new System.Windows.Forms.Button();
             this.panel10 = new System.Windows.Forms.Panel();
+            this.device_popup = new System.Windows.Forms.Button();
             this.usb_popup = new System.Windows.Forms.Button();
             this.panel13 = new System.Windows.Forms.Panel();
             this.screen_status = new System.Windows.Forms.Label();
@@ -89,6 +90,7 @@
             this.panel17 = new System.Windows.Forms.Panel();
             this.main_terminal = new System.Windows.Forms.Panel();
             this.panel32 = new System.Windows.Forms.Panel();
+            this.panel35 = new System.Windows.Forms.Panel();
             this.panel36 = new System.Windows.Forms.Panel();
             this.panel39 = new System.Windows.Forms.Panel();
             this.restart_button = new System.Windows.Forms.Button();
@@ -98,7 +100,6 @@
             this.brightness_button = new System.Windows.Forms.Button();
             this.panel38 = new System.Windows.Forms.Panel();
             this.panel37 = new System.Windows.Forms.Panel();
-            this.panel35 = new System.Windows.Forms.Panel();
             this.table_device = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label24 = new System.Windows.Forms.Label();
@@ -146,6 +147,14 @@
             this.button14 = new System.Windows.Forms.Button();
             this.panel40 = new System.Windows.Forms.Panel();
             this.panel70 = new System.Windows.Forms.Panel();
+            this.panel80 = new System.Windows.Forms.Panel();
+            this.duration_select = new System.Windows.Forms.TextBox();
+            this.entrytime_select = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.panel81 = new System.Windows.Forms.Panel();
+            this.name_select = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.panel69 = new System.Windows.Forms.Panel();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
@@ -208,14 +217,6 @@
             this.panel75 = new System.Windows.Forms.Panel();
             this.label50 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.panel80 = new System.Windows.Forms.Panel();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.entrytime_select = new System.Windows.Forms.TextBox();
-            this.duration_select = new System.Windows.Forms.TextBox();
-            this.panel81 = new System.Windows.Forms.Panel();
-            this.name_select = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -261,6 +262,8 @@
             this.panel45.SuspendLayout();
             this.panel40.SuspendLayout();
             this.panel70.SuspendLayout();
+            this.panel80.SuspendLayout();
+            this.panel81.SuspendLayout();
             this.panel69.SuspendLayout();
             this.panel49.SuspendLayout();
             this.panel41.SuspendLayout();
@@ -287,8 +290,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.panel76.SuspendLayout();
             this.panel75.SuspendLayout();
-            this.panel80.SuspendLayout();
-            this.panel81.SuspendLayout();
             this.SuspendLayout();
             // 
             // title
@@ -554,6 +555,7 @@
             // 
             this.panel10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel10.Controls.Add(this.device_popup);
             this.panel10.Controls.Add(this.usb_popup);
             this.panel10.Controls.Add(this.panel13);
             this.panel10.Controls.Add(this.panel12);
@@ -563,6 +565,19 @@
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(400, 663);
             this.panel10.TabIndex = 3;
+            // 
+            // device_popup
+            // 
+            this.device_popup.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.device_popup.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.device_popup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.device_popup.Image = ((System.Drawing.Image)(resources.GetObject("device_popup.Image")));
+            this.device_popup.Location = new System.Drawing.Point(73, 345);
+            this.device_popup.Name = "device_popup";
+            this.device_popup.Size = new System.Drawing.Size(40, 40);
+            this.device_popup.TabIndex = 4;
+            this.device_popup.UseVisualStyleBackColor = true;
+            this.device_popup.Click += new System.EventHandler(this.popup_Click);
             // 
             // usb_popup
             // 
@@ -575,7 +590,7 @@
             this.usb_popup.Size = new System.Drawing.Size(40, 40);
             this.usb_popup.TabIndex = 3;
             this.usb_popup.UseVisualStyleBackColor = true;
-            this.usb_popup.Click += new System.EventHandler(this.usb_popup_Click);
+            this.usb_popup.Click += new System.EventHandler(this.popup_Click);
             // 
             // panel13
             // 
@@ -998,6 +1013,18 @@
             this.panel32.Size = new System.Drawing.Size(948, 663);
             this.panel32.TabIndex = 1;
             // 
+            // panel35
+            // 
+            this.panel35.AutoScroll = true;
+            this.panel35.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panel35.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel35.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel35.Location = new System.Drawing.Point(0, 122);
+            this.panel35.Name = "panel35";
+            this.panel35.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.panel35.Size = new System.Drawing.Size(946, 434);
+            this.panel35.TabIndex = 1;
+            // 
             // panel36
             // 
             this.panel36.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1124,18 +1151,6 @@
             this.panel37.Name = "panel37";
             this.panel37.Size = new System.Drawing.Size(222, 103);
             this.panel37.TabIndex = 0;
-            // 
-            // panel35
-            // 
-            this.panel35.AutoScroll = true;
-            this.panel35.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panel35.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel35.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel35.Location = new System.Drawing.Point(0, 122);
-            this.panel35.Name = "panel35";
-            this.panel35.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panel35.Size = new System.Drawing.Size(946, 434);
-            this.panel35.TabIndex = 1;
             // 
             // table_device
             // 
@@ -1696,6 +1711,95 @@
             this.panel70.Size = new System.Drawing.Size(298, 200);
             this.panel70.TabIndex = 3;
             this.panel70.Visible = false;
+            // 
+            // panel80
+            // 
+            this.panel80.Controls.Add(this.duration_select);
+            this.panel80.Controls.Add(this.entrytime_select);
+            this.panel80.Controls.Add(this.label8);
+            this.panel80.Controls.Add(this.label6);
+            this.panel80.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel80.Location = new System.Drawing.Point(0, 119);
+            this.panel80.Name = "panel80";
+            this.panel80.Size = new System.Drawing.Size(298, 81);
+            this.panel80.TabIndex = 4;
+            this.panel80.Visible = false;
+            // 
+            // duration_select
+            // 
+            this.duration_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.duration_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.duration_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.duration_select.ForeColor = System.Drawing.Color.White;
+            this.duration_select.Location = new System.Drawing.Point(107, 48);
+            this.duration_select.Name = "duration_select";
+            this.duration_select.Size = new System.Drawing.Size(141, 23);
+            this.duration_select.TabIndex = 6;
+            this.duration_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // entrytime_select
+            // 
+            this.entrytime_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.entrytime_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.entrytime_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.entrytime_select.ForeColor = System.Drawing.Color.White;
+            this.entrytime_select.Location = new System.Drawing.Point(107, 8);
+            this.entrytime_select.Name = "entrytime_select";
+            this.entrytime_select.Size = new System.Drawing.Size(141, 23);
+            this.entrytime_select.TabIndex = 5;
+            this.entrytime_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(0, 50);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(100, 17);
+            this.label8.TabIndex = 3;
+            this.label8.Text = "Duration time :";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(0, 10);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(79, 17);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Entry time :";
+            // 
+            // panel81
+            // 
+            this.panel81.Controls.Add(this.name_select);
+            this.panel81.Controls.Add(this.label11);
+            this.panel81.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel81.Location = new System.Drawing.Point(0, 80);
+            this.panel81.Name = "panel81";
+            this.panel81.Size = new System.Drawing.Size(298, 39);
+            this.panel81.TabIndex = 5;
+            // 
+            // name_select
+            // 
+            this.name_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.name_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.name_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.name_select.ForeColor = System.Drawing.Color.White;
+            this.name_select.Location = new System.Drawing.Point(107, 10);
+            this.name_select.Name = "name_select";
+            this.name_select.ReadOnly = true;
+            this.name_select.Size = new System.Drawing.Size(141, 23);
+            this.name_select.TabIndex = 4;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(0, 10);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(53, 17);
+            this.label11.TabIndex = 0;
+            this.label11.Text = "Name :";
             // 
             // panel69
             // 
@@ -2470,95 +2574,6 @@
             this.label50.TabIndex = 1;
             this.label50.Text = "Genaral";
             // 
-            // panel80
-            // 
-            this.panel80.Controls.Add(this.duration_select);
-            this.panel80.Controls.Add(this.entrytime_select);
-            this.panel80.Controls.Add(this.label8);
-            this.panel80.Controls.Add(this.label6);
-            this.panel80.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel80.Location = new System.Drawing.Point(0, 119);
-            this.panel80.Name = "panel80";
-            this.panel80.Size = new System.Drawing.Size(298, 81);
-            this.panel80.TabIndex = 4;
-            this.panel80.Visible = false;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(0, 10);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 17);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Entry time :";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(0, 50);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 17);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "Duration time :";
-            // 
-            // entrytime_select
-            // 
-            this.entrytime_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.entrytime_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.entrytime_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.entrytime_select.ForeColor = System.Drawing.Color.White;
-            this.entrytime_select.Location = new System.Drawing.Point(107, 8);
-            this.entrytime_select.Name = "entrytime_select";
-            this.entrytime_select.Size = new System.Drawing.Size(141, 23);
-            this.entrytime_select.TabIndex = 5;
-            this.entrytime_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // duration_select
-            // 
-            this.duration_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.duration_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.duration_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.duration_select.ForeColor = System.Drawing.Color.White;
-            this.duration_select.Location = new System.Drawing.Point(107, 48);
-            this.duration_select.Name = "duration_select";
-            this.duration_select.Size = new System.Drawing.Size(141, 23);
-            this.duration_select.TabIndex = 6;
-            this.duration_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // panel81
-            // 
-            this.panel81.Controls.Add(this.name_select);
-            this.panel81.Controls.Add(this.label11);
-            this.panel81.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel81.Location = new System.Drawing.Point(0, 80);
-            this.panel81.Name = "panel81";
-            this.panel81.Size = new System.Drawing.Size(298, 39);
-            this.panel81.TabIndex = 5;
-            // 
-            // name_select
-            // 
-            this.name_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.name_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.name_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.name_select.ForeColor = System.Drawing.Color.White;
-            this.name_select.Location = new System.Drawing.Point(107, 10);
-            this.name_select.Name = "name_select";
-            this.name_select.ReadOnly = true;
-            this.name_select.Size = new System.Drawing.Size(141, 23);
-            this.name_select.TabIndex = 4;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(0, 10);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(53, 17);
-            this.label11.TabIndex = 0;
-            this.label11.Text = "Name :";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2637,6 +2652,10 @@
             this.panel45.ResumeLayout(false);
             this.panel40.ResumeLayout(false);
             this.panel70.ResumeLayout(false);
+            this.panel80.ResumeLayout(false);
+            this.panel80.PerformLayout();
+            this.panel81.ResumeLayout(false);
+            this.panel81.PerformLayout();
             this.panel69.ResumeLayout(false);
             this.panel69.PerformLayout();
             this.panel49.ResumeLayout(false);
@@ -2674,10 +2693,6 @@
             this.panel76.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
-            this.panel80.ResumeLayout(false);
-            this.panel80.PerformLayout();
-            this.panel81.ResumeLayout(false);
-            this.panel81.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2871,6 +2886,7 @@
         private System.Windows.Forms.Panel panel81;
         private System.Windows.Forms.TextBox name_select;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Button device_popup;
     }
 }
 
