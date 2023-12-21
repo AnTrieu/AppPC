@@ -140,12 +140,6 @@
     <EmbeddedResource Include="export_form.resx">
       <DependentUpon>export_form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="device_form.resx">
-      <DependentUpon>device_form.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="usb_form.resx">
-      <DependentUpon>usb_form.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="process_form.resx">
       <DependentUpon>process_form.cs</DependentUpon>
     </EmbeddedResource>
