@@ -18,6 +18,7 @@ using System.Diagnostics;
 using FFmpeg.AutoGen;
 using System.Text.RegularExpressions;
 
+
 namespace WindowsFormsApp
 {
     public partial class Form1 : Form
@@ -1299,6 +1300,7 @@ namespace WindowsFormsApp
                     {
                         var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
                         var flag_convert = false;
+                        long longestDuration = 0;
 
                         // Create folder output
                         String outputBackgroundPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Output", $"{info_program.Name}_{info_program.bittrate_select}");
@@ -1309,7 +1311,6 @@ namespace WindowsFormsApp
                         // Convert video
                         if (true && ((controlsList.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                         {
-                            long longestDuration = 0;
                             int windown_left_expected = 0;
                             int percentage = 0, percentageK1 = 0;
                             int counter_windown_empty = 0;
@@ -1808,10 +1809,6 @@ namespace WindowsFormsApp
                                 total_size += fileInfo.Length;
                             }
                         }
-                        else
-                        {
-
-                        }
 
                         if (total_size == 0)
                         {
@@ -2074,6 +2071,7 @@ namespace WindowsFormsApp
                                 var detailPacket = new
                                 {
                                     command = "SEND_PLAN",
+                                    durationProgramConvert = longestDuration,
                                     info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name),
                                     info_windown = info_windown
                                 };
@@ -2378,6 +2376,20 @@ namespace WindowsFormsApp
                     list_duration[0] = "10";
                     have_image = true;
                 }
+                else
+                {
+
+                    var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                    mediaInfo.Open(objectName);
+
+                    if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                    {
+                        double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                        list_entrytime[0] = "0";
+                        list_duration[0] = durationMilliseconds.ToString();
+                    }
+                }
 
                 Panel destinationPanel = sender as Panel;
                 ResizablePanel windown = null;
@@ -2642,8 +2654,27 @@ namespace WindowsFormsApp
                                 }
                                 else
                                 {
-                                    infoWindow.list_entrytime.Add("");
-                                    infoWindow.list_duration.Add("");
+                                    var flag_error = true;
+                                    var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                    mediaInfo.Open(name_file);
+
+                                    if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                    {
+                                        flag_error = false;
+
+                                        double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                        infoWindow.list_entrytime.Add("0");
+                                        infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                    }
+
+                                    if(flag_error)
+                                    {
+                                        flag_error = false;
+                                        infoWindow.list_entrytime.Add("");
+                                        infoWindow.list_duration.Add("");
+                                    }
+
                                 }
 
                                 infoWindow.list.Add(name_file);
@@ -3176,7 +3207,7 @@ namespace WindowsFormsApp
                                         // Get the control in the first cell of the first column (assuming it's a Label)
                                         Control controlInFirstColumn = tableLayoutPanel.GetControlFromPosition(0, 0);
 
-                                        if (response_device.UUID.Equals(controlInFirstColumn.Text))
+                                        if (controlInFirstColumn != null && response_device.UUID != null && response_device.UUID.Equals(controlInFirstColumn.Text))
                                         {
                                             if (response_device.password.Length > 0)
                                             {
@@ -4528,8 +4559,25 @@ namespace WindowsFormsApp
                                                         }
                                                         else
                                                         {
-                                                            infoWindow.list_entrytime.Add("");
-                                                            infoWindow.list_duration.Add("");
+                                                            var flag_error = true;
+                                                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                            mediaInfo.Open(name_file);
+
+                                                            if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                            {
+                                                                double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                                flag_error = false;
+                                                                infoWindow.list_entrytime.Add("0");
+                                                                infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                            }
+
+                                                            if (flag_error)
+                                                            {
+                                                                flag_error = false;
+                                                                infoWindow.list_entrytime.Add("");
+                                                                infoWindow.list_duration.Add("");
+                                                            }
                                                         }
 
                                                         infoWindow.list.Add(name_file);
