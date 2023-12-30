@@ -5440,6 +5440,7 @@ namespace WindowsFormsApp
                 
                 var save_info = new
                 {
+                    durationProgramConvert = longestDuration,
                     info_program = info_program,
                     info_windown = info_windown
                 };
