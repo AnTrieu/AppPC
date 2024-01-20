@@ -3648,7 +3648,6 @@ namespace WindowsFormsApp
                                     }
                                     else
                                     {
-                                        break;
                                         continue;
                                     }                                    
                                 }    
