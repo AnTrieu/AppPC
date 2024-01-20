@@ -3633,14 +3633,15 @@ namespace WindowsFormsApp
 
                         Stopwatch time_finish = new Stopwatch();
                         int counter_device = 0;
+                        time_finish.Start();
 
                         while (!flagTermianlUDPThread)
                         {
                             try
                             {
-                                if(udpListener.Available < 256)
-                                {
-                                    if (time_finish.ElapsedMilliseconds > 1000)
+                                if (udpListener.Available < 256)
+                                {                                    
+                                    if (time_finish.ElapsedMilliseconds > 2000)
                                     {
                                         time_finish.Stop();                                    
                                         Console.WriteLine($"Scan device finished with \"{time_finish.ElapsedMilliseconds} ms\"");
@@ -3648,6 +3649,7 @@ namespace WindowsFormsApp
                                     }
                                     else
                                     {
+                                        Thread.Sleep(10);
                                         continue;
                                     }                                    
                                 }    
@@ -3658,7 +3660,7 @@ namespace WindowsFormsApp
                                 string receivedMessage = Encoding.ASCII.GetString(receivedBytes);
                                 //Console.WriteLine(receivedMessage);
                                 //Console.WriteLine("First device");
-                                time_finish.Start();
+                                
 
                                 Boolean have_obj = false;
                                 counter_device = 1;
