@@ -17,7 +17,7 @@ using MediaInfo.DotNetWrapper.Enumerations;
 using System.Diagnostics;
 using FFmpeg.AutoGen;
 using System.Text.RegularExpressions;
-
+using System.Net.NetworkInformation;
 
 namespace WindowsFormsApp
 {
@@ -3161,6 +3161,7 @@ namespace WindowsFormsApp
             try
             {
                 byte[] buffer = new byte[10240 + 256];
+                //Console.WriteLine((string)parameter);
                 Command_device cmd_packet = JsonConvert.DeserializeObject<Command_device>((string)parameter);
 
                 // Create a Stopwatch instance
@@ -3168,12 +3169,14 @@ namespace WindowsFormsApp
 
                 // Start the stopwatch
                 stopwatch.Start();
-
+                
                 // Get resolution device
                 TcpClient client = new TcpClient();
                 client.Connect(cmd_packet.ip_address, 12345);
-                NetworkStream stream = client.GetStream();
 
+                //client.Connect(cmd_packet.ip_address, 12345);
+                NetworkStream stream = client.GetStream();
+                
 
                 // Send the data
                 byte[] byteArray = Encoding.UTF8.GetBytes((string)parameter);
@@ -3190,56 +3193,409 @@ namespace WindowsFormsApp
                         Array.Clear(buffer, 0, buffer.Length);
                         stream.Read(buffer, 0, buffer.Length);
 
-
                         Command_response_device response_device = JsonConvert.DeserializeObject<Command_response_device>(Encoding.UTF8.GetString(buffer));
+                        //Console.WriteLine(Encoding.UTF8.GetString(buffer));
 
-                        panel35.Invoke((MethodInvoker)delegate
+                        if (cmd_packet.deviceName.Length == 0)
                         {
-                            // Update list data
-                            foreach (Control control in this.panel35.Controls)
+                            // Login
+                            HttpWebRequest request_login = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/login");
+                            request_login.Method = "POST";
+
+                            // Add parameters to the request body
+                            string postData = $"password={response_device.password}";
+                            request_login.ContentType = "application/x-www-form-urlencoded";
+                            request_login.ContentLength = Encoding.UTF8.GetBytes(postData).Length;
+ 
+                            using (Stream dataStream = request_login.GetRequestStream())
                             {
-                                if (control is Panel panel_chill)
+                                dataStream.Write(Encoding.UTF8.GetBytes(postData), 0, Encoding.UTF8.GetBytes(postData).Length);
+                            }
+                    
+                            using (HttpWebResponse response_login = (HttpWebResponse)request_login.GetResponse())
+                            {
+                                if (response_login.StatusCode == HttpStatusCode.OK)
                                 {
-                                    // Now, check if there is a TableLayoutPanel within panel_chill
-                                    TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
-                                    if (tableLayoutPanel != null)
+                                    string session_id = response_login.Headers["Set-Cookie"];
+                                    
+                                    // Get current time
+                                    HttpWebRequest request_cur_time = (HttpWebRequest)WebRequest.Create($"http://{cmd_packet.ip_address}:18080/device");
+                                    request_cur_time.Method = "POST";
+                                    request_cur_time.Headers.Add("Cookie", $"{session_id}");
+                                    using (HttpWebResponse response_signnal_input = (HttpWebResponse)request_cur_time.GetResponse())
                                     {
-                                        // Get the control in the first cell of the first column (assuming it's a Label)
-                                        Control controlInFirstColumn = tableLayoutPanel.GetControlFromPosition(0, 0);
-
-                                        if (controlInFirstColumn != null && response_device.UUID != null && response_device.UUID.Equals(controlInFirstColumn.Text))
+                                        if (response_signnal_input.StatusCode == HttpStatusCode.OK)
                                         {
-                                            if (response_device.password.Length > 0)
+                                            using (Stream responseStream = response_signnal_input.GetResponseStream())
                                             {
-                                                Label device_name_label = controlInFirstColumn as Label;
-                                                device_name_label.Image = global::WindowsFormsApp.Properties.Resources.lock_icon;
-                                                device_name_label.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
-                                            }
+                                                using (StreamReader reader = new StreamReader(responseStream))
+                                                {
+                                                    device data = JsonConvert.DeserializeObject<device>(reader.ReadToEnd());
+                                                    if(data.code == 200)
+                                                    {
+                                                        panel35.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            // Create the add panel
+                                                            Panel addPanel = new Panel();
+                                                            addPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                                            addPanel.Dock = System.Windows.Forms.DockStyle.Top;
+                                                            addPanel.Location = new System.Drawing.Point(0, 0);
+                                                            addPanel.Size = new System.Drawing.Size(946, 60);
+                                                            addPanel.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
 
-                                            if (response_device.width != null && response_device.height != null)
-                                            {
-                                                Label resolution_label = tableLayoutPanel.GetControlFromPosition(3, 0) as Label;
-                                                resolution_label.Text = $"{response_device.width} x {response_device.height}";
-                                            }
+                                                            var info_device = new
+                                                            {
+                                                                deviceName = response_device.UUID,
+                                                                selected = false,
+                                                                password = "",
+                                                                session_id = "",
+                                                                ip_address = cmd_packet.ip_address
+                                                            };
 
-                                            if (response_device.voice != null)
-                                            {
-                                                Label brightness_label = tableLayoutPanel.GetControlFromPosition(4, 0) as Label;
-                                                brightness_label.Text = $"{response_device.bright}";
-                                            }
+                                                            // Create the add table panel
+                                                            TableLayoutPanel addTablePanel = new TableLayoutPanel();
+                                                            addTablePanel.BorderStyle = BorderStyle.None;
+                                                            addTablePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            addTablePanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                                                            addTablePanel.ColumnCount = 7;
+                                                            addTablePanel.Name = JsonConvert.SerializeObject(info_device);
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 8F));
+                                                            addTablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 
-                                            if (response_device.voice != null)
-                                            {
-                                                Label voice_label = tableLayoutPanel.GetControlFromPosition(5, 0) as Label;
-                                                voice_label.Text = $"{response_device.voice}";
-                                            }
+                                                            Label device_name_label = new Label();
+                                                            device_name_label.AutoSize = true;
+                                                            device_name_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            device_name_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            device_name_label.Location = new System.Drawing.Point(0, 0);
+                                                            device_name_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            device_name_label.Size = new System.Drawing.Size(283, 30);
+                                                            device_name_label.TabIndex = 0;
+                                                            device_name_label.Name = response_device.UUID;
+                                                            device_name_label.Text = response_device.UUID;
+                                                            device_name_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                                                            device_name_label.MouseEnter += row_device_MouseEnter;
+                                                            device_name_label.MouseLeave += row_device_MouseLeave;
+                                                            device_name_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(device_name_label, 0, 0);
 
-                                            break;
+                                                            Label method_label = new Label();
+                                                            method_label.AutoSize = true;
+                                                            method_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            method_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            method_label.Location = new System.Drawing.Point(0, 0);
+                                                            method_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            method_label.Size = new System.Drawing.Size(283, 30);
+                                                            method_label.TabIndex = 0;
+                                                            method_label.Name = response_device.UUID;
+                                                            method_label.Text = "Wifi AP";
+                                                            method_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            method_label.MouseEnter += row_device_MouseEnter;
+                                                            method_label.MouseLeave += row_device_MouseLeave;
+                                                            method_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(method_label, 1, 0);
+
+                                                            Label address_label = new Label();
+                                                            address_label.AutoSize = true;
+                                                            address_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            address_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            address_label.Location = new System.Drawing.Point(0, 0);
+                                                            address_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            address_label.Size = new System.Drawing.Size(283, 30);
+                                                            address_label.TabIndex = 0;
+                                                            address_label.Name = response_device.UUID;
+                                                            address_label.Text = cmd_packet.ip_address;
+                                                            address_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            address_label.MouseEnter += row_device_MouseEnter;
+                                                            address_label.MouseLeave += row_device_MouseLeave;
+                                                            address_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(address_label, 2, 0);
+
+                                                            Label resolution_label = new Label();
+                                                            resolution_label.AutoSize = true;
+                                                            resolution_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            resolution_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            resolution_label.Location = new System.Drawing.Point(0, 0);
+                                                            resolution_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            resolution_label.Size = new System.Drawing.Size(283, 30);
+                                                            resolution_label.TabIndex = 0;
+                                                            resolution_label.Name = response_device.UUID;
+                                                            resolution_label.Text = $"{response_device.width} x {response_device.height}";
+                                                            resolution_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            resolution_label.MouseEnter += row_device_MouseEnter;
+                                                            resolution_label.MouseLeave += row_device_MouseLeave;
+                                                            resolution_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(resolution_label, 3, 0);
+
+                                                            Label brightness_label = new Label();
+                                                            brightness_label.AutoSize = true;
+                                                            brightness_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            brightness_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            brightness_label.Location = new System.Drawing.Point(0, 0);
+                                                            brightness_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            brightness_label.Size = new System.Drawing.Size(283, 30);
+                                                            brightness_label.TabIndex = 0;
+                                                            brightness_label.Name = response_device.UUID;
+                                                            brightness_label.Text = $"{response_device.bright}";
+                                                            brightness_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            brightness_label.MouseEnter += row_device_MouseEnter;
+                                                            brightness_label.MouseLeave += row_device_MouseLeave;
+                                                            brightness_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(brightness_label, 4, 0);
+
+                                                            Label voice_label = new Label();
+                                                            voice_label.AutoSize = true;
+                                                            voice_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            voice_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            voice_label.Location = new System.Drawing.Point(0, 0);
+                                                            voice_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            voice_label.Size = new System.Drawing.Size(283, 30);
+                                                            voice_label.TabIndex = 0;
+                                                            voice_label.Name = response_device.UUID;
+                                                            voice_label.Text = $"{response_device.voice}";
+                                                            voice_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            voice_label.MouseEnter += row_device_MouseEnter;
+                                                            voice_label.MouseLeave += row_device_MouseLeave;
+                                                            voice_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(voice_label, 5, 0);
+
+                                                            Label version_label = new Label();
+                                                            version_label.AutoSize = true;
+                                                            version_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            version_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            version_label.Location = new System.Drawing.Point(0, 0);
+                                                            version_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            version_label.Size = new System.Drawing.Size(283, 30);
+                                                            version_label.TabIndex = 0;
+                                                            version_label.Name = response_device.UUID;
+                                                            version_label.Text = "v" + data.data.systemVersion + "-" + data.data.appVersion;
+                                                            version_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            version_label.MouseEnter += row_device_MouseEnter;
+                                                            version_label.MouseLeave += row_device_MouseLeave;
+                                                            version_label.MouseClick += row_device_MouseClick;
+                                                            addTablePanel.Controls.Add(version_label, 6, 0);
+
+                                                            addTablePanel.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            addTablePanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                                            addTablePanel.ForeColor = System.Drawing.Color.White;
+                                                            addTablePanel.Location = new System.Drawing.Point(0, 0);
+                                                            addTablePanel.RowCount = 1;
+                                                            addTablePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+                                                            addTablePanel.Size = new System.Drawing.Size(946, 60);
+                                                            addTablePanel.TabIndex = 0;
+
+                                                            addTablePanel.Paint += (sender1, e1) =>
+                                                            {
+                                                                int boTronKichThuoc = 20; // Điều chỉnh độ bo tròn ở đây
+                                                                GraphicsPath graphicsPath = new GraphicsPath();
+
+                                                                Rectangle rect = new Rectangle(0, 0, addTablePanel.Width, addTablePanel.Height);
+                                                                graphicsPath.AddArc(rect.X, rect.Y, boTronKichThuoc, boTronKichThuoc, 180, 90);
+                                                                graphicsPath.AddArc(rect.Right - boTronKichThuoc, rect.Y, boTronKichThuoc, boTronKichThuoc, 270, 90);
+                                                                graphicsPath.AddArc(rect.Right - boTronKichThuoc, rect.Bottom - boTronKichThuoc, boTronKichThuoc, boTronKichThuoc, 0, 90);
+                                                                graphicsPath.AddArc(rect.X, rect.Bottom - boTronKichThuoc, boTronKichThuoc, boTronKichThuoc, 90, 90);
+                                                                graphicsPath.CloseAllFigures();
+
+                                                                addTablePanel.Region = new Region(graphicsPath);
+                                                            };
+
+                                                            addPanel.Controls.Add(addTablePanel);
+                                                            this.panel35.Controls.Add(addPanel);
+
+
+                                                            // Create the add panel
+                                                            Panel addPanelRelease = new Panel();
+                                                            addPanelRelease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                                            addPanelRelease.Dock = System.Windows.Forms.DockStyle.Top;
+                                                            addPanelRelease.Location = new System.Drawing.Point(0, 0);
+                                                            addPanelRelease.Size = new System.Drawing.Size(946, 60);
+                                                            addPanelRelease.Padding = new System.Windows.Forms.Padding(30, 0, 8, 8);
+
+                                                            // Create the add table panel
+                                                            TableLayoutPanel addTablePanelRelease = new TableLayoutPanel();
+                                                            addTablePanelRelease.BorderStyle = BorderStyle.None;
+                                                            addTablePanelRelease.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            addTablePanelRelease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                                                            addTablePanelRelease.ColumnCount = 4;
+                                                            addTablePanelRelease.Name = response_device.UUID;
+                                                            addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 5F));
+                                                            addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+                                                            addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+                                                            addTablePanelRelease.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+                                                            addTablePanelRelease.MouseEnter += row_device_release_MouseEnter;
+                                                            addTablePanelRelease.MouseLeave += row_device_release_MouseLeave;
+
+                                                            RadioButton radioButton1 = new RadioButton();
+                                                            radioButton1.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            radioButton1.FlatAppearance.BorderSize = 0;
+                                                            radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                                            radioButton1.Location = new System.Drawing.Point(0, 0);
+                                                            radioButton1.Margin = new System.Windows.Forms.Padding(0);
+                                                            radioButton1.Name = response_device.UUID;
+                                                            radioButton1.Size = new System.Drawing.Size(100, 70);
+                                                            radioButton1.TabIndex = 0;
+                                                            radioButton1.TabStop = true;
+                                                            radioButton1.MouseEnter += row_device_release_MouseEnter;
+                                                            radioButton1.MouseLeave += row_device_release_MouseLeave;
+                                                            radioButton1.MouseClick += (sender, e) =>
+                                                            {
+                                                                foreach (Control control in this.panel84.Controls)
+                                                                {
+                                                                    if (control is Panel panel)
+                                                                    {
+                                                                        foreach (Control innerControl in panel.Controls)
+                                                                        {
+                                                                            if (innerControl is TableLayoutPanel tableLayoutPanel)
+                                                                            {
+                                                                                RadioButton radioObj = (RadioButton)tableLayoutPanel.GetControlFromPosition(0, 0);
+                                                                                radioObj.Checked = false;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                                radioButton1.Checked = true;
+                                                            };
+                                                            addTablePanelRelease.Controls.Add(radioButton1, 0, 0);
+
+                                                            Label device_name_release_label = new Label();
+                                                            device_name_release_label.AutoSize = true;
+                                                            device_name_release_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            device_name_release_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            device_name_release_label.Location = new System.Drawing.Point(0, 0);
+                                                            device_name_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            device_name_release_label.Size = new System.Drawing.Size(283, 30);
+                                                            device_name_release_label.TabIndex = 0;
+                                                            device_name_release_label.Name = response_device.UUID;
+                                                            device_name_release_label.Text = response_device.UUID;
+                                                            device_name_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                                                            device_name_release_label.MouseEnter += row_device_release_MouseEnter;
+                                                            device_name_release_label.MouseLeave += row_device_release_MouseLeave;
+                                                            addTablePanelRelease.Controls.Add(device_name_release_label, 1, 0);
+
+                                                            Label address_release_label = new Label();
+                                                            address_release_label.AutoSize = true;
+                                                            address_release_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            address_release_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            address_release_label.Location = new System.Drawing.Point(0, 0);
+                                                            address_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            address_release_label.Size = new System.Drawing.Size(283, 30);
+                                                            address_release_label.TabIndex = 0;
+                                                            address_release_label.Name = response_device.UUID;
+                                                            address_release_label.Text = cmd_packet.ip_address;
+                                                            address_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                                                            address_release_label.MouseEnter += row_device_release_MouseEnter;
+                                                            address_release_label.MouseLeave += row_device_release_MouseLeave;
+                                                            addTablePanelRelease.Controls.Add(address_release_label, 2, 0);
+
+                                                            Label remain_release_label = new Label();
+                                                            remain_release_label.AutoSize = true;
+                                                            remain_release_label.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            remain_release_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                                                            remain_release_label.Location = new System.Drawing.Point(0, 0);
+                                                            remain_release_label.Margin = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                                                            remain_release_label.Size = new System.Drawing.Size(283, 30);
+                                                            remain_release_label.TabIndex = 0;
+                                                            remain_release_label.Name = response_device.UUID;
+                                                            remain_release_label.Text = Math.Round(((float)data.data.usableSpace / 1024), 2).ToString();
+                                                            remain_release_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                                                            remain_release_label.MouseEnter += row_device_release_MouseEnter;
+                                                            remain_release_label.MouseLeave += row_device_release_MouseLeave;
+                                                            addTablePanelRelease.Controls.Add(remain_release_label, 3, 0);
+
+                                                            addTablePanelRelease.Dock = System.Windows.Forms.DockStyle.Fill;
+                                                            addTablePanelRelease.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                                                            addTablePanelRelease.ForeColor = System.Drawing.Color.White;
+                                                            addTablePanelRelease.Location = new System.Drawing.Point(0, 0);
+                                                            addTablePanelRelease.RowCount = 1;
+                                                            addTablePanelRelease.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+                                                            addTablePanelRelease.Size = new System.Drawing.Size(946, 60);
+                                                            addTablePanelRelease.TabIndex = 0;
+
+                                                            addTablePanelRelease.Paint += (sender1, e1) =>
+                                                            {
+                                                                int boTronKichThuoc = 20; // Điều chỉnh độ bo tròn ở đây
+                                                                GraphicsPath graphicsPath = new GraphicsPath();
+
+                                                                Rectangle rect = new Rectangle(0, 0, addTablePanelRelease.Width, addTablePanelRelease.Height);
+                                                                graphicsPath.AddArc(rect.X, rect.Y, boTronKichThuoc, boTronKichThuoc, 180, 90);
+                                                                graphicsPath.AddArc(rect.Right - boTronKichThuoc, rect.Y, boTronKichThuoc, boTronKichThuoc, 270, 90);
+                                                                graphicsPath.AddArc(rect.Right - boTronKichThuoc, rect.Bottom - boTronKichThuoc, boTronKichThuoc, boTronKichThuoc, 0, 90);
+                                                                graphicsPath.AddArc(rect.X, rect.Bottom - boTronKichThuoc, boTronKichThuoc, boTronKichThuoc, 90, 90);
+                                                                graphicsPath.CloseAllFigures();
+
+                                                                addTablePanelRelease.Region = new Region(graphicsPath);
+                                                            };
+
+                                                            addPanelRelease.Controls.Add(addTablePanelRelease);
+                                                            this.panel84.Controls.Add(addPanelRelease);
+
+                                                            // Counter device
+                                                            this.total_pc.Text = "Total 1";
+                                                            this.online_pc.Text = "Total 1";
+                                                        });
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
-                        });
+                        }
+                        else
+                        {
+                            panel35.Invoke((MethodInvoker)delegate
+                            {
+                                // Update list data
+                                foreach (Control control in this.panel35.Controls)
+                                {
+                                    if (control is Panel panel_chill)
+                                    {
+                                        // Now, check if there is a TableLayoutPanel within panel_chill
+                                        TableLayoutPanel tableLayoutPanel = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                                        if (tableLayoutPanel != null)
+                                        {
+                                            // Get the control in the first cell of the first column (assuming it's a Label)
+                                            Control controlInFirstColumn = tableLayoutPanel.GetControlFromPosition(0, 0);
+
+                                            if (controlInFirstColumn != null && response_device.UUID != null && response_device.UUID.Equals(controlInFirstColumn.Text))
+                                            {
+                                                if (response_device.password.Length > 0)
+                                                {
+                                                    Label device_name_label = controlInFirstColumn as Label;
+                                                    device_name_label.Image = global::WindowsFormsApp.Properties.Resources.lock_icon;
+                                                    device_name_label.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+                                                }
+
+                                                if (response_device.width != null && response_device.height != null)
+                                                {
+                                                    Label resolution_label = tableLayoutPanel.GetControlFromPosition(3, 0) as Label;
+                                                    resolution_label.Text = $"{response_device.width} x {response_device.height}";
+                                                }
+
+                                                if (response_device.voice != null)
+                                                {
+                                                    Label brightness_label = tableLayoutPanel.GetControlFromPosition(4, 0) as Label;
+                                                    brightness_label.Text = $"{response_device.bright}";
+                                                }
+
+                                                if (response_device.voice != null)
+                                                {
+                                                    Label voice_label = tableLayoutPanel.GetControlFromPosition(5, 0) as Label;
+                                                    voice_label.Text = $"{response_device.voice}";
+                                                }
+
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        }
 
                         break;
                     }
@@ -3254,7 +3610,7 @@ namespace WindowsFormsApp
             }
             catch (Exception e1)
             {
-                Console.WriteLine($"e1");
+                Console.WriteLine($"{e1}");
             }
         }
 
@@ -3276,6 +3632,7 @@ namespace WindowsFormsApp
                         flagTermianlUDPThread = false;
 
                         Stopwatch time_finish = new Stopwatch();
+                        int counter_device = 0;
 
                         while (!flagTermianlUDPThread)
                         {
@@ -3291,9 +3648,11 @@ namespace WindowsFormsApp
                                     }
                                     else
                                     {
+                                        break;
                                         continue;
                                     }                                    
                                 }    
+
 
                                 // Use Task.Factory.StartNew to run the asynchronous operation with a cancellation token
                                 byte[] receivedBytes = udpListener.Receive(ref endPoint);
@@ -3303,7 +3662,7 @@ namespace WindowsFormsApp
                                 time_finish.Start();
 
                                 Boolean have_obj = false;
-                                int counter_device = 1;
+                                counter_device = 1;
 
                                 adv_packet data = JsonConvert.DeserializeObject<adv_packet>(receivedMessage);
 
@@ -3418,6 +3777,10 @@ namespace WindowsFormsApp
                                             method_label.TabIndex = 0;
                                             method_label.Name = data.deviceId;
                                             method_label.Text = "LAN";
+                                            if(endPoint.Address.ToString().Equals("192.168.43.1"))
+                                            {
+                                                method_label.Text = "Wifi AP";
+                                            }
                                             method_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             method_label.MouseEnter += row_device_MouseEnter;
                                             method_label.MouseLeave += row_device_MouseLeave;
@@ -3555,19 +3918,16 @@ namespace WindowsFormsApp
                                             addTablePanelRelease.MouseLeave += row_device_release_MouseLeave;
 
                                             RadioButton radioButton1 = new RadioButton();
-                                            //radioButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                                             radioButton1.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
                                             radioButton1.FlatAppearance.BorderSize = 0;
                                             radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 50F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                                            //radioButton1.ForeColor = System.Drawing.Color.White;
                                             radioButton1.Location = new System.Drawing.Point(0, 0);
                                             radioButton1.Margin = new System.Windows.Forms.Padding(0);
                                             radioButton1.Name = data.deviceId;
                                             radioButton1.Size = new System.Drawing.Size(100, 70);
                                             radioButton1.TabIndex = 0;
                                             radioButton1.TabStop = true;
-                                            //radioButton1.UseVisualStyleBackColor = true;
                                             radioButton1.MouseEnter += row_device_release_MouseEnter;
                                             radioButton1.MouseLeave += row_device_release_MouseLeave;
                                             radioButton1.MouseClick += (sender, e) =>
@@ -3678,6 +4038,29 @@ namespace WindowsFormsApp
                                 // Xử lý lỗi
                                 Console.WriteLine($"Lỗi: {e}");
                                 Thread.Sleep(2000);
+                            }
+                        }
+
+                        if(counter_device == 0)
+                        {
+                            var cmd_for_device = new
+                            {
+                                deviceName = "",
+                                type = "SOCKET",
+                                command = "GET_INFO",
+                                ip_address = "192.168.43.1"
+                            };
+
+                            using (Ping ping = new Ping())
+                            {
+                                PingReply reply = ping.Send(cmd_for_device.ip_address);
+
+                                if (reply.Status == IPStatus.Success)
+                                {
+                                    // Start a new thread for the dialog with parameters
+                                    Thread dialogThread = new Thread(new ParameterizedThreadStart(getInfoThread));
+                                    dialogThread.Start(JsonConvert.SerializeObject(cmd_for_device));
+                                }
                             }
                         }
                     }
@@ -6167,5 +6550,11 @@ namespace WindowsFormsApp
     {
         public int code { get; set; }
         public String message { get; set; }
+    }
+
+    public class device
+    {
+        public int code { get; set; }
+        public adv_packet data { get; set; }
     }
 }
