@@ -1415,6 +1415,8 @@ namespace WindowsFormsApp
                                 }
                             }
 
+                            Console.WriteLine($"-> longestDuration: {longestDuration}");
+
                             // Step 2: convert video
                             for (int i = controlsList.Count - 1; i >= 0; i--)
                             {
@@ -1562,7 +1564,7 @@ namespace WindowsFormsApp
                                         }
 
                                         cmd_ffmpeg += filter + overlay + " ";
-                                        cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {longestDuration / 1000} \"{contentFilePath}\"";
+                                        cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {(longestDuration / 1000) + 1} \"{contentFilePath}\"";
                                         //Console.WriteLine(cmd_ffmpeg);
                                         process.StartInfo.Arguments = cmd_ffmpeg;
                                         process.StartInfo.UseShellExecute = false;
@@ -1576,6 +1578,9 @@ namespace WindowsFormsApp
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
+                                            if ((controlsList.Count - 4) == i)
+                                                Console.WriteLine(e.Data);
+
                                             //Console.WriteLine(e.Data);
                                             if (flag_cancel)
                                             {
@@ -1627,7 +1632,8 @@ namespace WindowsFormsApp
                                             percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty) * 2));
                                         else
                                             percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
-                           
+
+
                                         if (((idx_windown + 1) >= controlsList.Count) && File.Exists(backgroundFilePath))
                                         {
                                             File.Delete(backgroundFilePath);
@@ -1745,7 +1751,7 @@ namespace WindowsFormsApp
 
                                                     double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
 
-                                                    percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+                                                    percentage = percentageK1 + (int)((milliseconds * 100) / (2 * ((double)longestDuration * (controlsList.Count - counter_windown_empty))));
 
                                                     // set process bar
                                                     dialog.Invoke((MethodInvoker)delegate
@@ -2067,7 +2073,7 @@ namespace WindowsFormsApp
                                     info_windown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
                                     //Console.WriteLine((control as ResizablePanel).Name);
                                 }
-                                
+                                //Console.WriteLine($"---------------------------------------{longestDuration}");
                                 var detailPacket = new
                                 {
                                     command = "SEND_PLAN",
@@ -5137,6 +5143,8 @@ namespace WindowsFormsApp
                             if (infoWindow1.selected[idx_select])
                             {
                                 infoWindow1.list.RemoveAt(idx_select);
+                                infoWindow1.list_duration.RemoveAt(idx_select);
+                                infoWindow1.list_entrytime.RemoveAt(idx_select);
                                 infoWindow1.selected.RemoveAt(idx_select);
 
                                 infoWindow1.path_windown = "";
@@ -5506,7 +5514,7 @@ namespace WindowsFormsApp
                                 }
                 
                                 cmd_ffmpeg += filter + overlay + " ";
-                                cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {longestDuration / 1000} \"{contentFilePath}\"";
+                                cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {(longestDuration / 1000) + 1} \"{contentFilePath}\"";
                                 //Console.WriteLine(cmd_ffmpeg);
                                 process.StartInfo.Arguments = cmd_ffmpeg;
                                 process.StartInfo.UseShellExecute = false;
@@ -5681,8 +5689,8 @@ namespace WindowsFormsApp
                                             string time_str = match.Groups[1].Value;
                 
                                             double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
-                
-                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsList.Count - counter_windown_empty)));
+
+                                            percentage = percentageK1 + (int)((milliseconds * 100) / (2 * ((double)longestDuration * (controlsList.Count - counter_windown_empty))));
                 
                                             // set process bar
                                             dialog.Invoke((MethodInvoker)delegate
