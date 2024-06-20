@@ -133,11 +133,14 @@
   <data name="brightness_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\brightness_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="equal_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\equal_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\program_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="trash_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\trash_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Logo Toan Trung_final-02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo Toan Trung_final-02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="down-arrow_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down-arrow_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -145,8 +148,8 @@
   <data name="max_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\max_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Logo Toan Trung_final-02" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Logo Toan Trung_final-02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="restart_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\restart_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="data-storage_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\data-storage_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -160,11 +163,11 @@
   <data name="plus_icon_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\plus_icon_16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="tools-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\tools-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="terminal_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\terminal_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="restart_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\restart_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="volume_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\volume_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -172,11 +175,11 @@
   <data name="close_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="open-folder_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\open-folder_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="browser-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\browser-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="equal_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\equal_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="up-arrow_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\up-arrow_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -187,8 +190,8 @@
   <data name="clock_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\clock_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\program_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="open-folder_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\open-folder_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="usb_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\usb_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -208,7 +211,7 @@
   <data name="close_white_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_white_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="tools-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\tools-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="folder_not_found" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\folder_not_found.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
