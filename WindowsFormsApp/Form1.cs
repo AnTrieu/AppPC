@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using System.Net.NetworkInformation;
 using Accord.Video.FFMPEG;
 using System.Runtime.InteropServices.ComTypes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace WindowsFormsApp
 {
@@ -85,8 +86,6 @@ namespace WindowsFormsApp
 
                 this.show_file.Height = 250;
 
-                this.bk_program.Width = 130;
-
                 this.panel77.Width = 1000;
                 this.label45.Top = 400;
                 this.label45.Left = 350;
@@ -102,7 +101,6 @@ namespace WindowsFormsApp
 
                 this.show_file.Height = 250;
 
-                this.bk_program.Width = 70;
 
                 this.panel77.Width = 400;
                 this.label45.Top = 330;
@@ -1220,12 +1218,11 @@ namespace WindowsFormsApp
             this.General.MouseUp += (sender, e) =>
             {
                 (sender as Button).BackgroundImage = normal_button();
+                bool flagError = false;
 
-                if (!this.panel72.Visible)
-                {
-                    MessageBox.Show("Please select the program to upload.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
-                else
+                // TODO: should be handle check list program that have object is selected or not
+
+                if(!flagError)
                 {
                     String IP_client = "";
 
@@ -1265,6 +1262,10 @@ namespace WindowsFormsApp
                         popup.ShowDialog();
 
                     }
+                }
+                else
+                {
+                    MessageBox.Show("Please select the program to upload.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             };
             this.General.Paint += (sender, e) =>
@@ -2390,97 +2391,279 @@ namespace WindowsFormsApp
             Application.Exit();
         }
 
-        private void new_program_button_Click(object sender, EventArgs e)
+        private void add_layout_program(Panel parent, String name, int width, int height, String info_program)
         {
-            if (!this.panel47.Visible && !this.panel72.Visible)
+            int old = parent.Controls.Count;
+
+            if (parent != this.panel71)
             {
-                setting_form popup = new setting_form();
-
-                popup.ConfirmClick += (sender1, e1) =>
+                foreach (Control control in parent.Controls)
                 {
-                    if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
+                    if ((control != this.panel34) && (control != this.panel33) && (control != this.panel75))
                     {
-                        var infoProgram = new
-                        {
-                            name = e1.name,
-                            width_resolution = e1.width_resolution,
-                            height_resolution = e1.height_resolution,
-                            width_real = e1.width_real,
-                            height_real = e1.height_real,
-                            bittrate_select = e1.bittrate_select
-                        };
-
-                        this.panel43.Controls.Clear();
-
-                        // Get the maximum allowable width and height based on the mainPanel's size
-                        int width_contain = this.show.Width;
-                        int height_contain = this.show.Height;
-                        int width_select = width;
-                        int height_select = height;
-                        float delta = (float)width_select / (float)height_select;
-                        float width_config = 0;
-                        float height_config = 0;
-                        do
-                        {
-                            height_config += 1;
-                            width_config += delta;
-                        }
-                        while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 50)));
-
-                        width_panel = (int)width_config;
-                        height_panel = (int)height_config;
-
-                        // Create the inner panel based on the adjusted width and height
-                        Panel innerPanel = new Panel
-                        {
-                            Width = (int)width_config,
-                            Height = (int)height_config,
-                            BackColor = Color.Black,
-                            Name = JsonConvert.SerializeObject(infoProgram),
-                            AllowDrop = true
-                        };
-
-                        // Calculate the position to center the inner panel within the main panel
-                        int x = (this.panel43.Width - (int)width_config) / 2;
-                        int y = (this.panel43.Height - (int)height_config) / 2;
-
-                        // Set the location of the inner panel
-                        innerPanel.Location = new Point(x, y);
-
-                        // Đăng ký sự kiện DragDrop và DragEnter cho Panel
-                        innerPanel.DragDrop += TargetPanel_DragDrop;
-                        innerPanel.DragEnter += TargetPanel_DragEnter;
-                        innerPanel.DragOver += Target_DragOver;
-                        innerPanel.MouseDown += (sender2, e2) =>
-                        {
-                            unselect_object();
-                        };
-
-                        this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
-
-                        // Add the inner panel to the main panel
-                        this.panel43.Controls.Add(innerPanel);
-
-                        // Create list program
-                        this.panel47.Visible = true;
-                        label36.Text = $"{width}(W) x {height}(H)";
-                        label35.Text = e1.name;
-
-                        // Create list program
-                        this.panel72.Visible = true;
-                        label43.Text = $"{width}(W) x {height}(H)";
-                        label44.Text = e1.name;
-
-                        currentScale = 1.0f;
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                     }
-                };
+                }
+            }
 
-                popup.ShowDialog();
+
+            Panel index = new Panel();
+            if (parent == this.panel71)
+            {
+                RadioButton select = new RadioButton();
+                select.AutoEllipsis = true;
+                select.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                select.Checked = false;
+                select.Dock = System.Windows.Forms.DockStyle.Fill;
+                select.FlatAppearance.BorderSize = 0;
+                select.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                select.ForeColor = System.Drawing.Color.Transparent;
+                select.Location = new System.Drawing.Point(0, 0);
+                select.Margin = new System.Windows.Forms.Padding(0);
+                select.Size = new System.Drawing.Size(30, 70);
+                select.TabIndex = 0;
+                select.TabStop = true;
+                select.UseVisualStyleBackColor = false;
+
+                index.Controls.Add(select);
+                index.Dock = System.Windows.Forms.DockStyle.Left;
+                index.Location = new System.Drawing.Point(0, 10);
+                index.Size = new System.Drawing.Size(30, 70);
+                index.TabIndex = 0;
             }
             else
             {
-                MessageBox.Show("Exceeded number of allowed programs.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Label value = new Label();
+                value.AutoSize = true;
+                value.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                value.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                value.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                value.ForeColor = System.Drawing.Color.White;
+                value.Location = new System.Drawing.Point(5, 25);
+                value.Size = new System.Drawing.Size(19, 19);
+                value.TabIndex = 0;
+                value.Text = Convert.ToString(old - 1);
+                value.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+
+                
+                index.Controls.Add(value);
+                index.Dock = System.Windows.Forms.DockStyle.Left;
+                index.Location = new System.Drawing.Point(0, 10);
+                index.Size = new System.Drawing.Size(33, 70);
+                index.TabIndex = 0;
             }
+
+            PictureBox pictureBox = new PictureBox();
+            pictureBox.BackColor = System.Drawing.Color.Black;
+            pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox.Location = new System.Drawing.Point(0, 0);
+            pictureBox.Size = new System.Drawing.Size(70, 70);
+            pictureBox.TabIndex = 0;
+            pictureBox.TabStop = false;
+            pictureBox.MouseClick += (sender, e) =>
+            {
+                PictureBox box = sender as PictureBox;
+                if (box.Parent.Parent.BackColor != System.Drawing.Color.SteelBlue)
+                {
+                    // Unselect all 
+                    foreach (Control control in parent.Controls)
+                    {
+                        if ((control != this.panel34) && (control != this.panel33) && (control != this.panel75))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                        }
+                    }
+
+                    // Select object new
+                    box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
+                }
+            };
+
+            Panel background = new Panel();
+            background.Controls.Add(pictureBox);
+            background.Dock = System.Windows.Forms.DockStyle.Left;
+            background.Location = new System.Drawing.Point(33, 10);
+            background.Size = new System.Drawing.Size(70, 70);
+            background.TabIndex = 1;
+
+            Label resolution_value = new Label();
+            resolution_value.AutoSize = true;
+            resolution_value.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            resolution_value.ForeColor = System.Drawing.Color.White;
+            resolution_value.Location = new System.Drawing.Point(5, 44);
+            resolution_value.Size = new System.Drawing.Size(0, 17);
+            resolution_value.TabIndex = 1;
+            resolution_value.Text = $"{width}(W) x {height}(H)";
+            resolution_value.MouseClick += (sender, e) =>
+            {
+                Label box = sender as Label;
+                if (box.Parent.Parent.BackColor != System.Drawing.Color.SteelBlue)
+                {
+                    // Unselect all 
+                    foreach (Control control in parent.Controls)
+                    {
+                        if ((control != this.panel34) && (control != this.panel33) && (control != this.panel75))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                        }
+                    }
+
+                    // Select object new
+                    box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
+                }
+            };
+
+            Label name_value = new Label();
+            name_value.AutoSize = true;
+            name_value.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            name_value.ForeColor = System.Drawing.Color.White;
+            name_value.Location = new System.Drawing.Point(5, 14);
+            name_value.Size = new System.Drawing.Size(0, 17);
+            name_value.TabIndex = 0;
+            name_value.Text = name;
+            name_value.MouseClick += (sender, e) =>
+            {
+                Label box = sender as Label;
+                if (box.Parent.Parent.BackColor != System.Drawing.Color.SteelBlue)
+                {
+                    // Unselect all 
+                    foreach (Control control in parent.Controls)
+                    {
+                        if ((control != this.panel34) && (control != this.panel33) && (control != this.panel75))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                        }
+                    }
+
+                    // Select object new
+                    box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
+                }
+            };
+
+            Panel info = new Panel();
+            info.Controls.Add(resolution_value);
+            info.Controls.Add(name_value);
+            info.Dock = System.Windows.Forms.DockStyle.Fill;
+            info.Location = new System.Drawing.Point(103, 10);
+            info.Size = new System.Drawing.Size(95, 70);
+            info.TabIndex = 2;
+            info.MouseClick += (sender, e) =>
+            {
+                Panel box = sender as Panel;
+                if (box.Parent.BackColor != System.Drawing.Color.SteelBlue)
+                {
+                    // Unselect all 
+                    foreach (Control control in parent.Controls)
+                    {
+                        if ((control != this.panel34) && (control != this.panel33) && (control != this.panel75))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+                        }
+                    }
+
+                    // Select object new
+                    box.Parent.BackColor = System.Drawing.Color.SteelBlue;
+                }
+            };
+
+            Panel row = new Panel();
+            if (parent != this.panel71)
+                row.BackColor = System.Drawing.Color.SteelBlue;
+            row.Dock = System.Windows.Forms.DockStyle.Top;
+            row.Location = new System.Drawing.Point(0, 30);
+            row.Margin = new System.Windows.Forms.Padding(0);
+            row.Padding = new System.Windows.Forms.Padding(0, 10, 0, 10);
+            row.Size = new System.Drawing.Size(198, 80);
+            row.TabIndex = 2;
+            row.Name = info_program;
+            row.Controls.Add(info);
+            row.Controls.Add(background);
+            row.Controls.Add(index);
+
+            parent.Controls.Add(row);
+            if (parent == this.panel71)
+                parent.Controls.SetChildIndex(row, parent.Controls.Count - old - 1);
+            else
+                parent.Controls.SetChildIndex(row, parent.Controls.Count - old);
+        }
+        private void new_program_button_Click(object sender, EventArgs e)
+        {
+            setting_form popup = new setting_form();
+
+            popup.ConfirmClick += (sender1, e1) =>
+            {
+                if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
+                {
+                    var infoProgram = new
+                    {
+                        name = e1.name,
+                        width_resolution = e1.width_resolution,
+                        height_resolution = e1.height_resolution,
+                        width_real = e1.width_real,
+                        height_real = e1.height_real,
+                        bittrate_select = e1.bittrate_select
+                    };
+
+                    this.panel43.Controls.Clear();
+
+                    // Get the maximum allowable width and height based on the mainPanel's size
+                    int width_contain = this.show.Width;
+                    int height_contain = this.show.Height;
+                    int width_select = width;
+                    int height_select = height;
+                    float delta = (float)width_select / (float)height_select;
+                    float width_config = 0;
+                    float height_config = 0;
+                    do
+                    {
+                        height_config += 1;
+                        width_config += delta;
+                    }
+                    while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 50)));
+
+                    width_panel = (int)width_config;
+                    height_panel = (int)height_config;
+
+                    // Create the inner panel based on the adjusted width and height
+                    Panel innerPanel = new Panel
+                    {
+                        Width = (int)width_config,
+                        Height = (int)height_config,
+                        BackColor = Color.Black,
+                        AllowDrop = true
+                    };
+
+                    // Calculate the position to center the inner panel within the main panel
+                    int x = (this.panel43.Width - (int)width_config) / 2;
+                    int y = (this.panel43.Height - (int)height_config) / 2;
+
+                    // Set the location of the inner panel
+                    innerPanel.Location = new Point(x, y);
+
+                    // Đăng ký sự kiện DragDrop và DragEnter cho Panel
+                    innerPanel.DragDrop += TargetPanel_DragDrop;
+                    innerPanel.DragEnter += TargetPanel_DragEnter;
+                    innerPanel.DragOver += Target_DragOver;
+                    innerPanel.MouseDown += (sender2, e2) =>
+                    {
+                        unselect_object();
+                    };
+
+                    this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+
+                    // Add the inner panel to the main panel
+                    this.panel43.Controls.Add(innerPanel);
+
+                    // Create list program
+                    add_layout_program(this.panel6, e1.name, width, height, JsonConvert.SerializeObject(infoProgram));
+                    add_layout_program(this.panel71, e1.name, width, height, null);
+
+                    currentScale = 1.0f;
+                }
+            };
+
+            popup.ShowDialog();
         }
 
 
@@ -4548,9 +4731,10 @@ namespace WindowsFormsApp
 
         private void setting_program(object sender, EventArgs e)
         {
-            foreach (Control control in this.panel43.Controls)
+            
+            foreach (Control control in this.panel6.Controls)
             {
-                if (control is Panel panel_chill && panel_chill.Visible)
+                if ((control != this.panel34) && (control != this.panel33) && (control.BackColor == System.Drawing.Color.SteelBlue))
                 {
                     var info_program = JsonConvert.DeserializeObject<Info_Program>(control.Name);
 
@@ -4559,7 +4743,7 @@ namespace WindowsFormsApp
                     {
                         if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
                         {
-                            reinit();
+                            reinit(true);
 
                             var infoProgram = new
                             {
@@ -4571,11 +4755,14 @@ namespace WindowsFormsApp
                                 bittrate_select = e1.bittrate_select
                             };
 
+                            // Update info program
+                            control.Name = JsonConvert.SerializeObject(infoProgram);
+
                             this.panel43.Controls.Clear();
 
                             // Get the maximum allowable width and height based on the mainPanel's size
-                            int width_contain = this.panel43.Width;
-                            int height_contain = this.panel43.Height;
+                            int width_contain = this.show.Width;
+                            int height_contain = this.show.Height;
                             int width_select = width;
                             int height_select = height;
                             float delta = (float)width_select / (float)height_select;
@@ -4586,26 +4773,25 @@ namespace WindowsFormsApp
                                 height_config += 1;
                                 width_config += delta;
                             }
-                            while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 70)));
+                            while ((width_config < (width_contain - 50)) && (height_config < (height_contain - 50)));
 
                             // Create the inner panel based on the adjusted width and height
                             Panel innerPanel = new Panel
                             {
                                 Width = (int)width_config,
                                 Height = (int)height_config,
-                                BackColor = Color.Black,
-                                Name = JsonConvert.SerializeObject(infoProgram),
+                                BackColor = Color.Black,                                
                                 AllowDrop = true
                             };
-
+                            
                             // Calculate the position to center the inner panel within the main panel
-                            int x = (width_contain - (int)width_config) / 2;
-                            int y = (height_contain - (int)height_config) / 2;
-
-
+                            int x = (this.panel43.Width - (int)width_config) / 2;
+                            int y = (this.panel43.Height - (int)height_config) / 2;
+                            
+                            
                             // Set the location of the inner panel
                             innerPanel.Location = new Point(x, y);
-
+                            
                             // Đăng ký sự kiện DragDrop và DragEnter cho Panel
                             innerPanel.DragDrop += TargetPanel_DragDrop;
                             innerPanel.DragEnter += TargetPanel_DragEnter;
@@ -4614,19 +4800,24 @@ namespace WindowsFormsApp
                             {
                                 unselect_object();
                             };
-
+                            
                             // Add the inner panel to the main panel
                             this.panel43.Controls.Add(innerPanel);
 
-                            // Create list program
-                            this.panel47.Visible = true;
-                            label36.Text = width + "*" + height;
-                            label35.Text = e1.name;
+                            currentScale = 1.0f;
 
-                            // Create list program
-                            this.panel72.Visible = true;
-                            label43.Text = width + "*" + height;
-                            label44.Text = e1.name;
+                            // Edit info
+                            foreach (Control child in control.Controls)
+                            {
+                                foreach (Control item in child.Controls)
+                                {
+                                    if (child.Controls.IndexOf(item) == 0)
+                                        item.Text = $"{width}(W) x {height}(H)";
+                                    else if (child.Controls.IndexOf(item) == 1)
+                                        item.Text = e1.name;
+                                }
+                                break;
+                            }                              
                         }
                     };
 
@@ -4643,10 +4834,10 @@ namespace WindowsFormsApp
 
         private void delete_program(object sender, EventArgs e)
         {
-            reinit();
+            reinit(false);
         }
 
-        private void reinit()
+        private void reinit(Boolean flagIgnore)
         {
             foreach (Control control1 in controlsList)
             {
@@ -4669,12 +4860,42 @@ namespace WindowsFormsApp
 
             this.list_windowns.Controls.Clear();
             this.panel43.Controls.Clear();
-            this.panel47.Visible = false;
-            this.panel72.Visible = false;
 
             this.panel70.Visible = false;
             this.panel70.Name = "";
             this.panel80.Visible = false;
+
+            if (!flagIgnore)
+            {
+                List<Control> controlsToRemove = new List<Control>();
+
+                // Clear List program
+                foreach (Control control in this.panel6.Controls)
+                {
+                    if ((control != this.panel34) && (control != this.panel33))
+                    {
+                        controlsToRemove.Add(control);
+                    }
+                }
+                foreach (Control control in controlsToRemove)
+                {
+                    this.panel6.Controls.Remove(control);
+                }
+
+                controlsToRemove.Clear();
+
+                foreach (Control control in this.panel71.Controls)
+                {
+                    if (control != this.panel75)
+                    {
+                        controlsToRemove.Add(control);
+                    }
+                }
+                foreach (Control control in controlsToRemove)
+                {
+                    this.panel71.Controls.Remove(control);
+                }
+            }
 
             currentScale = 1.0f;
         }
@@ -4797,7 +5018,7 @@ namespace WindowsFormsApp
                         var info_stored = JsonConvert.DeserializeObject<Info_stored>(File.ReadAllText(filePath));
 
                         // Set up show area
-                        reinit();
+                        reinit(false);
 
                         var infoProgram = new
                         {
@@ -4860,15 +5081,10 @@ namespace WindowsFormsApp
                         // Add the inner panel to the main panel
                         this.panel43.Controls.Add(innerPanel);
 
-                        // Create list program
-                        this.panel47.Visible = true;
-                        label36.Text = int.Parse(info_stored.info_program.width_real) + "*" + height;
-                        label35.Text = info_stored.info_program.Name;
 
                         // Create list program
-                        this.panel72.Visible = true;
-                        label43.Text = int.Parse(info_stored.info_program.width_real) + "*" + height;
-                        label44.Text = info_stored.info_program.Name;
+                        add_layout_program(this.panel6, info_stored.info_program.Name, width, height, JsonConvert.SerializeObject(infoProgram));
+                        add_layout_program(this.panel71, info_stored.info_program.Name, width, height, null);
 
                         var visiblePanels = this.panel43.Controls
                             .OfType<Panel>()

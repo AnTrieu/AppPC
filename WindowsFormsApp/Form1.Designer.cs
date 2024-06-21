@@ -32,15 +32,27 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.title = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.close_app_button = new System.Windows.Forms.Button();
+            this.max_button = new System.Windows.Forms.Button();
+            this.min_button = new System.Windows.Forms.Button();
             this.content = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
+            this.terminal_button = new System.Windows.Forms.Button();
+            this.release_button = new System.Windows.Forms.Button();
+            this.program_button = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
             this.button_option_area = new System.Windows.Forms.Panel();
+            this.button8 = new System.Windows.Forms.Button();
+            this.Save = new System.Windows.Forms.Button();
+            this.Open = new System.Windows.Forms.Button();
             this.panel10 = new System.Windows.Forms.Panel();
+            this.device_popup = new System.Windows.Forms.Button();
+            this.usb_popup = new System.Windows.Forms.Button();
             this.panel13 = new System.Windows.Forms.Panel();
             this.screen_status = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -62,21 +74,31 @@
             this.panel28 = new System.Windows.Forms.Panel();
             this.panel30 = new System.Windows.Forms.Panel();
             this.label22 = new System.Windows.Forms.Label();
+            this.panel29 = new System.Windows.Forms.Panel();
             this.panel27 = new System.Windows.Forms.Panel();
+            this.panel26 = new System.Windows.Forms.Panel();
             this.panel25 = new System.Windows.Forms.Panel();
             this.panel22 = new System.Windows.Forms.Panel();
             this.panel24 = new System.Windows.Forms.Panel();
             this.label21 = new System.Windows.Forms.Label();
+            this.panel23 = new System.Windows.Forms.Panel();
             this.panel21 = new System.Windows.Forms.Panel();
+            this.panel20 = new System.Windows.Forms.Panel();
             this.panel19 = new System.Windows.Forms.Panel();
             this.panel16 = new System.Windows.Forms.Panel();
             this.panel18 = new System.Windows.Forms.Panel();
             this.label20 = new System.Windows.Forms.Label();
+            this.panel17 = new System.Windows.Forms.Panel();
             this.main_terminal = new System.Windows.Forms.Panel();
             this.panel32 = new System.Windows.Forms.Panel();
             this.panel35 = new System.Windows.Forms.Panel();
             this.panel36 = new System.Windows.Forms.Panel();
             this.panel39 = new System.Windows.Forms.Panel();
+            this.restart_button = new System.Windows.Forms.Button();
+            this.close_button = new System.Windows.Forms.Button();
+            this.open_button = new System.Windows.Forms.Button();
+            this.volume_button = new System.Windows.Forms.Button();
+            this.brightness_button = new System.Windows.Forms.Button();
             this.panel38 = new System.Windows.Forms.Panel();
             this.panel37 = new System.Windows.Forms.Panel();
             this.table_device = new System.Windows.Forms.Panel();
@@ -95,25 +117,35 @@
             this.panel53 = new System.Windows.Forms.Panel();
             this.panel54 = new System.Windows.Forms.Panel();
             this.label26 = new System.Windows.Forms.Label();
+            this.panel55 = new System.Windows.Forms.Panel();
             this.panel56 = new System.Windows.Forms.Panel();
+            this.panel57 = new System.Windows.Forms.Panel();
             this.panel58 = new System.Windows.Forms.Panel();
             this.panel59 = new System.Windows.Forms.Panel();
             this.panel60 = new System.Windows.Forms.Panel();
             this.online_pc = new System.Windows.Forms.Label();
+            this.panel61 = new System.Windows.Forms.Panel();
             this.panel62 = new System.Windows.Forms.Panel();
+            this.panel63 = new System.Windows.Forms.Panel();
             this.panel64 = new System.Windows.Forms.Panel();
             this.panel65 = new System.Windows.Forms.Panel();
             this.panel66 = new System.Windows.Forms.Panel();
             this.total_pc = new System.Windows.Forms.Label();
+            this.panel67 = new System.Windows.Forms.Panel();
             this.main_program = new System.Windows.Forms.Panel();
+            this.drappPictureBox = new System.Windows.Forms.PictureBox();
             this.show = new System.Windows.Forms.Panel();
             this.panel43 = new System.Windows.Forms.Panel();
             this.panel79 = new System.Windows.Forms.Panel();
+            this.ZoomOut = new System.Windows.Forms.Button();
+            this.ZoomIn = new System.Windows.Forms.Button();
             this.show_file = new System.Windows.Forms.Panel();
             this.panel46 = new System.Windows.Forms.Panel();
             this.panel42 = new System.Windows.Forms.Panel();
+            this.new_resource = new System.Windows.Forms.Button();
             this.panel44 = new System.Windows.Forms.Panel();
             this.panel45 = new System.Windows.Forms.Panel();
+            this.button14 = new System.Windows.Forms.Button();
             this.panel40 = new System.Windows.Forms.Panel();
             this.panel70 = new System.Windows.Forms.Panel();
             this.panel80 = new System.Windows.Forms.Panel();
@@ -142,16 +174,15 @@
             this.panel14 = new System.Windows.Forms.Panel();
             this.list_windowns = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.Up = new System.Windows.Forms.Button();
+            this.Down = new System.Windows.Forms.Button();
+            this.Delete = new System.Windows.Forms.Button();
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel34 = new System.Windows.Forms.Panel();
-            this.panel47 = new System.Windows.Forms.Panel();
-            this.panel68 = new System.Windows.Forms.Panel();
-            this.label36 = new System.Windows.Forms.Label();
-            this.label35 = new System.Windows.Forms.Label();
-            this.bk_program = new System.Windows.Forms.Panel();
-            this.panel48 = new System.Windows.Forms.Panel();
-            this.label34 = new System.Windows.Forms.Label();
+            this.new_program_button = new System.Windows.Forms.Button();
             this.panel33 = new System.Windows.Forms.Panel();
+            this.button15 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.label23 = new System.Windows.Forms.Label();
             this.main_release = new System.Windows.Forms.Panel();
             this.Advanced = new System.Windows.Forms.Button();
@@ -168,57 +199,10 @@
             this.panel82 = new System.Windows.Forms.Panel();
             this.label47 = new System.Windows.Forms.Label();
             this.panel71 = new System.Windows.Forms.Panel();
-            this.panel72 = new System.Windows.Forms.Panel();
-            this.panel73 = new System.Windows.Forms.Panel();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label44 = new System.Windows.Forms.Label();
-            this.panel74 = new System.Windows.Forms.Panel();
-            this.panel76 = new System.Windows.Forms.Panel();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.panel75 = new System.Windows.Forms.Panel();
             this.label50 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.drappPictureBox = new System.Windows.Forms.PictureBox();
-            this.ZoomOut = new System.Windows.Forms.Button();
-            this.ZoomIn = new System.Windows.Forms.Button();
-            this.new_resource = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
-            this.Up = new System.Windows.Forms.Button();
-            this.Down = new System.Windows.Forms.Button();
-            this.Delete = new System.Windows.Forms.Button();
-            this.new_program_button = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button15 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.restart_button = new System.Windows.Forms.Button();
-            this.close_button = new System.Windows.Forms.Button();
-            this.open_button = new System.Windows.Forms.Button();
-            this.volume_button = new System.Windows.Forms.Button();
-            this.brightness_button = new System.Windows.Forms.Button();
-            this.panel55 = new System.Windows.Forms.Panel();
-            this.panel57 = new System.Windows.Forms.Panel();
-            this.panel61 = new System.Windows.Forms.Panel();
-            this.panel63 = new System.Windows.Forms.Panel();
-            this.panel67 = new System.Windows.Forms.Panel();
-            this.device_popup = new System.Windows.Forms.Button();
-            this.usb_popup = new System.Windows.Forms.Button();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.terminal_button = new System.Windows.Forms.Button();
-            this.release_button = new System.Windows.Forms.Button();
-            this.program_button = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
-            this.Save = new System.Windows.Forms.Button();
-            this.Open = new System.Windows.Forms.Button();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.close_app_button = new System.Windows.Forms.Button();
-            this.max_button = new System.Windows.Forms.Button();
-            this.min_button = new System.Windows.Forms.Button();
-            this.panel29 = new System.Windows.Forms.Panel();
-            this.panel26 = new System.Windows.Forms.Panel();
-            this.panel23 = new System.Windows.Forms.Panel();
-            this.panel20 = new System.Windows.Forms.Panel();
-            this.panel17 = new System.Windows.Forms.Panel();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -254,6 +238,7 @@
             this.panel65.SuspendLayout();
             this.panel66.SuspendLayout();
             this.main_program.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).BeginInit();
             this.show.SuspendLayout();
             this.panel79.SuspendLayout();
             this.show_file.SuspendLayout();
@@ -272,10 +257,6 @@
             this.panel1.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel34.SuspendLayout();
-            this.panel47.SuspendLayout();
-            this.panel68.SuspendLayout();
-            this.bk_program.SuspendLayout();
-            this.panel48.SuspendLayout();
             this.panel33.SuspendLayout();
             this.main_release.SuspendLayout();
             this.panel78.SuspendLayout();
@@ -284,14 +265,7 @@
             this.panel77.SuspendLayout();
             this.panel82.SuspendLayout();
             this.panel71.SuspendLayout();
-            this.panel72.SuspendLayout();
-            this.panel73.SuspendLayout();
-            this.panel74.SuspendLayout();
-            this.panel76.SuspendLayout();
             this.panel75.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // title
@@ -317,6 +291,17 @@
             this.panel5.Size = new System.Drawing.Size(1075, 30);
             this.panel5.TabIndex = 2;
             // 
+            // panel4
+            // 
+            this.panel4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel4.BackgroundImage")));
+            this.panel4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel4.Cursor = System.Windows.Forms.Cursors.SizeAll;
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel4.Location = new System.Drawing.Point(0, 0);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(130, 30);
+            this.panel4.TabIndex = 1;
+            // 
             // panel3
             // 
             this.panel3.Controls.Add(this.label1);
@@ -335,7 +320,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "v1.0.1";
+            this.label1.Text = "v1.0.2";
             // 
             // panel2
             // 
@@ -347,6 +332,48 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(90, 30);
             this.panel2.TabIndex = 0;
+            // 
+            // close_app_button
+            // 
+            this.close_app_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.close_app_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("close_app_button.BackgroundImage")));
+            this.close_app_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.close_app_button.FlatAppearance.BorderSize = 0;
+            this.close_app_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.close_app_button.Location = new System.Drawing.Point(62, 2);
+            this.close_app_button.Name = "close_app_button";
+            this.close_app_button.Size = new System.Drawing.Size(25, 25);
+            this.close_app_button.TabIndex = 1;
+            this.close_app_button.UseVisualStyleBackColor = false;
+            this.close_app_button.Click += new System.EventHandler(this.close_button_Click);
+            // 
+            // max_button
+            // 
+            this.max_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.max_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("max_button.BackgroundImage")));
+            this.max_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.max_button.FlatAppearance.BorderSize = 0;
+            this.max_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.max_button.Location = new System.Drawing.Point(33, 2);
+            this.max_button.Name = "max_button";
+            this.max_button.Size = new System.Drawing.Size(25, 25);
+            this.max_button.TabIndex = 0;
+            this.max_button.UseVisualStyleBackColor = false;
+            this.max_button.Click += new System.EventHandler(this.max_button_Click);
+            // 
+            // min_button
+            // 
+            this.min_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.min_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("min_button.BackgroundImage")));
+            this.min_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.min_button.FlatAppearance.BorderSize = 0;
+            this.min_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.min_button.Location = new System.Drawing.Point(3, 2);
+            this.min_button.Name = "min_button";
+            this.min_button.Size = new System.Drawing.Size(25, 25);
+            this.min_button.TabIndex = 0;
+            this.min_button.UseVisualStyleBackColor = false;
+            this.min_button.Click += new System.EventHandler(this.min_button_Click);
             // 
             // content
             // 
@@ -372,6 +399,53 @@
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(548, 53);
             this.panel9.TabIndex = 2;
+            // 
+            // terminal_button
+            // 
+            this.terminal_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.terminal_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.terminal_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.terminal_button.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.terminal_button.Image = ((System.Drawing.Image)(resources.GetObject("terminal_button.Image")));
+            this.terminal_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.terminal_button.Location = new System.Drawing.Point(386, 8);
+            this.terminal_button.Name = "terminal_button";
+            this.terminal_button.Size = new System.Drawing.Size(145, 40);
+            this.terminal_button.TabIndex = 2;
+            this.terminal_button.Text = "  Terminal";
+            this.terminal_button.UseVisualStyleBackColor = true;
+            // 
+            // release_button
+            // 
+            this.release_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.release_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.release_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.release_button.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.release_button.Image = ((System.Drawing.Image)(resources.GetObject("release_button.Image")));
+            this.release_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.release_button.Location = new System.Drawing.Point(203, 8);
+            this.release_button.Name = "release_button";
+            this.release_button.Size = new System.Drawing.Size(145, 40);
+            this.release_button.TabIndex = 1;
+            this.release_button.Text = "  Release";
+            this.release_button.UseVisualStyleBackColor = true;
+            // 
+            // program_button
+            // 
+            this.program_button.CausesValidation = false;
+            this.program_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.program_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.program_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.program_button.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.program_button.Image = ((System.Drawing.Image)(resources.GetObject("program_button.Image")));
+            this.program_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.program_button.Location = new System.Drawing.Point(20, 6);
+            this.program_button.Name = "program_button";
+            this.program_button.Size = new System.Drawing.Size(145, 40);
+            this.program_button.TabIndex = 0;
+            this.program_button.Text = "  Program";
+            this.program_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.program_button.UseVisualStyleBackColor = false;
             // 
             // panel8
             // 
@@ -402,6 +476,57 @@
             this.button_option_area.TabIndex = 0;
             this.button_option_area.Visible = false;
             // 
+            // button8
+            // 
+            this.button8.Dock = System.Windows.Forms.DockStyle.Left;
+            this.button8.FlatAppearance.BorderSize = 0;
+            this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button8.ForeColor = System.Drawing.Color.White;
+            this.button8.Image = global::WindowsFormsApp.Properties.Resources.usb_icon;
+            this.button8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button8.Location = new System.Drawing.Point(100, 0);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(50, 53);
+            this.button8.TabIndex = 2;
+            this.button8.Text = "USB";
+            this.button8.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.export_project);
+            // 
+            // Save
+            // 
+            this.Save.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Save.FlatAppearance.BorderSize = 0;
+            this.Save.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Save.ForeColor = System.Drawing.Color.White;
+            this.Save.Image = global::WindowsFormsApp.Properties.Resources.data_storage_icon;
+            this.Save.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.Save.Location = new System.Drawing.Point(50, 0);
+            this.Save.Name = "Save";
+            this.Save.Size = new System.Drawing.Size(50, 53);
+            this.Save.TabIndex = 1;
+            this.Save.Text = "Save";
+            this.Save.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.Save.UseVisualStyleBackColor = true;
+            this.Save.Click += new System.EventHandler(this.button_function);
+            // 
+            // Open
+            // 
+            this.Open.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Open.FlatAppearance.BorderSize = 0;
+            this.Open.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Open.ForeColor = System.Drawing.Color.White;
+            this.Open.Image = global::WindowsFormsApp.Properties.Resources.open_folder_icon;
+            this.Open.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.Open.Location = new System.Drawing.Point(0, 0);
+            this.Open.Name = "Open";
+            this.Open.Size = new System.Drawing.Size(50, 53);
+            this.Open.TabIndex = 0;
+            this.Open.Text = "Open";
+            this.Open.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.Open.UseVisualStyleBackColor = true;
+            this.Open.Click += new System.EventHandler(this.button_function);
+            // 
             // panel10
             // 
             this.panel10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -416,6 +541,32 @@
             this.panel10.Name = "panel10";
             this.panel10.Size = new System.Drawing.Size(400, 663);
             this.panel10.TabIndex = 3;
+            // 
+            // device_popup
+            // 
+            this.device_popup.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.device_popup.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.device_popup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.device_popup.Image = ((System.Drawing.Image)(resources.GetObject("device_popup.Image")));
+            this.device_popup.Location = new System.Drawing.Point(73, 345);
+            this.device_popup.Name = "device_popup";
+            this.device_popup.Size = new System.Drawing.Size(40, 40);
+            this.device_popup.TabIndex = 4;
+            this.device_popup.UseVisualStyleBackColor = true;
+            this.device_popup.Click += new System.EventHandler(this.popup_Click);
+            // 
+            // usb_popup
+            // 
+            this.usb_popup.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.usb_popup.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.usb_popup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.usb_popup.Image = ((System.Drawing.Image)(resources.GetObject("usb_popup.Image")));
+            this.usb_popup.Location = new System.Drawing.Point(16, 345);
+            this.usb_popup.Name = "usb_popup";
+            this.usb_popup.Size = new System.Drawing.Size(40, 40);
+            this.usb_popup.TabIndex = 3;
+            this.usb_popup.UseVisualStyleBackColor = true;
+            this.usb_popup.Click += new System.EventHandler(this.popup_Click);
             // 
             // panel13
             // 
@@ -667,6 +818,16 @@
             this.label22.TabIndex = 2;
             this.label22.Text = "Offline 0";
             // 
+            // panel29
+            // 
+            this.panel29.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel29.BackgroundImage")));
+            this.panel29.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel29.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel29.Location = new System.Drawing.Point(0, 0);
+            this.panel29.Name = "panel29";
+            this.panel29.Size = new System.Drawing.Size(90, 60);
+            this.panel29.TabIndex = 0;
+            // 
             // panel27
             // 
             this.panel27.Dock = System.Windows.Forms.DockStyle.Left;
@@ -674,6 +835,16 @@
             this.panel27.Name = "panel27";
             this.panel27.Size = new System.Drawing.Size(30, 90);
             this.panel27.TabIndex = 7;
+            // 
+            // panel26
+            // 
+            this.panel26.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel26.BackgroundImage")));
+            this.panel26.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel26.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel26.Location = new System.Drawing.Point(300, 0);
+            this.panel26.Name = "panel26";
+            this.panel26.Size = new System.Drawing.Size(30, 90);
+            this.panel26.TabIndex = 6;
             // 
             // panel25
             // 
@@ -713,6 +884,16 @@
             this.label21.TabIndex = 1;
             this.label21.Text = "Online 0";
             // 
+            // panel23
+            // 
+            this.panel23.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel23.BackgroundImage")));
+            this.panel23.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel23.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel23.Location = new System.Drawing.Point(0, 0);
+            this.panel23.Name = "panel23";
+            this.panel23.Size = new System.Drawing.Size(90, 60);
+            this.panel23.TabIndex = 0;
+            // 
             // panel21
             // 
             this.panel21.Dock = System.Windows.Forms.DockStyle.Left;
@@ -720,6 +901,16 @@
             this.panel21.Name = "panel21";
             this.panel21.Size = new System.Drawing.Size(30, 90);
             this.panel21.TabIndex = 3;
+            // 
+            // panel20
+            // 
+            this.panel20.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel20.BackgroundImage")));
+            this.panel20.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel20.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel20.Location = new System.Drawing.Point(120, 0);
+            this.panel20.Name = "panel20";
+            this.panel20.Size = new System.Drawing.Size(30, 90);
+            this.panel20.TabIndex = 2;
             // 
             // panel19
             // 
@@ -761,6 +952,16 @@
             this.label20.Size = new System.Drawing.Size(52, 17);
             this.label20.TabIndex = 0;
             this.label20.Text = "Total 0";
+            // 
+            // panel17
+            // 
+            this.panel17.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel17.BackgroundImage")));
+            this.panel17.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel17.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel17.Location = new System.Drawing.Point(0, 0);
+            this.panel17.Name = "panel17";
+            this.panel17.Size = new System.Drawing.Size(90, 60);
+            this.panel17.TabIndex = 0;
             // 
             // main_terminal
             // 
@@ -825,6 +1026,91 @@
             this.panel39.Name = "panel39";
             this.panel39.Size = new System.Drawing.Size(500, 103);
             this.panel39.TabIndex = 2;
+            // 
+            // restart_button
+            // 
+            this.restart_button.Dock = System.Windows.Forms.DockStyle.Left;
+            this.restart_button.FlatAppearance.BorderSize = 0;
+            this.restart_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.restart_button.ForeColor = System.Drawing.Color.White;
+            this.restart_button.Image = global::WindowsFormsApp.Properties.Resources.restart_icon;
+            this.restart_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.restart_button.Location = new System.Drawing.Point(400, 0);
+            this.restart_button.Name = "restart_button";
+            this.restart_button.Size = new System.Drawing.Size(100, 103);
+            this.restart_button.TabIndex = 4;
+            this.restart_button.Text = "Restart";
+            this.restart_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.restart_button.UseVisualStyleBackColor = true;
+            this.restart_button.Click += new System.EventHandler(this.screen_function);
+            // 
+            // close_button
+            // 
+            this.close_button.Dock = System.Windows.Forms.DockStyle.Left;
+            this.close_button.FlatAppearance.BorderSize = 0;
+            this.close_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.close_button.ForeColor = System.Drawing.Color.White;
+            this.close_button.Image = global::WindowsFormsApp.Properties.Resources.close_icon1;
+            this.close_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.close_button.Location = new System.Drawing.Point(300, 0);
+            this.close_button.Name = "close_button";
+            this.close_button.Size = new System.Drawing.Size(100, 103);
+            this.close_button.TabIndex = 3;
+            this.close_button.Text = "Close Screen";
+            this.close_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.close_button.UseVisualStyleBackColor = true;
+            this.close_button.Click += new System.EventHandler(this.screen_function);
+            // 
+            // open_button
+            // 
+            this.open_button.Dock = System.Windows.Forms.DockStyle.Left;
+            this.open_button.FlatAppearance.BorderSize = 0;
+            this.open_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.open_button.ForeColor = System.Drawing.Color.White;
+            this.open_button.Image = global::WindowsFormsApp.Properties.Resources.desktop_icon;
+            this.open_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.open_button.Location = new System.Drawing.Point(200, 0);
+            this.open_button.Name = "open_button";
+            this.open_button.Size = new System.Drawing.Size(100, 103);
+            this.open_button.TabIndex = 2;
+            this.open_button.Text = "Open Screen";
+            this.open_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.open_button.UseVisualStyleBackColor = true;
+            this.open_button.Click += new System.EventHandler(this.screen_function);
+            // 
+            // volume_button
+            // 
+            this.volume_button.Dock = System.Windows.Forms.DockStyle.Left;
+            this.volume_button.FlatAppearance.BorderSize = 0;
+            this.volume_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.volume_button.ForeColor = System.Drawing.Color.White;
+            this.volume_button.Image = global::WindowsFormsApp.Properties.Resources.volume_icon;
+            this.volume_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.volume_button.Location = new System.Drawing.Point(100, 0);
+            this.volume_button.Name = "volume_button";
+            this.volume_button.Size = new System.Drawing.Size(100, 103);
+            this.volume_button.TabIndex = 1;
+            this.volume_button.Text = "Volume";
+            this.volume_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.volume_button.UseVisualStyleBackColor = true;
+            this.volume_button.Click += new System.EventHandler(this.screen_function);
+            // 
+            // brightness_button
+            // 
+            this.brightness_button.Dock = System.Windows.Forms.DockStyle.Left;
+            this.brightness_button.FlatAppearance.BorderSize = 0;
+            this.brightness_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.brightness_button.ForeColor = System.Drawing.Color.White;
+            this.brightness_button.Image = global::WindowsFormsApp.Properties.Resources.brightness_icon;
+            this.brightness_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.brightness_button.Location = new System.Drawing.Point(0, 0);
+            this.brightness_button.Name = "brightness_button";
+            this.brightness_button.Size = new System.Drawing.Size(100, 103);
+            this.brightness_button.TabIndex = 0;
+            this.brightness_button.Text = "Brightness";
+            this.brightness_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.brightness_button.UseVisualStyleBackColor = true;
+            this.brightness_button.Click += new System.EventHandler(this.screen_function);
             // 
             // panel38
             // 
@@ -1052,6 +1338,16 @@
             this.label26.TabIndex = 0;
             this.label26.Text = "Offline 0";
             // 
+            // panel55
+            // 
+            this.panel55.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel55.BackgroundImage")));
+            this.panel55.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel55.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel55.Location = new System.Drawing.Point(0, 0);
+            this.panel55.Name = "panel55";
+            this.panel55.Size = new System.Drawing.Size(90, 60);
+            this.panel55.TabIndex = 0;
+            // 
             // panel56
             // 
             this.panel56.Dock = System.Windows.Forms.DockStyle.Left;
@@ -1059,6 +1355,16 @@
             this.panel56.Name = "panel56";
             this.panel56.Size = new System.Drawing.Size(30, 90);
             this.panel56.TabIndex = 7;
+            // 
+            // panel57
+            // 
+            this.panel57.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel57.BackgroundImage")));
+            this.panel57.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel57.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel57.Location = new System.Drawing.Point(300, 0);
+            this.panel57.Name = "panel57";
+            this.panel57.Size = new System.Drawing.Size(30, 90);
+            this.panel57.TabIndex = 6;
             // 
             // panel58
             // 
@@ -1098,6 +1404,16 @@
             this.online_pc.TabIndex = 0;
             this.online_pc.Text = "Online 0";
             // 
+            // panel61
+            // 
+            this.panel61.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel61.BackgroundImage")));
+            this.panel61.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel61.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel61.Location = new System.Drawing.Point(0, 0);
+            this.panel61.Name = "panel61";
+            this.panel61.Size = new System.Drawing.Size(90, 60);
+            this.panel61.TabIndex = 0;
+            // 
             // panel62
             // 
             this.panel62.Dock = System.Windows.Forms.DockStyle.Left;
@@ -1105,6 +1421,16 @@
             this.panel62.Name = "panel62";
             this.panel62.Size = new System.Drawing.Size(30, 90);
             this.panel62.TabIndex = 3;
+            // 
+            // panel63
+            // 
+            this.panel63.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel63.BackgroundImage")));
+            this.panel63.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel63.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel63.Location = new System.Drawing.Point(120, 0);
+            this.panel63.Name = "panel63";
+            this.panel63.Size = new System.Drawing.Size(30, 90);
+            this.panel63.TabIndex = 2;
             // 
             // panel64
             // 
@@ -1144,6 +1470,16 @@
             this.total_pc.TabIndex = 0;
             this.total_pc.Text = "Total 0";
             // 
+            // panel67
+            // 
+            this.panel67.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel67.BackgroundImage")));
+            this.panel67.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel67.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel67.Location = new System.Drawing.Point(0, 0);
+            this.panel67.Name = "panel67";
+            this.panel67.Size = new System.Drawing.Size(90, 60);
+            this.panel67.TabIndex = 0;
+            // 
             // main_program
             // 
             this.main_program.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
@@ -1161,6 +1497,17 @@
             this.main_program.Size = new System.Drawing.Size(1350, 665);
             this.main_program.TabIndex = 1;
             this.main_program.Visible = false;
+            // 
+            // drappPictureBox
+            // 
+            this.drappPictureBox.BackColor = System.Drawing.Color.Transparent;
+            this.drappPictureBox.Location = new System.Drawing.Point(600, 100);
+            this.drappPictureBox.Name = "drappPictureBox";
+            this.drappPictureBox.Size = new System.Drawing.Size(125, 61);
+            this.drappPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.drappPictureBox.TabIndex = 1;
+            this.drappPictureBox.TabStop = false;
+            this.drappPictureBox.Visible = false;
             // 
             // show
             // 
@@ -1192,6 +1539,36 @@
             this.panel79.Name = "panel79";
             this.panel79.Size = new System.Drawing.Size(698, 40);
             this.panel79.TabIndex = 0;
+            // 
+            // ZoomOut
+            // 
+            this.ZoomOut.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ZoomOut.FlatAppearance.BorderSize = 0;
+            this.ZoomOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZoomOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomOut.ForeColor = System.Drawing.Color.White;
+            this.ZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ZoomOut.Image")));
+            this.ZoomOut.Location = new System.Drawing.Point(35, 0);
+            this.ZoomOut.Name = "ZoomOut";
+            this.ZoomOut.Size = new System.Drawing.Size(35, 40);
+            this.ZoomOut.TabIndex = 1;
+            this.ZoomOut.UseVisualStyleBackColor = true;
+            this.ZoomOut.Click += new System.EventHandler(this.zoom_function);
+            // 
+            // ZoomIn
+            // 
+            this.ZoomIn.Dock = System.Windows.Forms.DockStyle.Left;
+            this.ZoomIn.FlatAppearance.BorderSize = 0;
+            this.ZoomIn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ZoomIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ZoomIn.ForeColor = System.Drawing.Color.White;
+            this.ZoomIn.Image = global::WindowsFormsApp.Properties.Resources.plus_icon_16;
+            this.ZoomIn.Location = new System.Drawing.Point(0, 0);
+            this.ZoomIn.Name = "ZoomIn";
+            this.ZoomIn.Size = new System.Drawing.Size(35, 40);
+            this.ZoomIn.TabIndex = 0;
+            this.ZoomIn.UseVisualStyleBackColor = true;
+            this.ZoomIn.Click += new System.EventHandler(this.zoom_function);
             // 
             // show_file
             // 
@@ -1225,6 +1602,25 @@
             this.panel42.Size = new System.Drawing.Size(696, 50);
             this.panel42.TabIndex = 3;
             // 
+            // new_resource
+            // 
+            this.new_resource.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.new_resource.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.new_resource.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.new_resource.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.new_resource.ForeColor = System.Drawing.Color.White;
+            this.new_resource.Image = ((System.Drawing.Image)(resources.GetObject("new_resource.Image")));
+            this.new_resource.Location = new System.Drawing.Point(5, 5);
+            this.new_resource.Name = "new_resource";
+            this.new_resource.Size = new System.Drawing.Size(686, 40);
+            this.new_resource.TabIndex = 2;
+            this.new_resource.Text = " Add Resource";
+            this.new_resource.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.new_resource.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.new_resource.UseMnemonic = false;
+            this.new_resource.UseVisualStyleBackColor = true;
+            this.new_resource.Click += new System.EventHandler(this.new_resource_Click);
+            // 
             // panel44
             // 
             this.panel44.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1246,6 +1642,25 @@
             this.panel45.Name = "panel45";
             this.panel45.Size = new System.Drawing.Size(75, 60);
             this.panel45.TabIndex = 0;
+            // 
+            // button14
+            // 
+            this.button14.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
+            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button14.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.button14.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.button14.FlatAppearance.BorderSize = 0;
+            this.button14.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button14.ForeColor = System.Drawing.Color.White;
+            this.button14.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
+            this.button14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button14.Location = new System.Drawing.Point(0, 0);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(75, 60);
+            this.button14.TabIndex = 0;
+            this.button14.Text = "Webpage";
+            this.button14.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button14.UseVisualStyleBackColor = true;
             // 
             // panel40
             // 
@@ -1599,12 +2014,50 @@
             this.panel1.Size = new System.Drawing.Size(148, 30);
             this.panel1.TabIndex = 0;
             // 
+            // Up
+            // 
+            this.Up.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Up.FlatAppearance.BorderSize = 0;
+            this.Up.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Up.Image = global::WindowsFormsApp.Properties.Resources.up_arrow_icon;
+            this.Up.Location = new System.Drawing.Point(71, 0);
+            this.Up.Name = "Up";
+            this.Up.Size = new System.Drawing.Size(25, 28);
+            this.Up.TabIndex = 3;
+            this.Up.UseVisualStyleBackColor = true;
+            this.Up.Click += new System.EventHandler(this.button_function);
+            // 
+            // Down
+            // 
+            this.Down.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Down.FlatAppearance.BorderSize = 0;
+            this.Down.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Down.Image = global::WindowsFormsApp.Properties.Resources.down_arrow_icon;
+            this.Down.Location = new System.Drawing.Point(96, 0);
+            this.Down.Name = "Down";
+            this.Down.Size = new System.Drawing.Size(25, 28);
+            this.Down.TabIndex = 2;
+            this.Down.UseVisualStyleBackColor = true;
+            this.Down.Click += new System.EventHandler(this.button_function);
+            // 
+            // Delete
+            // 
+            this.Delete.Dock = System.Windows.Forms.DockStyle.Right;
+            this.Delete.FlatAppearance.BorderSize = 0;
+            this.Delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Delete.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
+            this.Delete.Location = new System.Drawing.Point(121, 0);
+            this.Delete.Name = "Delete";
+            this.Delete.Size = new System.Drawing.Size(25, 28);
+            this.Delete.TabIndex = 1;
+            this.Delete.UseVisualStyleBackColor = true;
+            this.Delete.Click += new System.EventHandler(this.button_function);
+            // 
             // panel6
             // 
             this.panel6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel6.Controls.Add(this.panel34);
-            this.panel6.Controls.Add(this.panel47);
             this.panel6.Controls.Add(this.panel33);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel6.Location = new System.Drawing.Point(0, 0);
@@ -1616,87 +2069,30 @@
             // 
             this.panel34.Controls.Add(this.new_program_button);
             this.panel34.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel34.Location = new System.Drawing.Point(0, 110);
+            this.panel34.Location = new System.Drawing.Point(0, 30);
             this.panel34.Name = "panel34";
             this.panel34.Padding = new System.Windows.Forms.Padding(10);
             this.panel34.Size = new System.Drawing.Size(198, 60);
             this.panel34.TabIndex = 1;
             // 
-            // panel47
+            // new_program_button
             // 
-            this.panel47.Controls.Add(this.panel68);
-            this.panel47.Controls.Add(this.bk_program);
-            this.panel47.Controls.Add(this.panel48);
-            this.panel47.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel47.Location = new System.Drawing.Point(0, 30);
-            this.panel47.Margin = new System.Windows.Forms.Padding(0);
-            this.panel47.Name = "panel47";
-            this.panel47.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.panel47.Size = new System.Drawing.Size(198, 80);
-            this.panel47.TabIndex = 2;
-            this.panel47.Visible = false;
-            // 
-            // panel68
-            // 
-            this.panel68.Controls.Add(this.label36);
-            this.panel68.Controls.Add(this.label35);
-            this.panel68.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel68.Location = new System.Drawing.Point(103, 10);
-            this.panel68.Name = "panel68";
-            this.panel68.Size = new System.Drawing.Size(95, 70);
-            this.panel68.TabIndex = 2;
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label36.ForeColor = System.Drawing.Color.White;
-            this.label36.Location = new System.Drawing.Point(5, 44);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(0, 17);
-            this.label36.TabIndex = 1;
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label35.ForeColor = System.Drawing.Color.White;
-            this.label35.Location = new System.Drawing.Point(5, 14);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(0, 17);
-            this.label35.TabIndex = 0;
-            // 
-            // bk_program
-            // 
-            this.bk_program.Controls.Add(this.pictureBox1);
-            this.bk_program.Dock = System.Windows.Forms.DockStyle.Left;
-            this.bk_program.Location = new System.Drawing.Point(33, 10);
-            this.bk_program.Name = "bk_program";
-            this.bk_program.Size = new System.Drawing.Size(70, 70);
-            this.bk_program.TabIndex = 1;
-            // 
-            // panel48
-            // 
-            this.panel48.Controls.Add(this.label34);
-            this.panel48.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel48.Location = new System.Drawing.Point(0, 10);
-            this.panel48.Name = "panel48";
-            this.panel48.Size = new System.Drawing.Size(33, 70);
-            this.panel48.TabIndex = 0;
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.label34.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label34.ForeColor = System.Drawing.Color.White;
-            this.label34.Location = new System.Drawing.Point(5, 25);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(19, 19);
-            this.label34.TabIndex = 0;
-            this.label34.Text = "1";
-            this.label34.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.new_program_button.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.new_program_button.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.new_program_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.new_program_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.new_program_button.ForeColor = System.Drawing.Color.White;
+            this.new_program_button.Image = ((System.Drawing.Image)(resources.GetObject("new_program_button.Image")));
+            this.new_program_button.Location = new System.Drawing.Point(10, 10);
+            this.new_program_button.Name = "new_program_button";
+            this.new_program_button.Size = new System.Drawing.Size(178, 40);
+            this.new_program_button.TabIndex = 0;
+            this.new_program_button.Text = "  New Program";
+            this.new_program_button.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.new_program_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.new_program_button.UseMnemonic = false;
+            this.new_program_button.UseVisualStyleBackColor = true;
+            this.new_program_button.Click += new System.EventHandler(this.new_program_button_Click);
             // 
             // panel33
             // 
@@ -1710,6 +2106,32 @@
             this.panel33.Name = "panel33";
             this.panel33.Size = new System.Drawing.Size(198, 30);
             this.panel33.TabIndex = 0;
+            // 
+            // button15
+            // 
+            this.button15.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button15.FlatAppearance.BorderSize = 0;
+            this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button15.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
+            this.button15.Location = new System.Drawing.Point(146, 0);
+            this.button15.Name = "button15";
+            this.button15.Size = new System.Drawing.Size(25, 28);
+            this.button15.TabIndex = 3;
+            this.button15.UseVisualStyleBackColor = true;
+            this.button15.Click += new System.EventHandler(this.setting_program);
+            // 
+            // button5
+            // 
+            this.button5.Dock = System.Windows.Forms.DockStyle.Right;
+            this.button5.FlatAppearance.BorderSize = 0;
+            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button5.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
+            this.button5.Location = new System.Drawing.Point(171, 0);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(25, 28);
+            this.button5.TabIndex = 2;
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.delete_program);
             // 
             // label23
             // 
@@ -1916,7 +2338,6 @@
             // 
             this.panel71.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel71.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel71.Controls.Add(this.panel72);
             this.panel71.Controls.Add(this.panel75);
             this.panel71.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel71.ForeColor = System.Drawing.Color.White;
@@ -1924,86 +2345,6 @@
             this.panel71.Name = "panel71";
             this.panel71.Size = new System.Drawing.Size(300, 663);
             this.panel71.TabIndex = 3;
-            // 
-            // panel72
-            // 
-            this.panel72.Controls.Add(this.panel73);
-            this.panel72.Controls.Add(this.panel74);
-            this.panel72.Controls.Add(this.panel76);
-            this.panel72.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel72.Location = new System.Drawing.Point(0, 30);
-            this.panel72.Margin = new System.Windows.Forms.Padding(0);
-            this.panel72.Name = "panel72";
-            this.panel72.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
-            this.panel72.Size = new System.Drawing.Size(298, 80);
-            this.panel72.TabIndex = 3;
-            this.panel72.Visible = false;
-            // 
-            // panel73
-            // 
-            this.panel73.Controls.Add(this.label43);
-            this.panel73.Controls.Add(this.label44);
-            this.panel73.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel73.Location = new System.Drawing.Point(100, 10);
-            this.panel73.Name = "panel73";
-            this.panel73.Size = new System.Drawing.Size(198, 70);
-            this.panel73.TabIndex = 2;
-            // 
-            // label43
-            // 
-            this.label43.AutoSize = true;
-            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label43.ForeColor = System.Drawing.Color.White;
-            this.label43.Location = new System.Drawing.Point(5, 44);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(0, 17);
-            this.label43.TabIndex = 1;
-            // 
-            // label44
-            // 
-            this.label44.AutoSize = true;
-            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label44.ForeColor = System.Drawing.Color.White;
-            this.label44.Location = new System.Drawing.Point(5, 14);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(0, 17);
-            this.label44.TabIndex = 0;
-            // 
-            // panel74
-            // 
-            this.panel74.Controls.Add(this.pictureBox2);
-            this.panel74.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel74.Location = new System.Drawing.Point(30, 10);
-            this.panel74.Name = "panel74";
-            this.panel74.Size = new System.Drawing.Size(70, 70);
-            this.panel74.TabIndex = 1;
-            // 
-            // panel76
-            // 
-            this.panel76.Controls.Add(this.radioButton1);
-            this.panel76.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel76.Location = new System.Drawing.Point(0, 10);
-            this.panel76.Name = "panel76";
-            this.panel76.Size = new System.Drawing.Size(30, 70);
-            this.panel76.TabIndex = 0;
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoEllipsis = true;
-            this.radioButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.radioButton1.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.radioButton1.FlatAppearance.BorderSize = 0;
-            this.radioButton1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.radioButton1.ForeColor = System.Drawing.Color.Transparent;
-            this.radioButton1.Location = new System.Drawing.Point(0, 0);
-            this.radioButton1.Margin = new System.Windows.Forms.Padding(0);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(30, 70);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.UseVisualStyleBackColor = false;
             // 
             // panel75
             // 
@@ -2033,553 +2374,6 @@
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // drappPictureBox
-            // 
-            this.drappPictureBox.BackColor = System.Drawing.Color.Transparent;
-            this.drappPictureBox.Location = new System.Drawing.Point(600, 100);
-            this.drappPictureBox.Name = "drappPictureBox";
-            this.drappPictureBox.Size = new System.Drawing.Size(125, 61);
-            this.drappPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.drappPictureBox.TabIndex = 1;
-            this.drappPictureBox.TabStop = false;
-            this.drappPictureBox.Visible = false;
-            // 
-            // ZoomOut
-            // 
-            this.ZoomOut.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ZoomOut.FlatAppearance.BorderSize = 0;
-            this.ZoomOut.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ZoomOut.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ZoomOut.ForeColor = System.Drawing.Color.White;
-            this.ZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ZoomOut.Image")));
-            this.ZoomOut.Location = new System.Drawing.Point(35, 0);
-            this.ZoomOut.Name = "ZoomOut";
-            this.ZoomOut.Size = new System.Drawing.Size(35, 40);
-            this.ZoomOut.TabIndex = 1;
-            this.ZoomOut.UseVisualStyleBackColor = true;
-            this.ZoomOut.Click += new System.EventHandler(this.zoom_function);
-            // 
-            // ZoomIn
-            // 
-            this.ZoomIn.Dock = System.Windows.Forms.DockStyle.Left;
-            this.ZoomIn.FlatAppearance.BorderSize = 0;
-            this.ZoomIn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ZoomIn.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ZoomIn.ForeColor = System.Drawing.Color.White;
-            this.ZoomIn.Image = global::WindowsFormsApp.Properties.Resources.plus_icon_16;
-            this.ZoomIn.Location = new System.Drawing.Point(0, 0);
-            this.ZoomIn.Name = "ZoomIn";
-            this.ZoomIn.Size = new System.Drawing.Size(35, 40);
-            this.ZoomIn.TabIndex = 0;
-            this.ZoomIn.UseVisualStyleBackColor = true;
-            this.ZoomIn.Click += new System.EventHandler(this.zoom_function);
-            // 
-            // new_resource
-            // 
-            this.new_resource.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.new_resource.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.new_resource.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.new_resource.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.new_resource.ForeColor = System.Drawing.Color.White;
-            this.new_resource.Image = ((System.Drawing.Image)(resources.GetObject("new_resource.Image")));
-            this.new_resource.Location = new System.Drawing.Point(5, 5);
-            this.new_resource.Name = "new_resource";
-            this.new_resource.Size = new System.Drawing.Size(686, 40);
-            this.new_resource.TabIndex = 2;
-            this.new_resource.Text = " Add Resource";
-            this.new_resource.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.new_resource.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.new_resource.UseMnemonic = false;
-            this.new_resource.UseVisualStyleBackColor = true;
-            this.new_resource.Click += new System.EventHandler(this.new_resource_Click);
-            // 
-            // button14
-            // 
-            this.button14.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
-            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button14.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button14.FlatAppearance.BorderSize = 0;
-            this.button14.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button14.ForeColor = System.Drawing.Color.White;
-            this.button14.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
-            this.button14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button14.Location = new System.Drawing.Point(0, 0);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(75, 60);
-            this.button14.TabIndex = 0;
-            this.button14.Text = "Webpage";
-            this.button14.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button14.UseVisualStyleBackColor = true;
-            // 
-            // Up
-            // 
-            this.Up.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Up.FlatAppearance.BorderSize = 0;
-            this.Up.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Up.Image = global::WindowsFormsApp.Properties.Resources.up_arrow_icon;
-            this.Up.Location = new System.Drawing.Point(71, 0);
-            this.Up.Name = "Up";
-            this.Up.Size = new System.Drawing.Size(25, 28);
-            this.Up.TabIndex = 3;
-            this.Up.UseVisualStyleBackColor = true;
-            this.Up.Click += new System.EventHandler(this.button_function);
-            // 
-            // Down
-            // 
-            this.Down.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Down.FlatAppearance.BorderSize = 0;
-            this.Down.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Down.Image = global::WindowsFormsApp.Properties.Resources.down_arrow_icon;
-            this.Down.Location = new System.Drawing.Point(96, 0);
-            this.Down.Name = "Down";
-            this.Down.Size = new System.Drawing.Size(25, 28);
-            this.Down.TabIndex = 2;
-            this.Down.UseVisualStyleBackColor = true;
-            this.Down.Click += new System.EventHandler(this.button_function);
-            // 
-            // Delete
-            // 
-            this.Delete.Dock = System.Windows.Forms.DockStyle.Right;
-            this.Delete.FlatAppearance.BorderSize = 0;
-            this.Delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Delete.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
-            this.Delete.Location = new System.Drawing.Point(121, 0);
-            this.Delete.Name = "Delete";
-            this.Delete.Size = new System.Drawing.Size(25, 28);
-            this.Delete.TabIndex = 1;
-            this.Delete.UseVisualStyleBackColor = true;
-            this.Delete.Click += new System.EventHandler(this.button_function);
-            // 
-            // new_program_button
-            // 
-            this.new_program_button.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.new_program_button.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.new_program_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.new_program_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.new_program_button.ForeColor = System.Drawing.Color.White;
-            this.new_program_button.Image = ((System.Drawing.Image)(resources.GetObject("new_program_button.Image")));
-            this.new_program_button.Location = new System.Drawing.Point(10, 10);
-            this.new_program_button.Name = "new_program_button";
-            this.new_program_button.Size = new System.Drawing.Size(178, 40);
-            this.new_program_button.TabIndex = 0;
-            this.new_program_button.Text = "  New Program";
-            this.new_program_button.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.new_program_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.new_program_button.UseMnemonic = false;
-            this.new_program_button.UseVisualStyleBackColor = true;
-            this.new_program_button.Click += new System.EventHandler(this.new_program_button_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Black;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(70, 70);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
-            // button15
-            // 
-            this.button15.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button15.FlatAppearance.BorderSize = 0;
-            this.button15.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button15.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
-            this.button15.Location = new System.Drawing.Point(146, 0);
-            this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(25, 28);
-            this.button15.TabIndex = 3;
-            this.button15.UseVisualStyleBackColor = true;
-            this.button15.Click += new System.EventHandler(this.setting_program);
-            // 
-            // button5
-            // 
-            this.button5.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button5.FlatAppearance.BorderSize = 0;
-            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button5.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
-            this.button5.Location = new System.Drawing.Point(171, 0);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(25, 28);
-            this.button5.TabIndex = 2;
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.delete_program);
-            // 
-            // restart_button
-            // 
-            this.restart_button.Dock = System.Windows.Forms.DockStyle.Left;
-            this.restart_button.FlatAppearance.BorderSize = 0;
-            this.restart_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.restart_button.ForeColor = System.Drawing.Color.White;
-            this.restart_button.Image = global::WindowsFormsApp.Properties.Resources.restart_icon;
-            this.restart_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.restart_button.Location = new System.Drawing.Point(400, 0);
-            this.restart_button.Name = "restart_button";
-            this.restart_button.Size = new System.Drawing.Size(100, 103);
-            this.restart_button.TabIndex = 4;
-            this.restart_button.Text = "Restart";
-            this.restart_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.restart_button.UseVisualStyleBackColor = true;
-            this.restart_button.Click += new System.EventHandler(this.screen_function);
-            // 
-            // close_button
-            // 
-            this.close_button.Dock = System.Windows.Forms.DockStyle.Left;
-            this.close_button.FlatAppearance.BorderSize = 0;
-            this.close_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.close_button.ForeColor = System.Drawing.Color.White;
-            this.close_button.Image = global::WindowsFormsApp.Properties.Resources.close_icon1;
-            this.close_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.close_button.Location = new System.Drawing.Point(300, 0);
-            this.close_button.Name = "close_button";
-            this.close_button.Size = new System.Drawing.Size(100, 103);
-            this.close_button.TabIndex = 3;
-            this.close_button.Text = "Close Screen";
-            this.close_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.close_button.UseVisualStyleBackColor = true;
-            this.close_button.Click += new System.EventHandler(this.screen_function);
-            // 
-            // open_button
-            // 
-            this.open_button.Dock = System.Windows.Forms.DockStyle.Left;
-            this.open_button.FlatAppearance.BorderSize = 0;
-            this.open_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.open_button.ForeColor = System.Drawing.Color.White;
-            this.open_button.Image = global::WindowsFormsApp.Properties.Resources.desktop_icon;
-            this.open_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.open_button.Location = new System.Drawing.Point(200, 0);
-            this.open_button.Name = "open_button";
-            this.open_button.Size = new System.Drawing.Size(100, 103);
-            this.open_button.TabIndex = 2;
-            this.open_button.Text = "Open Screen";
-            this.open_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.open_button.UseVisualStyleBackColor = true;
-            this.open_button.Click += new System.EventHandler(this.screen_function);
-            // 
-            // volume_button
-            // 
-            this.volume_button.Dock = System.Windows.Forms.DockStyle.Left;
-            this.volume_button.FlatAppearance.BorderSize = 0;
-            this.volume_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.volume_button.ForeColor = System.Drawing.Color.White;
-            this.volume_button.Image = global::WindowsFormsApp.Properties.Resources.volume_icon;
-            this.volume_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.volume_button.Location = new System.Drawing.Point(100, 0);
-            this.volume_button.Name = "volume_button";
-            this.volume_button.Size = new System.Drawing.Size(100, 103);
-            this.volume_button.TabIndex = 1;
-            this.volume_button.Text = "Volume";
-            this.volume_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.volume_button.UseVisualStyleBackColor = true;
-            this.volume_button.Click += new System.EventHandler(this.screen_function);
-            // 
-            // brightness_button
-            // 
-            this.brightness_button.Dock = System.Windows.Forms.DockStyle.Left;
-            this.brightness_button.FlatAppearance.BorderSize = 0;
-            this.brightness_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.brightness_button.ForeColor = System.Drawing.Color.White;
-            this.brightness_button.Image = global::WindowsFormsApp.Properties.Resources.brightness_icon;
-            this.brightness_button.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.brightness_button.Location = new System.Drawing.Point(0, 0);
-            this.brightness_button.Name = "brightness_button";
-            this.brightness_button.Size = new System.Drawing.Size(100, 103);
-            this.brightness_button.TabIndex = 0;
-            this.brightness_button.Text = "Brightness";
-            this.brightness_button.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.brightness_button.UseVisualStyleBackColor = true;
-            this.brightness_button.Click += new System.EventHandler(this.screen_function);
-            // 
-            // panel55
-            // 
-            this.panel55.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel55.BackgroundImage")));
-            this.panel55.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel55.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel55.Location = new System.Drawing.Point(0, 0);
-            this.panel55.Name = "panel55";
-            this.panel55.Size = new System.Drawing.Size(90, 60);
-            this.panel55.TabIndex = 0;
-            // 
-            // panel57
-            // 
-            this.panel57.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel57.BackgroundImage")));
-            this.panel57.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel57.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel57.Location = new System.Drawing.Point(300, 0);
-            this.panel57.Name = "panel57";
-            this.panel57.Size = new System.Drawing.Size(30, 90);
-            this.panel57.TabIndex = 6;
-            // 
-            // panel61
-            // 
-            this.panel61.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel61.BackgroundImage")));
-            this.panel61.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel61.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel61.Location = new System.Drawing.Point(0, 0);
-            this.panel61.Name = "panel61";
-            this.panel61.Size = new System.Drawing.Size(90, 60);
-            this.panel61.TabIndex = 0;
-            // 
-            // panel63
-            // 
-            this.panel63.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel63.BackgroundImage")));
-            this.panel63.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel63.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel63.Location = new System.Drawing.Point(120, 0);
-            this.panel63.Name = "panel63";
-            this.panel63.Size = new System.Drawing.Size(30, 90);
-            this.panel63.TabIndex = 2;
-            // 
-            // panel67
-            // 
-            this.panel67.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel67.BackgroundImage")));
-            this.panel67.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel67.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel67.Location = new System.Drawing.Point(0, 0);
-            this.panel67.Name = "panel67";
-            this.panel67.Size = new System.Drawing.Size(90, 60);
-            this.panel67.TabIndex = 0;
-            // 
-            // device_popup
-            // 
-            this.device_popup.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.device_popup.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.device_popup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.device_popup.Image = ((System.Drawing.Image)(resources.GetObject("device_popup.Image")));
-            this.device_popup.Location = new System.Drawing.Point(73, 345);
-            this.device_popup.Name = "device_popup";
-            this.device_popup.Size = new System.Drawing.Size(40, 40);
-            this.device_popup.TabIndex = 4;
-            this.device_popup.UseVisualStyleBackColor = true;
-            this.device_popup.Click += new System.EventHandler(this.popup_Click);
-            // 
-            // usb_popup
-            // 
-            this.usb_popup.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.usb_popup.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.usb_popup.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.usb_popup.Image = ((System.Drawing.Image)(resources.GetObject("usb_popup.Image")));
-            this.usb_popup.Location = new System.Drawing.Point(16, 345);
-            this.usb_popup.Name = "usb_popup";
-            this.usb_popup.Size = new System.Drawing.Size(40, 40);
-            this.usb_popup.TabIndex = 3;
-            this.usb_popup.UseVisualStyleBackColor = true;
-            this.usb_popup.Click += new System.EventHandler(this.popup_Click);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackColor = System.Drawing.Color.Black;
-            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox2.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(70, 70);
-            this.pictureBox2.TabIndex = 0;
-            this.pictureBox2.TabStop = false;
-            // 
-            // terminal_button
-            // 
-            this.terminal_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-            this.terminal_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.terminal_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.terminal_button.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.terminal_button.Image = ((System.Drawing.Image)(resources.GetObject("terminal_button.Image")));
-            this.terminal_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.terminal_button.Location = new System.Drawing.Point(386, 8);
-            this.terminal_button.Name = "terminal_button";
-            this.terminal_button.Size = new System.Drawing.Size(145, 40);
-            this.terminal_button.TabIndex = 2;
-            this.terminal_button.Text = "  Terminal";
-            this.terminal_button.UseVisualStyleBackColor = true;
-            // 
-            // release_button
-            // 
-            this.release_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-            this.release_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.release_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.release_button.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.release_button.Image = ((System.Drawing.Image)(resources.GetObject("release_button.Image")));
-            this.release_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.release_button.Location = new System.Drawing.Point(203, 8);
-            this.release_button.Name = "release_button";
-            this.release_button.Size = new System.Drawing.Size(145, 40);
-            this.release_button.TabIndex = 1;
-            this.release_button.Text = "  Release";
-            this.release_button.UseVisualStyleBackColor = true;
-            // 
-            // program_button
-            // 
-            this.program_button.CausesValidation = false;
-            this.program_button.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-            this.program_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.program_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.program_button.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.program_button.Image = ((System.Drawing.Image)(resources.GetObject("program_button.Image")));
-            this.program_button.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.program_button.Location = new System.Drawing.Point(20, 6);
-            this.program_button.Name = "program_button";
-            this.program_button.Size = new System.Drawing.Size(145, 40);
-            this.program_button.TabIndex = 0;
-            this.program_button.Text = "  Program";
-            this.program_button.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.program_button.UseVisualStyleBackColor = false;
-            // 
-            // button8
-            // 
-            this.button8.Dock = System.Windows.Forms.DockStyle.Left;
-            this.button8.FlatAppearance.BorderSize = 0;
-            this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button8.ForeColor = System.Drawing.Color.White;
-            this.button8.Image = global::WindowsFormsApp.Properties.Resources.usb_icon;
-            this.button8.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button8.Location = new System.Drawing.Point(100, 0);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(50, 53);
-            this.button8.TabIndex = 2;
-            this.button8.Text = "USB";
-            this.button8.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.export_project);
-            // 
-            // Save
-            // 
-            this.Save.Dock = System.Windows.Forms.DockStyle.Left;
-            this.Save.FlatAppearance.BorderSize = 0;
-            this.Save.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Save.ForeColor = System.Drawing.Color.White;
-            this.Save.Image = global::WindowsFormsApp.Properties.Resources.data_storage_icon;
-            this.Save.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.Save.Location = new System.Drawing.Point(50, 0);
-            this.Save.Name = "Save";
-            this.Save.Size = new System.Drawing.Size(50, 53);
-            this.Save.TabIndex = 1;
-            this.Save.Text = "Save";
-            this.Save.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.Save.UseVisualStyleBackColor = true;
-            this.Save.Click += new System.EventHandler(this.button_function);
-            // 
-            // Open
-            // 
-            this.Open.Dock = System.Windows.Forms.DockStyle.Left;
-            this.Open.FlatAppearance.BorderSize = 0;
-            this.Open.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Open.ForeColor = System.Drawing.Color.White;
-            this.Open.Image = global::WindowsFormsApp.Properties.Resources.open_folder_icon;
-            this.Open.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.Open.Location = new System.Drawing.Point(0, 0);
-            this.Open.Name = "Open";
-            this.Open.Size = new System.Drawing.Size(50, 53);
-            this.Open.TabIndex = 0;
-            this.Open.Text = "Open";
-            this.Open.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.Open.UseVisualStyleBackColor = true;
-            this.Open.Click += new System.EventHandler(this.button_function);
-            // 
-            // panel4
-            // 
-            this.panel4.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel4.BackgroundImage")));
-            this.panel4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panel4.Cursor = System.Windows.Forms.Cursors.SizeAll;
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel4.Location = new System.Drawing.Point(0, 0);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(130, 30);
-            this.panel4.TabIndex = 1;
-            // 
-            // close_app_button
-            // 
-            this.close_app_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.close_app_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("close_app_button.BackgroundImage")));
-            this.close_app_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.close_app_button.FlatAppearance.BorderSize = 0;
-            this.close_app_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.close_app_button.Location = new System.Drawing.Point(62, 2);
-            this.close_app_button.Name = "close_app_button";
-            this.close_app_button.Size = new System.Drawing.Size(25, 25);
-            this.close_app_button.TabIndex = 1;
-            this.close_app_button.UseVisualStyleBackColor = false;
-            this.close_app_button.Click += new System.EventHandler(this.close_button_Click);
-            // 
-            // max_button
-            // 
-            this.max_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.max_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("max_button.BackgroundImage")));
-            this.max_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.max_button.FlatAppearance.BorderSize = 0;
-            this.max_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.max_button.Location = new System.Drawing.Point(33, 2);
-            this.max_button.Name = "max_button";
-            this.max_button.Size = new System.Drawing.Size(25, 25);
-            this.max_button.TabIndex = 0;
-            this.max_button.UseVisualStyleBackColor = false;
-            this.max_button.Click += new System.EventHandler(this.max_button_Click);
-            // 
-            // min_button
-            // 
-            this.min_button.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.min_button.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("min_button.BackgroundImage")));
-            this.min_button.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.min_button.FlatAppearance.BorderSize = 0;
-            this.min_button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.min_button.Location = new System.Drawing.Point(3, 2);
-            this.min_button.Name = "min_button";
-            this.min_button.Size = new System.Drawing.Size(25, 25);
-            this.min_button.TabIndex = 0;
-            this.min_button.UseVisualStyleBackColor = false;
-            this.min_button.Click += new System.EventHandler(this.min_button_Click);
-            // 
-            // panel29
-            // 
-            this.panel29.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel29.BackgroundImage")));
-            this.panel29.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel29.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel29.Location = new System.Drawing.Point(0, 0);
-            this.panel29.Name = "panel29";
-            this.panel29.Size = new System.Drawing.Size(90, 60);
-            this.panel29.TabIndex = 0;
-            // 
-            // panel26
-            // 
-            this.panel26.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel26.BackgroundImage")));
-            this.panel26.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel26.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel26.Location = new System.Drawing.Point(300, 0);
-            this.panel26.Name = "panel26";
-            this.panel26.Size = new System.Drawing.Size(30, 90);
-            this.panel26.TabIndex = 6;
-            // 
-            // panel23
-            // 
-            this.panel23.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel23.BackgroundImage")));
-            this.panel23.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel23.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel23.Location = new System.Drawing.Point(0, 0);
-            this.panel23.Name = "panel23";
-            this.panel23.Size = new System.Drawing.Size(90, 60);
-            this.panel23.TabIndex = 0;
-            // 
-            // panel20
-            // 
-            this.panel20.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel20.BackgroundImage")));
-            this.panel20.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel20.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel20.Location = new System.Drawing.Point(120, 0);
-            this.panel20.Name = "panel20";
-            this.panel20.Size = new System.Drawing.Size(30, 90);
-            this.panel20.TabIndex = 2;
-            // 
-            // panel17
-            // 
-            this.panel17.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panel17.BackgroundImage")));
-            this.panel17.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel17.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel17.Location = new System.Drawing.Point(0, 0);
-            this.panel17.Name = "panel17";
-            this.panel17.Size = new System.Drawing.Size(90, 60);
-            this.panel17.TabIndex = 0;
             // 
             // Form1
             // 
@@ -2649,6 +2443,7 @@
             this.panel66.ResumeLayout(false);
             this.panel66.PerformLayout();
             this.main_program.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).EndInit();
             this.show.ResumeLayout(false);
             this.panel79.ResumeLayout(false);
             this.show_file.ResumeLayout(false);
@@ -2672,12 +2467,6 @@
             this.panel1.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel34.ResumeLayout(false);
-            this.panel47.ResumeLayout(false);
-            this.panel68.ResumeLayout(false);
-            this.panel68.PerformLayout();
-            this.bk_program.ResumeLayout(false);
-            this.panel48.ResumeLayout(false);
-            this.panel48.PerformLayout();
             this.panel33.ResumeLayout(false);
             this.panel33.PerformLayout();
             this.main_release.ResumeLayout(false);
@@ -2690,16 +2479,8 @@
             this.panel82.ResumeLayout(false);
             this.panel82.PerformLayout();
             this.panel71.ResumeLayout(false);
-            this.panel72.ResumeLayout(false);
-            this.panel73.ResumeLayout(false);
-            this.panel73.PerformLayout();
-            this.panel74.ResumeLayout(false);
-            this.panel76.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.drappPictureBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -2834,14 +2615,6 @@
         private System.Windows.Forms.Panel panel46;
         private System.Windows.Forms.Panel panel43;
         private System.Windows.Forms.PictureBox drappPictureBox;
-        private System.Windows.Forms.Panel panel47;
-        private System.Windows.Forms.Panel panel68;
-        private System.Windows.Forms.Panel bk_program;
-        private System.Windows.Forms.Panel panel48;
-        private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label36;
-        private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Panel panel49;
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.TextBox textBox1;
@@ -2857,16 +2630,8 @@
         private System.Windows.Forms.Panel panel70;
         private System.Windows.Forms.Panel list_windowns;
         private System.Windows.Forms.Panel panel71;
-        private System.Windows.Forms.Panel panel72;
-        private System.Windows.Forms.Panel panel73;
-        private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Panel panel74;
-        private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.Panel panel76;
         private System.Windows.Forms.Panel panel75;
         private System.Windows.Forms.Label label50;
-        private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.Panel panel77;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Panel panel82;
