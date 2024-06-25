@@ -22,6 +22,7 @@ using Accord.Video.FFMPEG;
 using System.Runtime.InteropServices.ComTypes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Windows.Media.Media3D;
+using System.IO.Pipes;
 
 namespace WindowsFormsApp
 {
@@ -100,10 +101,14 @@ namespace WindowsFormsApp
             }
 
             this.General.Top = this.panel77.Height / 2 - 30;
-            this.General.Left = this.panel71.Width - 45;
+            this.General.Left = this.panel71.Width - 35;
 
             this.Advanced.Top = this.panel77.Height / 2 - 30;
-            this.Advanced.Left = this.panel71.Width + this.panel78.Width - 50;
+            this.Advanced.Left = this.panel71.Width + this.panel78.Width - 40;
+
+            this.panel90.Height = (this.panel77.Height - this.panel82.Height) / 3;
+            this.panel76.Height = (this.panel77.Height - this.panel82.Height) / 3;
+            this.panel48.Height = (this.panel77.Height - this.panel82.Height) / 3;
 
             // Refresh design area
             refresh_program_design(currentScale);
@@ -1122,6 +1127,9 @@ namespace WindowsFormsApp
             this.SizeChanged += new EventHandler(Form_SizeChanged);
 
             this.new_program_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
+            this.new_loop_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
+            this.new_timming_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
+            this.new_command_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
             this.new_resource.Paint += new PaintEventHandler(DashedBorderButton_Paint);
 
             this.textBox1.KeyPress += NumericTextBox_KeyPress;
@@ -1214,11 +1222,37 @@ namespace WindowsFormsApp
             this.General.MouseUp += (sender, e) =>
             {
                 (sender as Button).BackgroundImage = normal_button();
-                bool flagError = false;
 
-                // TODO: should be handle check list program that have object is selected or not
+                List<string> program_list = new List<string> { };
 
-                if(!flagError)
+                // Search program is selected
+                foreach (Control control in this.panel71.Controls)
+                {
+                    if (control != this.panel75)
+                    {
+                        foreach (Control child in control.Controls)
+                        {
+                            if (control.Controls.IndexOf(child) == 2)
+                            {
+                                foreach (Control item in child.Controls)
+                                {
+                                    if ((item as RadioButton).Checked)
+                                    {
+                                        foreach (Control control1 in this.panel6.Controls)
+                                        {
+                                            if (this.panel6.Controls.IndexOf(control1) == (this.panel71.Controls.IndexOf(control) + 1))
+                                            {
+                                                program_list.Add(control1.Name);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (program_list.Count > 0)
                 {
                     String IP_client = "";
 
@@ -1243,12 +1277,22 @@ namespace WindowsFormsApp
 
                     if (IP_client.Length == 0)
                     {
-                        MessageBox.Show("Please select the device to upload.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // Active message
+                        notify_form popup = new notify_form();
+                        popup.set_message("Please select the device to upload");
+                        popup.ShowDialog();
                     }
                     else
                     {
+                        var detailPacket = new
+                        {
+                            IP_client = IP_client,
+                            type = 0,
+                            program_list = program_list
+                        };
+
                         process_form popup = new process_form();
-                        popup.Name = IP_client;
+                        popup.Name = JsonConvert.SerializeObject(detailPacket);
 
                         // Start a new thread for the dialog with parameters
                         Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
@@ -1261,7 +1305,10 @@ namespace WindowsFormsApp
                 }
                 else
                 {
-                    MessageBox.Show("Please select the program to upload.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Active message
+                    notify_form popup = new notify_form();
+                    popup.set_message("Please select the program to upload");
+                    popup.ShowDialog();
                 }
             };
             this.General.Paint += (sender, e) =>
@@ -1307,6 +1354,22 @@ namespace WindowsFormsApp
             this.panel43.MouseClick += (sender, e) =>
             {
                 unselect_object();
+            };
+
+            this.panel74.Paint += (sender, e) =>
+            {
+                Graphics g = e.Graphics;
+
+                // Thiết lập các màu sắc cho gradient
+                Color topColor = Color.FromArgb(64, 64, 64);
+                Color bottomColor = Color.FromArgb(54, 54, 54);
+
+                // Tạo LinearGradientBrush để vẽ gradient
+                using (LinearGradientBrush brush = new LinearGradientBrush(this.panel74.ClientRectangle, topColor, bottomColor, LinearGradientMode.Vertical))
+                {
+                    // Vẽ nền với gradient
+                    g.FillRectangle(brush, this.panel74.ClientRectangle);
+                }
             };
 
             for (int panelIndex = this.panel46.Controls.Count - 1; panelIndex > 0; panelIndex--)
@@ -1420,7 +1483,9 @@ namespace WindowsFormsApp
                 bool flag_cancel = false;
 
                 process_form dialog = (process_form)parameter;
-                string IP_client = (string)dialog.Name;
+                var sendDetailInfo = JsonConvert.DeserializeObject<sendDetailInfo>((string)dialog.Name);
+                string IP_client = sendDetailInfo.IP_client;
+
                 dialog.Name = "File sent unsuccessfully";
 
                 // Buffer size for receiving video data
@@ -1438,13 +1503,11 @@ namespace WindowsFormsApp
 
                 try
                 {
-                    // Resize child panels in program list (panel43)
-                    var visiblePanels = this.panel43.Controls
-                        .OfType<Panel>();
-
-                    foreach (var panel_chill in visiblePanels)
+                    if (sendDetailInfo.program_list.Count > 0)
                     {
-                        var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
+                        
+                        var info_program = JsonConvert.DeserializeObject<Info_Program>(sendDetailInfo.program_list[0]);
+                            
                         var flag_convert = false;
                         long longestDuration = 0;
 
@@ -1940,8 +2003,10 @@ namespace WindowsFormsApp
                             Console.WriteLine("Convert finish");
                         }
 
+                        bool flagForceSucceed = false;
+
                         // Carculator total size                          
-                        if (!flag_convert && controlsListSelect[currentIdxList][0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
+                        if (!flag_convert && controlsListSelect[currentIdxList].Count > 0 && controlsListSelect[currentIdxList][0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
                         {
                             // Deserialize JSON data from the Name property
                             Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
@@ -1961,10 +2026,42 @@ namespace WindowsFormsApp
                                 total_size += fileInfo.Length;
                             }
                         }
-
-                        if (total_size == 0)
+                        // Empty windown in program
+                        else if (controlsListSelect[currentIdxList].Count == 0)
                         {
-                            MessageBox.Show("File error, please try again", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            flagForceSucceed = true;
+                        }
+
+                        if (flagForceSucceed)
+                        {
+                            ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                            // set process bar
+                            dialog.Invoke((MethodInvoker)delegate
+                            {
+                                try
+                                {
+                                    // Your UI update code
+                                    dialog.ProgressValue = 1;
+                                    dialog.progressBar1.Refresh();
+                                }
+                                finally
+                                {
+                                    // Signal that the UI update is completed
+                                    resetEvent.Set();
+                                }
+                            });
+
+                            // Block until the UI update is completed
+                            resetEvent.WaitOne();
+                            resetEvent = null;
+                        }
+                        else if (total_size == 0)
+                        {
+                            // Active message
+                            notify_form popup = new notify_form();
+                            popup.set_message("File error, please try again");
+                            popup.ShowDialog();
                         }
                         else
                         {
@@ -2217,14 +2314,14 @@ namespace WindowsFormsApp
                                 foreach (Control control in controlsListSelect[currentIdxList])
                                 {
                                     info_windown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
-                                    //Console.WriteLine((control as ResizablePanel).Name);
                                 }
                                 //Console.WriteLine($"---------------------------------------{longestDuration}");
+
                                 var detailPacket = new
                                 {
                                     command = "SEND_PLAN",
                                     durationProgramConvert = longestDuration,
-                                    info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name),
+                                    info_program = JsonConvert.DeserializeObject<Info_Program>(sendDetailInfo.program_list[0]),
                                     info_windown = info_windown
                                 };
 
@@ -2898,7 +2995,29 @@ namespace WindowsFormsApp
                 select.TabIndex = 0;
                 select.TabStop = true;
                 select.UseVisualStyleBackColor = false;
+                select.Click += (sender, e) =>
+                {
+                    // Only 1 program is selected in generated list
+                    foreach (Control control in parent.Controls)
+                    {
+                        if (control != this.panel75)
+                        {
+                            foreach (Control child in control.Controls)
+                            {
+                                if (control.Controls.IndexOf(child) == 2)
+                                {
+                                    foreach (Control item in child.Controls)
+                                    {
+                                        RadioButton buttonObj = item as RadioButton;
+                                        buttonObj.Checked = false;
+                                    }                                    
+                                }
+                            }
+                        }
+                    }
 
+                    (sender as RadioButton).Checked = true;
+                };
                 index.Controls.Add(select);
                 index.Dock = System.Windows.Forms.DockStyle.Left;
                 index.Location = new System.Drawing.Point(0, 10);
@@ -5339,29 +5458,32 @@ namespace WindowsFormsApp
                                 idxSelect = int.Parse(item.Text);
 
                                 // Remove layout and data
+                                this.panel71.Controls.RemoveAt((this.panel6.Controls.IndexOf(control) - 1));
                                 this.panel6.Controls.Remove(control);
                                 controlsListSelect[idxSelect].Clear();
                                 controlsListSelect[idxSelect] = null;
 
                                 do
-                                {                               
-                                    if (--currentIdxList == 0)
-                                    {
-                                        // Clear counter
-                                        countProgram = 0;
-
-                                        // Clear data windown of program
-                                        for (int i = 1; i < controlsListSelect.Length; i++)
-                                        { 
-                                            if (controlsListSelect[i] != null)
-                                            {
-                                                controlsListSelect[i].Clear();
-                                                controlsListSelect[i] = null;
-                                            }
-                                        }
-                                    }
+                                {
+                                    --currentIdxList;
                                 }
                                 while (controlsListSelect[currentIdxList] == null);
+
+                                // Is empty list
+                                bool flagEmpty = true;
+                                for (int i = 1; i < controlsListSelect.Length; i++)
+                                {
+                                    if (controlsListSelect[i] != null)
+                                    {
+                                        flagEmpty = false;
+                                    }
+                                }
+
+                                if (flagEmpty)
+                                {
+                                    // Clear counter
+                                    countProgram = 0;
+                                }
 
                                 reinit(true);
                                 break;
@@ -6032,7 +6154,10 @@ namespace WindowsFormsApp
                     }
                     else
                     {
-                        MessageBox.Show("The file is not in the correct format.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        // Active message
+                        notify_form popup = new notify_form();
+                        popup.set_message("The file is not in the correct format");
+                        popup.ShowDialog();
                     }
 
                 }
@@ -7153,7 +7278,11 @@ namespace WindowsFormsApp
             if (flag_error)
             {
                 flag_error = false;
-                MessageBox.Show("No device is chosen.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                // Active message
+                notify_form popup = new notify_form();
+                popup.set_message("No device is chosen");
+                popup.ShowDialog();
             }
         }
 
@@ -7369,6 +7498,110 @@ namespace WindowsFormsApp
                 }
             }
         }
+
+        private void process_button_advanced_list(Button obj)
+        {
+            String type = obj.Text;
+
+            if (type == new_loop_button.Text)
+            {
+                Button show = new Button();
+                show.Dock = System.Windows.Forms.DockStyle.Fill;
+                show.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                show.Image = global::WindowsFormsApp.Properties.Resources.arrow;
+                show.Location = new System.Drawing.Point(0, 0);
+                show.Size = new System.Drawing.Size(16, 32);
+                show.TabIndex = 0;
+                show.UseVisualStyleBackColor = true;
+                show.Visible = false;
+
+                Panel P1 = new Panel();
+                P1.Controls.Add(show);
+                P1.Dock = System.Windows.Forms.DockStyle.Left;
+                P1.Location = new System.Drawing.Point(0, 0);
+                P1.Size = new System.Drawing.Size(16, 32);
+                P1.TabIndex = 0;
+
+                RadioButton radio = new RadioButton();
+                radio.AutoSize = true;
+                radio.Dock = System.Windows.Forms.DockStyle.Fill;
+                radio.FlatAppearance.BorderSize = 0;
+                radio.Location = new System.Drawing.Point(0, 0);
+                radio.Margin = new System.Windows.Forms.Padding(13, 3, 3, 3);
+                radio.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+                radio.Size = new System.Drawing.Size(34, 32);
+                radio.TabIndex = 0;
+                radio.TabStop = true;
+                radio.UseVisualStyleBackColor = true;
+                
+                Panel P2 = new Panel();
+                P2.Controls.Add(radio);
+                P2.Dock = System.Windows.Forms.DockStyle.Left;
+                P2.Location = new System.Drawing.Point(16, 0);
+                P2.Size = new System.Drawing.Size(34, 32);
+                P2.TabIndex = 1;
+
+                Button select = new Button();
+                select.Dock = System.Windows.Forms.DockStyle.Fill;
+                select.FlatAppearance.BorderSize = 0;
+                select.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                select.ForeColor = System.Drawing.SystemColors.ControlLight;
+                select.Image = global::WindowsFormsApp.Properties.Resources.calendar;
+                select.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+                select.Location = new System.Drawing.Point(0, 0);
+                select.Size = new System.Drawing.Size(114, 32);
+                select.TabIndex = 0;
+                select.Text = "  Loop1";
+                select.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+                select.UseVisualStyleBackColor = true;
+                select.Enabled = true;
+
+
+                Panel P3 = new Panel();
+                P3.Controls.Add(select);
+                P3.Dock = System.Windows.Forms.DockStyle.Left;
+                P3.ForeColor = System.Drawing.Color.White;
+                P3.Location = new System.Drawing.Point(50, 0);
+                P3.Size = new System.Drawing.Size(114, 32);
+                P3.TabIndex = 2;
+
+                Panel row = new Panel();
+                row.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                row.Controls.Add(P3);
+                row.Controls.Add(P2);
+                row.Controls.Add(P1);
+                row.Dock = System.Windows.Forms.DockStyle.Top;
+                row.Location = new System.Drawing.Point(0, 59);
+                row.Size = new System.Drawing.Size(694, 32);
+                row.TabIndex = 5;
+
+                this.panel68.Controls.Add(row);
+            }
+            else if (type == new_timming_button.Text)
+            {
+
+            }
+            else if (type == new_command_button.Text)
+            {
+
+            }
+        }
+
+        private void new_loop_button_Click(object sender, EventArgs e)
+        {
+            process_button_advanced_list(sender as Button);
+        }
+
+        private void new_timming_button_Click(object sender, EventArgs e)
+        {
+            process_button_advanced_list(sender as Button);
+        }
+
+        private void new_command_button_Click(object sender, EventArgs e)
+        {
+            process_button_advanced_list(sender as Button);
+        }
     }
 
     public class export_packet
@@ -7513,5 +7746,12 @@ namespace WindowsFormsApp
     {
         public int code { get; set; }
         public adv_packet data { get; set; }
+    }
+
+    public class sendDetailInfo
+    {
+        public String IP_client { get; set; }
+        public int type { get; set; }
+        public List<string> program_list { get; set; }
     }
 }
