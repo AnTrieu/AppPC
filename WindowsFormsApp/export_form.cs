@@ -252,7 +252,7 @@ namespace WindowsFormsApp
 
         private void confirm_button_Click(object sender, EventArgs e)
         {
-            if (this.textBox1.Text.Length > 0)
+            if ((this.textBox1.Text.Length > 0) && (this.textBox2.Text.Length > 0) && (this.textBox3.Text.Length > 0))
             {
                 this.Close();
 

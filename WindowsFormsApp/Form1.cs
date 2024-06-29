@@ -1278,7 +1278,7 @@ namespace WindowsFormsApp
                     if (IP_client.Length == 0)
                     {
                         // Active message
-                        notify_form popup = new notify_form();
+                        notify_form popup = new notify_form(false);
                         popup.set_message("Please select the device to upload");
                         popup.ShowDialog();
                     }
@@ -1306,7 +1306,7 @@ namespace WindowsFormsApp
                 else
                 {
                     // Active message
-                    notify_form popup = new notify_form();
+                    notify_form popup = new notify_form(false);
                     popup.set_message("Please select the program to upload");
                     popup.ShowDialog();
                 }
@@ -2059,7 +2059,7 @@ namespace WindowsFormsApp
                         else if (total_size == 0)
                         {
                             // Active message
-                            notify_form popup = new notify_form();
+                            notify_form popup = new notify_form(false);
                             popup.set_message("File error, please try again");
                             popup.ShowDialog();
                         }
@@ -3939,7 +3939,7 @@ namespace WindowsFormsApp
                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                         pictureBox.Name = selectfilePath;
                         pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-
+                
                         pictureBox.MouseDown += (sender, e) =>
                         {
                             // Unselect all
@@ -6155,7 +6155,7 @@ namespace WindowsFormsApp
                     else
                     {
                         // Active message
-                        notify_form popup = new notify_form();
+                        notify_form popup = new notify_form(false);
                         popup.set_message("The file is not in the correct format");
                         popup.ShowDialog();
                     }
@@ -7280,7 +7280,7 @@ namespace WindowsFormsApp
                 flag_error = false;
 
                 // Active message
-                notify_form popup = new notify_form();
+                notify_form popup = new notify_form(false);
                 popup.set_message("No device is chosen");
                 popup.ShowDialog();
             }
@@ -7502,89 +7502,354 @@ namespace WindowsFormsApp
         private void process_button_advanced_list(Button obj)
         {
             String type = obj.Text;
-
+            String mark_text = "";
             if (type == new_loop_button.Text)
             {
-                Button show = new Button();
-                show.Dock = System.Windows.Forms.DockStyle.Fill;
-                show.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                show.Image = global::WindowsFormsApp.Properties.Resources.arrow;
-                show.Location = new System.Drawing.Point(0, 0);
-                show.Size = new System.Drawing.Size(16, 32);
-                show.TabIndex = 0;
-                show.UseVisualStyleBackColor = true;
-                show.Visible = false;
-
-                Panel P1 = new Panel();
-                P1.Controls.Add(show);
-                P1.Dock = System.Windows.Forms.DockStyle.Left;
-                P1.Location = new System.Drawing.Point(0, 0);
-                P1.Size = new System.Drawing.Size(16, 32);
-                P1.TabIndex = 0;
-
-                RadioButton radio = new RadioButton();
-                radio.AutoSize = true;
-                radio.Dock = System.Windows.Forms.DockStyle.Fill;
-                radio.FlatAppearance.BorderSize = 0;
-                radio.Location = new System.Drawing.Point(0, 0);
-                radio.Margin = new System.Windows.Forms.Padding(13, 3, 3, 3);
-                radio.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
-                radio.Size = new System.Drawing.Size(34, 32);
-                radio.TabIndex = 0;
-                radio.TabStop = true;
-                radio.UseVisualStyleBackColor = true;
-                
-                Panel P2 = new Panel();
-                P2.Controls.Add(radio);
-                P2.Dock = System.Windows.Forms.DockStyle.Left;
-                P2.Location = new System.Drawing.Point(16, 0);
-                P2.Size = new System.Drawing.Size(34, 32);
-                P2.TabIndex = 1;
-
-                Button select = new Button();
-                select.Dock = System.Windows.Forms.DockStyle.Fill;
-                select.FlatAppearance.BorderSize = 0;
-                select.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                select.ForeColor = System.Drawing.SystemColors.ControlLight;
-                select.Image = global::WindowsFormsApp.Properties.Resources.calendar;
-                select.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-                select.Location = new System.Drawing.Point(0, 0);
-                select.Size = new System.Drawing.Size(114, 32);
-                select.TabIndex = 0;
-                select.Text = "  Loop1";
-                select.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-                select.UseVisualStyleBackColor = true;
-                select.Enabled = true;
-
-
-                Panel P3 = new Panel();
-                P3.Controls.Add(select);
-                P3.Dock = System.Windows.Forms.DockStyle.Left;
-                P3.ForeColor = System.Drawing.Color.White;
-                P3.Location = new System.Drawing.Point(50, 0);
-                P3.Size = new System.Drawing.Size(114, 32);
-                P3.TabIndex = 2;
-
-                Panel row = new Panel();
-                row.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-                row.Controls.Add(P3);
-                row.Controls.Add(P2);
-                row.Controls.Add(P1);
-                row.Dock = System.Windows.Forms.DockStyle.Top;
-                row.Location = new System.Drawing.Point(0, 59);
-                row.Size = new System.Drawing.Size(694, 32);
-                row.TabIndex = 5;
-
-                this.panel68.Controls.Add(row);
+                mark_text = "Loop " + this.panel96.Controls.Count.ToString();
             }
             else if (type == new_timming_button.Text)
             {
-
+                mark_text = "Timming play " + this.panel97.Controls.Count.ToString();
             }
             else if (type == new_command_button.Text)
             {
+                mark_text = "Timming instruction " + this.panel98.Controls.Count.ToString();
+            }
 
+            // Tạo PictureBox cho biểu tượng (icon)
+            PictureBox show = new PictureBox();
+            show.Image = global::WindowsFormsApp.Properties.Resources.arrow;
+            show.SizeMode = PictureBoxSizeMode.CenterImage; // Hiển thị hình ảnh theo trung tâm
+            show.Dock = DockStyle.Fill;
+            show.Name = mark_text;
+            show.Visible = false;
+
+
+            Panel P1 = new Panel();
+            P1.Controls.Add(show);
+            P1.Dock = System.Windows.Forms.DockStyle.Left;
+            P1.Location = new System.Drawing.Point(0, 0);
+            P1.Size = new System.Drawing.Size(16, 32);
+            P1.TabIndex = 0;
+
+            RadioButton radio = new RadioButton();
+            radio.AutoSize = true;
+            radio.Dock = System.Windows.Forms.DockStyle.Fill;
+            radio.FlatAppearance.BorderSize = 0;
+            radio.Location = new System.Drawing.Point(0, 0);
+            radio.Margin = new System.Windows.Forms.Padding(13, 3, 3, 3);
+            radio.Padding = new System.Windows.Forms.Padding(10, 0, 0, 0);
+            radio.Size = new System.Drawing.Size(34, 32);
+            radio.TabIndex = 0;
+            radio.TabStop = true;
+            radio.AutoCheck = false;
+            radio.UseVisualStyleBackColor = true;
+            radio.Click += (sender, e) =>
+            {
+                // Select object
+                (sender as RadioButton).Checked = !(sender as RadioButton).Checked;
+
+                Panel parentPanel = ((Panel)radio.Parent);
+                Panel row = ((Panel)parentPanel.Parent);
+
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+            };
+
+            Panel P2 = new Panel();
+            P2.Controls.Add(radio);
+            P2.Dock = System.Windows.Forms.DockStyle.Left;
+            P2.Location = new System.Drawing.Point(16, 0);
+            P2.Size = new System.Drawing.Size(34, 32);
+            P2.TabIndex = 1;
+
+
+            // Tạo PictureBox cho biểu tượng (icon)
+            PictureBox iconPictureBox = new PictureBox();
+            iconPictureBox.Image = global::WindowsFormsApp.Properties.Resources.calendar; // Thiết lập hình ảnh từ resource của bạn
+            iconPictureBox.SizeMode = PictureBoxSizeMode.CenterImage; // Hiển thị hình ảnh theo trung tâm
+            iconPictureBox.Dock = DockStyle.Left;
+            iconPictureBox.Size = new Size(32, 32); // Thiết lập kích thước của PictureBox
+            iconPictureBox.Click += (sender1, e1) =>
+            {
+                Panel parentPanel = ((Panel)iconPictureBox.Parent);
+                Panel row = ((Panel)parentPanel.Parent);
+
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+            };
+
+            // Tạo Label cho nhãn (label)
+            Label label = new Label();
+            label.Text = mark_text;
+            label.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point, 0); // Thiết lập font chữ
+            label.ForeColor = Color.White; // Thiết lập màu chữ
+            label.Dock = DockStyle.Fill; ; // Chỉnh sửa .
+            label.TextAlign = ContentAlignment.MiddleLeft; // Canh giữa nội dung của Label
+            label.Click += (sender1, e1) =>
+            {
+                Panel parentPanel = ((Panel)label.Parent);
+                Panel row = ((Panel)parentPanel.Parent);
+
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+            };
+
+            Panel P3 = new Panel();
+            P3.Controls.Add(label);
+            P3.Controls.Add(iconPictureBox);
+            P3.Dock = System.Windows.Forms.DockStyle.Left;
+            P3.ForeColor = System.Drawing.Color.White;
+            P3.Location = new System.Drawing.Point(50, 0);
+            P3.Size = new System.Drawing.Size(250, 32);
+            P3.TabIndex = 2;
+
+            Panel rowMaster = new Panel();
+            rowMaster.Controls.Add(P3);
+            rowMaster.Controls.Add(P2);
+            rowMaster.Controls.Add(P1);
+            rowMaster.Dock = System.Windows.Forms.DockStyle.Top;
+            rowMaster.Location = new System.Drawing.Point(0, 59);
+            rowMaster.Size = new System.Drawing.Size(694, 32);
+            rowMaster.TabIndex = 5;
+            rowMaster.BackColor = System.Drawing.Color.SteelBlue;
+            rowMaster.Click += (sender1, e1) =>
+            {
+                // Clean object select
+                foreach (Control control in rowMaster.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                rowMaster.BackColor = System.Drawing.Color.SteelBlue;
+            };
+
+
+            if (type == new_loop_button.Text)
+            {
+                // Only 1 type at a time
+                if ((this.panel97.Controls.Count > 1) || (this.panel98.Controls.Count > 1))
+                {
+                    notify_form popup = new notify_form(true);
+                    popup.set_message("Just one kind at once");
+                    Boolean flagConfirm = false;
+                    popup.ConfirmClick += (sender1, e1) =>
+                    {
+                        flagConfirm = true;
+                    };
+
+                    popup.ShowDialog();
+
+                    if (flagConfirm)
+                    {
+                        List<Control> controlsToRemove = new List<Control>();
+
+                        // Clean list
+                        foreach (Control control in this.panel97.Controls)
+                        {
+                            if (this.panel97.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel97.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+
+                        // Clean list
+                        foreach (Control control in this.panel98.Controls)
+                        {
+                            if (this.panel98.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel98.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+                    }
+                    else
+                        return;
+                }
+                else if (this.panel96.Controls.Count > 1)
+                {
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("Setting is now in its maximum loop");
+                    popup.ShowDialog();
+
+                    return;
+                }
+
+                // Clean object select
+                foreach (Control control in this.panel96.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                this.panel96.Controls.Add(rowMaster);
+
+                // Sử dụng SetChildIndex để đưa row lên đầu
+                this.panel96.Controls.SetChildIndex(rowMaster, 1);
+            }
+            else if (type == new_timming_button.Text)
+            {
+                // Only 1 type at a time
+                if ((this.panel96.Controls.Count > 1) || (this.panel98.Controls.Count > 1))
+                {
+                    notify_form popup = new notify_form(true);
+                    popup.set_message("Just one kind at once");
+                    Boolean flagConfirm = false;
+                    popup.ConfirmClick += (sender1, e1) =>
+                    {
+                        flagConfirm = true;
+                    };
+
+                    popup.ShowDialog();
+
+                    if (flagConfirm)
+                    {
+                        List<Control> controlsToRemove = new List<Control>();
+
+                        // Clean list
+                        foreach (Control control in this.panel96.Controls)
+                        {
+                            if (this.panel96.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel96.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+
+                        // Clean list
+                        foreach (Control control in this.panel98.Controls)
+                        {
+                            if (this.panel98.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel98.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+                    }
+                    else
+                        return;
+                }
+
+                // Clean object select
+                foreach (Control control in this.panel97.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                this.panel97.Controls.Add(rowMaster);
+
+                // Sử dụng SetChildIndex để đưa row lên đầu
+                this.panel97.Controls.SetChildIndex(rowMaster, 1);
+            }
+            else if (type == new_command_button.Text)
+            {
+                // Only 1 type at a time
+                if ((this.panel96.Controls.Count > 1) || (this.panel97.Controls.Count > 1))
+                {
+                    notify_form popup = new notify_form(true);
+                    popup.set_message("Just one kind at once");
+                    Boolean flagConfirm = false;
+                    popup.ConfirmClick += (sender1, e1) =>
+                    {
+                        flagConfirm = true;
+                    };
+
+                    popup.ShowDialog();
+
+                    if (flagConfirm)
+                    {
+                        List<Control> controlsToRemove = new List<Control>();
+
+                        // Clean list
+                        foreach (Control control in this.panel96.Controls)
+                        {
+                            if (this.panel96.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel96.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+
+                        // Clean list
+                        foreach (Control control in this.panel97.Controls)
+                        {
+                            if (this.panel97.Controls.IndexOf(control) > 0)
+                                controlsToRemove.Add(control);
+                        }
+                        foreach (Control control in controlsToRemove)
+                        {
+                            this.panel97.Controls.Remove(control);
+                        }
+                        controlsToRemove.Clear();
+                    }
+                    else
+                        return;
+                }
+                else if (this.panel98.Controls.Count > 1)
+                {
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("Setting is now in its maximum loop");
+                    popup.ShowDialog();
+
+                    return;
+                }
+
+                // Clean object select
+                foreach (Control control in this.panel98.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                this.panel98.Controls.Add(rowMaster);
+
+                // Sử dụng SetChildIndex để đưa row lên đầu
+                this.panel98.Controls.SetChildIndex(rowMaster, 1);
             }
         }
 
