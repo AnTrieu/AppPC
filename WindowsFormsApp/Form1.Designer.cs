@@ -206,8 +206,8 @@
             this.label43 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.panel95 = new System.Windows.Forms.Panel();
-            this.button9 = new System.Windows.Forms.Button();
-            this.button10 = new System.Windows.Forms.Button();
+            this.command_edit = new System.Windows.Forms.Button();
+            this.command_delete = new System.Windows.Forms.Button();
             this.label45 = new System.Windows.Forms.Label();
             this.panel91 = new System.Windows.Forms.Panel();
             this.label35 = new System.Windows.Forms.Label();
@@ -222,8 +222,8 @@
             this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.panel89 = new System.Windows.Forms.Panel();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.timing_edit = new System.Windows.Forms.Button();
+            this.timing_delete = new System.Windows.Forms.Button();
             this.label34 = new System.Windows.Forms.Label();
             this.panel83 = new System.Windows.Forms.Panel();
             this.label16 = new System.Windows.Forms.Label();
@@ -238,8 +238,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.panel74 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.loop_edit = new System.Windows.Forms.Button();
+            this.loop_delete = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.panel72 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
@@ -2449,7 +2449,7 @@
             // 
             this.tableLayoutPanel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel5.ColumnCount = 4;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -2474,7 +2474,7 @@
             this.label36.Location = new System.Drawing.Point(0, 0);
             this.label36.Margin = new System.Windows.Forms.Padding(0);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(130, 30);
+            this.label36.Size = new System.Drawing.Size(260, 30);
             this.label36.TabIndex = 0;
             this.label36.Text = "Instruction type";
             this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2484,7 +2484,7 @@
             this.label43.AutoSize = true;
             this.label43.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label43.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label43.Location = new System.Drawing.Point(130, 0);
+            this.label43.Location = new System.Drawing.Point(260, 0);
             this.label43.Margin = new System.Windows.Forms.Padding(0);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(100, 30);
@@ -2497,7 +2497,7 @@
             this.label44.AutoSize = true;
             this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label44.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label44.Location = new System.Drawing.Point(230, 0);
+            this.label44.Location = new System.Drawing.Point(360, 0);
             this.label44.Margin = new System.Windows.Forms.Padding(0);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(100, 30);
@@ -2509,8 +2509,8 @@
             // 
             this.panel95.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel95.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel95.Controls.Add(this.button9);
-            this.panel95.Controls.Add(this.button10);
+            this.panel95.Controls.Add(this.command_edit);
+            this.panel95.Controls.Add(this.command_delete);
             this.panel95.Controls.Add(this.label45);
             this.panel95.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel95.Location = new System.Drawing.Point(0, 0);
@@ -2519,29 +2519,30 @@
             this.panel95.Size = new System.Drawing.Size(694, 30);
             this.panel95.TabIndex = 4;
             // 
-            // button9
+            // command_edit
             // 
-            this.button9.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button9.FlatAppearance.BorderSize = 0;
-            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button9.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
-            this.button9.Location = new System.Drawing.Point(642, 3);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(25, 25);
-            this.button9.TabIndex = 4;
-            this.button9.UseVisualStyleBackColor = true;
+            this.command_edit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.command_edit.FlatAppearance.BorderSize = 0;
+            this.command_edit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.command_edit.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
+            this.command_edit.Location = new System.Drawing.Point(642, 3);
+            this.command_edit.Name = "command_edit";
+            this.command_edit.Size = new System.Drawing.Size(25, 25);
+            this.command_edit.TabIndex = 4;
+            this.command_edit.UseVisualStyleBackColor = true;
+            this.command_edit.Click += new System.EventHandler(this.command_edit_Click);
             // 
-            // button10
+            // command_delete
             // 
-            this.button10.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button10.FlatAppearance.BorderSize = 0;
-            this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button10.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
-            this.button10.Location = new System.Drawing.Point(667, 3);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(25, 25);
-            this.button10.TabIndex = 5;
-            this.button10.UseVisualStyleBackColor = true;
+            this.command_delete.Dock = System.Windows.Forms.DockStyle.Right;
+            this.command_delete.FlatAppearance.BorderSize = 0;
+            this.command_delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.command_delete.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
+            this.command_delete.Location = new System.Drawing.Point(667, 3);
+            this.command_delete.Name = "command_delete";
+            this.command_delete.Size = new System.Drawing.Size(25, 25);
+            this.command_delete.TabIndex = 5;
+            this.command_delete.UseVisualStyleBackColor = true;
             // 
             // label45
             // 
@@ -2657,7 +2658,7 @@
             // 
             this.tableLayoutPanel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel4.ColumnCount = 4;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -2682,7 +2683,7 @@
             this.label17.Location = new System.Drawing.Point(0, 0);
             this.label17.Margin = new System.Windows.Forms.Padding(0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(130, 30);
+            this.label17.Size = new System.Drawing.Size(260, 30);
             this.label17.TabIndex = 0;
             this.label17.Text = "Instruction type";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2692,7 +2693,7 @@
             this.label18.AutoSize = true;
             this.label18.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label18.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label18.Location = new System.Drawing.Point(130, 0);
+            this.label18.Location = new System.Drawing.Point(260, 0);
             this.label18.Margin = new System.Windows.Forms.Padding(0);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(100, 30);
@@ -2705,7 +2706,7 @@
             this.label19.AutoSize = true;
             this.label19.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label19.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label19.Location = new System.Drawing.Point(230, 0);
+            this.label19.Location = new System.Drawing.Point(360, 0);
             this.label19.Margin = new System.Windows.Forms.Padding(0);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(100, 30);
@@ -2717,8 +2718,8 @@
             // 
             this.panel89.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel89.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel89.Controls.Add(this.button4);
-            this.panel89.Controls.Add(this.button6);
+            this.panel89.Controls.Add(this.timing_edit);
+            this.panel89.Controls.Add(this.timing_delete);
             this.panel89.Controls.Add(this.label34);
             this.panel89.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel89.Location = new System.Drawing.Point(0, 0);
@@ -2727,29 +2728,30 @@
             this.panel89.Size = new System.Drawing.Size(694, 30);
             this.panel89.TabIndex = 4;
             // 
-            // button4
+            // timing_edit
             // 
-            this.button4.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
-            this.button4.Location = new System.Drawing.Point(642, 3);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(25, 25);
-            this.button4.TabIndex = 4;
-            this.button4.UseVisualStyleBackColor = true;
+            this.timing_edit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.timing_edit.FlatAppearance.BorderSize = 0;
+            this.timing_edit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.timing_edit.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
+            this.timing_edit.Location = new System.Drawing.Point(642, 3);
+            this.timing_edit.Name = "timing_edit";
+            this.timing_edit.Size = new System.Drawing.Size(25, 25);
+            this.timing_edit.TabIndex = 4;
+            this.timing_edit.UseVisualStyleBackColor = true;
+            this.timing_edit.Click += new System.EventHandler(this.timing_edit_Click);
             // 
-            // button6
+            // timing_delete
             // 
-            this.button6.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button6.FlatAppearance.BorderSize = 0;
-            this.button6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button6.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
-            this.button6.Location = new System.Drawing.Point(667, 3);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(25, 25);
-            this.button6.TabIndex = 5;
-            this.button6.UseVisualStyleBackColor = true;
+            this.timing_delete.Dock = System.Windows.Forms.DockStyle.Right;
+            this.timing_delete.FlatAppearance.BorderSize = 0;
+            this.timing_delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.timing_delete.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
+            this.timing_delete.Location = new System.Drawing.Point(667, 3);
+            this.timing_delete.Name = "timing_delete";
+            this.timing_delete.Size = new System.Drawing.Size(25, 25);
+            this.timing_delete.TabIndex = 5;
+            this.timing_delete.UseVisualStyleBackColor = true;
             // 
             // label34
             // 
@@ -2866,7 +2868,7 @@
             // 
             this.tableLayoutPanel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel3.ColumnCount = 4;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -2891,7 +2893,7 @@
             this.label9.Location = new System.Drawing.Point(0, 0);
             this.label9.Margin = new System.Windows.Forms.Padding(0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(130, 30);
+            this.label9.Size = new System.Drawing.Size(260, 30);
             this.label9.TabIndex = 0;
             this.label9.Text = "Instruction type";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2901,7 +2903,7 @@
             this.label10.AutoSize = true;
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label10.Location = new System.Drawing.Point(130, 0);
+            this.label10.Location = new System.Drawing.Point(260, 0);
             this.label10.Margin = new System.Windows.Forms.Padding(0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 30);
@@ -2914,7 +2916,7 @@
             this.label12.AutoSize = true;
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label12.Location = new System.Drawing.Point(230, 0);
+            this.label12.Location = new System.Drawing.Point(360, 0);
             this.label12.Margin = new System.Windows.Forms.Padding(0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(100, 30);
@@ -2926,8 +2928,8 @@
             // 
             this.panel74.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel74.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel74.Controls.Add(this.button1);
-            this.panel74.Controls.Add(this.button2);
+            this.panel74.Controls.Add(this.loop_edit);
+            this.panel74.Controls.Add(this.loop_delete);
             this.panel74.Controls.Add(this.label14);
             this.panel74.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel74.Location = new System.Drawing.Point(0, 0);
@@ -2936,29 +2938,30 @@
             this.panel74.Size = new System.Drawing.Size(694, 30);
             this.panel74.TabIndex = 4;
             // 
-            // button1
+            // loop_edit
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
-            this.button1.Location = new System.Drawing.Point(642, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(25, 25);
-            this.button1.TabIndex = 4;
-            this.button1.UseVisualStyleBackColor = true;
+            this.loop_edit.Dock = System.Windows.Forms.DockStyle.Right;
+            this.loop_edit.FlatAppearance.BorderSize = 0;
+            this.loop_edit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.loop_edit.Image = global::WindowsFormsApp.Properties.Resources.tools_icon;
+            this.loop_edit.Location = new System.Drawing.Point(642, 3);
+            this.loop_edit.Name = "loop_edit";
+            this.loop_edit.Size = new System.Drawing.Size(25, 25);
+            this.loop_edit.TabIndex = 4;
+            this.loop_edit.UseVisualStyleBackColor = true;
+            this.loop_edit.Click += new System.EventHandler(this.loop_edit_Click);
             // 
-            // button2
+            // loop_delete
             // 
-            this.button2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button2.FlatAppearance.BorderSize = 0;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
-            this.button2.Location = new System.Drawing.Point(667, 3);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(25, 25);
-            this.button2.TabIndex = 5;
-            this.button2.UseVisualStyleBackColor = true;
+            this.loop_delete.Dock = System.Windows.Forms.DockStyle.Right;
+            this.loop_delete.FlatAppearance.BorderSize = 0;
+            this.loop_delete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.loop_delete.Image = global::WindowsFormsApp.Properties.Resources.trash_icon;
+            this.loop_delete.Location = new System.Drawing.Point(667, 3);
+            this.loop_delete.Name = "loop_delete";
+            this.loop_delete.Size = new System.Drawing.Size(25, 25);
+            this.loop_delete.TabIndex = 5;
+            this.loop_delete.UseVisualStyleBackColor = true;
             // 
             // label14
             // 
@@ -3393,8 +3396,8 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Panel panel74;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button loop_edit;
+        private System.Windows.Forms.Button loop_delete;
         private System.Windows.Forms.Panel panel90;
         private System.Windows.Forms.Panel panel91;
         private System.Windows.Forms.Label label35;
@@ -3407,8 +3410,8 @@
         private System.Windows.Forms.Label label43;
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Panel panel95;
-        private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button command_edit;
+        private System.Windows.Forms.Button command_delete;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Panel panel76;
         private System.Windows.Forms.Panel panel83;
@@ -3422,8 +3425,8 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Panel panel89;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button timing_edit;
+        private System.Windows.Forms.Button timing_delete;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.Panel panel96;
         private System.Windows.Forms.Panel panel98;

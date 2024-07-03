@@ -23,6 +23,7 @@ using System.Runtime.InteropServices.ComTypes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using System.Windows.Media.Media3D;
 using System.IO.Pipes;
+using System.Timers;
 
 namespace WindowsFormsApp
 {
@@ -1428,7 +1429,7 @@ namespace WindowsFormsApp
 
             // Create a timer with a 1000ms (1 second) interval
             Timer timer = new Timer();
-            timer.Interval = 100;
+            timer.Interval = 1000;
             // Hook up the Elapsed event for the timer
             timer.Tick += (sender1, e1) =>
             {
@@ -1437,12 +1438,75 @@ namespace WindowsFormsApp
                     DateTimeOffset dateTimeOffset = DateTimeOffset.FromFileTime(current_time_box * 10000);
 
                     this.current_time.Text = dateTimeOffset.ToString($"dd/MM/{DateTime.Now.Year} HH:mm:ss");
-
-                    current_time_box += 100;
+                    current_time_box += 1000;
                 }
                 else
                 {
                     this.current_time.Text = "--/--/-- --:--:--";
+                }
+
+                var visiblePanels = this.panel43.Controls
+                                    .OfType<Panel>()
+                                    .Where(panel => panel.Visible);
+
+                foreach (var destinationPanel in visiblePanels)
+                {
+                    // Program tab
+                    foreach (Control control in this.panel6.Controls)
+                    {
+                        if ((control != this.panel34) && (control != this.panel33) && (control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            foreach (Control child in control.Controls)
+                            {
+                                if (control.Controls.IndexOf(child) == 1)
+                                {
+                                    foreach (Control item in child.Controls)
+                                    {
+                                        // Create a bitmap with the same size as the panel
+                                        Bitmap bitmap = new Bitmap(destinationPanel.Width, destinationPanel.Height);
+                                        destinationPanel.DrawToBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
+
+                                        // Show capture picture
+                                        PictureBox showPictureBox = item as PictureBox;
+                                        if (showPictureBox.Image != null)
+                                        {
+                                            showPictureBox.Image.Dispose();
+                                            showPictureBox.Image = null;
+                                        }
+
+                                        showPictureBox.Image = bitmap;
+
+                                        // Release tab
+                                        foreach (Control control1 in this.panel71.Controls)
+                                        {
+                                            if ((control1 != this.panel75) && (this.panel71.Controls.IndexOf(control1) == (this.panel6.Controls.IndexOf(control) - 1)))
+                                            {
+                                                foreach (Control child1 in control1.Controls)
+                                                {
+                                                    if (control1.Controls.IndexOf(child1) == 1)
+                                                    {
+                                                        foreach (Control item1 in child1.Controls)
+                                                        {
+                                                            PictureBox showPictureBox1 = item1 as PictureBox;
+                                                            if (showPictureBox1.Image != null)
+                                                            {
+                                                                showPictureBox1.Image.Dispose();
+                                                                showPictureBox1.Image = null;
+                                                            }
+                                                            
+                                                            showPictureBox1.Image = bitmap;
+                                                            break;
+                                                        }
+                                                    }                                                    
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
@@ -3048,7 +3112,7 @@ namespace WindowsFormsApp
 
             PictureBox pictureBox = new PictureBox();
             pictureBox.BackColor = System.Drawing.Color.Black;
-            pictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
             pictureBox.Location = new System.Drawing.Point(0, 0);
             pictureBox.Size = new System.Drawing.Size(70, 70);
@@ -3072,7 +3136,8 @@ namespace WindowsFormsApp
                     box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
 
                     // Load Program
-                    processSelectProgram();
+                    if (parent != this.panel71)
+                        processSelectProgram();
                 }
             };
 
@@ -3109,7 +3174,8 @@ namespace WindowsFormsApp
                     box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
 
                     // Load Program
-                    processSelectProgram();
+                    if (parent != this.panel71)
+                        processSelectProgram();
                 }
             };
 
@@ -3139,7 +3205,8 @@ namespace WindowsFormsApp
                     box.Parent.Parent.BackColor = System.Drawing.Color.SteelBlue;
 
                     // Load Program
-                    processSelectProgram();
+                    if (parent != this.panel71)
+                        processSelectProgram();
                 }
             };
 
@@ -3168,13 +3235,16 @@ namespace WindowsFormsApp
                     box.Parent.BackColor = System.Drawing.Color.SteelBlue;
 
                     // Load Program
-                    processSelectProgram();
+                    if (parent != this.panel71)
+                        processSelectProgram();
                 }
             };
 
             Panel row = new Panel();
             if (parent != this.panel71)
                 row.BackColor = System.Drawing.Color.SteelBlue;
+            else
+                row.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             row.Dock = System.Windows.Forms.DockStyle.Top;
             row.Location = new System.Drawing.Point(0, 30);
             row.Margin = new System.Windows.Forms.Padding(0);
@@ -3288,7 +3358,7 @@ namespace WindowsFormsApp
         {
             if (e.Data.GetDataPresent("PictureBoxImage") && e.Data.GetDataPresent("PictureBoxName"))
             {
-                // Unselect all
+                // Unselect all in list video
                 foreach (Control control in controlsListSelect[currentIdxList])
                 {
                     if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
@@ -3646,7 +3716,6 @@ namespace WindowsFormsApp
                 // Load the video file
                 windown.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
 
-                int interval = 20;
                 long total_frame = 0;
 
                 // Create PictureBox for the image
@@ -3670,7 +3739,6 @@ namespace WindowsFormsApp
                 windown.Controls.Add(pictureBox);
 
                 windown.updateTimer = new Timer();
-                windown.updateTimer.Interval = interval;
                 windown.updateTimer.Tick += (sender1, e1) =>
                 {
                     if (InvokeRequired)
@@ -3684,7 +3752,7 @@ namespace WindowsFormsApp
                             total_frame = windown.videoFileReader.FrameCount;
                             pictureBox.Name = "0";
                         }
-                        else if (int.Parse(pictureBox.Name) > total_frame)
+                        else if (int.Parse(pictureBox.Name) >= (total_frame >= 2 ? (total_frame - 2) : total_frame))
                         {
                             pictureBox.Name = "0";
                         }
@@ -3697,7 +3765,6 @@ namespace WindowsFormsApp
                         }
                         pictureBox.Image = windown.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
                         pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
-
                     }
                 };
 
@@ -3783,7 +3850,7 @@ namespace WindowsFormsApp
                             // Unselect all
                             foreach (Control control1 in lists)
                             {
-                                if (control1 is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
+                                if (control1 is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name) && control1.Parent != null)
                                 {
                                     // Deserialize JSON data from the Name property
                                     Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
@@ -3849,7 +3916,7 @@ namespace WindowsFormsApp
 
                                                     panel_windown.updateTimer.Stop();
                                                     panel_windown.videoFileReader.Close();
-
+                                                    
                                                     panel_windown.videoFileReader.Open(path_file);
                                                     panel_windown.updateTimer.Interval = 1000 / (int)panel_windown.videoFileReader.FrameRate.Value;
                                                     panel_windown.updateTimer.Start();
@@ -3915,14 +3982,13 @@ namespace WindowsFormsApp
                             extension == ".rmvp" || extension == ".mov" ||
                             extension == ".dat" || extension == ".flv")
                         {
-
                             // Load the video file
                             Accord.Video.FFMPEG.VideoFileReader videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
                             videoFileReader.Open(selectfilePath);
-
+                                                                                  
                             // Get the first frame
-                            videoFrame = videoFileReader.ReadVideoFrame();
-
+                            videoFrame = videoFileReader.ReadVideoFrame(10);
+                            
                             // Close the video file reader
                             videoFileReader.Close();
                         }
@@ -3939,7 +4005,7 @@ namespace WindowsFormsApp
                         pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                         pictureBox.Name = selectfilePath;
                         pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-                
+
                         pictureBox.MouseDown += (sender, e) =>
                         {
                             // Unselect all
@@ -5339,8 +5405,7 @@ namespace WindowsFormsApp
         }
 
         private void setting_program(object sender, EventArgs e)
-        {
-            
+        {            
             foreach (Control control in this.panel6.Controls)
             {
                 if ((control != this.panel34) && (control != this.panel33) && (control.BackColor == System.Drawing.Color.SteelBlue))
@@ -5414,18 +5479,45 @@ namespace WindowsFormsApp
                             // Update program info
                             control.Name = JsonConvert.SerializeObject(infoProgram);
 
-                            // Edit info
+                            // Edit info program tab
                             foreach (Control child in control.Controls)
                             {
                                 foreach (Control item in child.Controls)
                                 {
                                     if (child.Controls.IndexOf(item) == 0)
+                                    {
                                         item.Text = $"{width}(W) x {height}(H)";
+                                    }                                       
                                     else if (child.Controls.IndexOf(item) == 1)
+                                    {
                                         item.Text = e1.name;
+                                    }                                        
                                 }
                                 break;
-                            }                              
+                            }
+
+                            // Edit info release tab
+                            foreach (Control control1 in this.panel71.Controls)
+                            {
+                                if ((control1 != this.panel75) && (this.panel71.Controls.IndexOf(control1) == (this.panel6.Controls.IndexOf(control) - 1)))
+                                {
+                                    foreach (Control child in control1.Controls)
+                                    {
+                                        foreach (Control item in child.Controls)
+                                        {
+                                            if (child.Controls.IndexOf(item) == 0)
+                                            {
+                                                item.Text = $"{width}(W) x {height}(H)";
+                                            }
+                                            else if (child.Controls.IndexOf(item) == 1)
+                                            {
+                                                item.Text = e1.name;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     };
 
@@ -7499,6 +7591,77 @@ namespace WindowsFormsApp
             }
         }
 
+        private List<int> findPositionMasterRow(Panel destinationPanel)
+        {
+            List<int> returnValue = new List<int>();
+
+            int master = -1;
+            int masterNext = -1;
+            int hide = 0;
+            int delta = 1;
+            int counter = 0;
+
+            // Find start poind
+            foreach (Control control in destinationPanel.Controls)
+            {
+                if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                {
+                    if (control.Controls.Count != 3)
+                    {
+                        // Need to find row master
+                        delta = 1;
+                        counter = 0;
+
+                        do
+                        {
+                            foreach (Control control1 in destinationPanel.Controls)
+                            {
+
+                                if ((destinationPanel.Controls.IndexOf(control1) == (destinationPanel.Controls.IndexOf(control) + delta)) && (control1.Controls.Count == 3))
+                                {
+                                    master = destinationPanel.Controls.IndexOf(control1);
+                                    break;
+                                }
+                            }
+                            delta++;
+                        }
+                        while ((master == -1) && (counter++ < 50));
+                    }
+                    else
+                    {
+                        // Found row master
+                        master = destinationPanel.Controls.IndexOf(control);
+                    }
+                }
+            }
+
+            // Need to find row master
+            delta = 1;
+            counter = 0;
+
+            // Find end point
+            do
+            {
+                if ((destinationPanel.Controls[master - delta].Controls.Count == 3) || (destinationPanel.Controls[master - delta].Controls.Count == 1))
+                {
+                    masterNext = master - delta;
+                    break;
+                }
+                else if (!destinationPanel.Controls[master - delta].Visible)
+                {
+                    hide++;
+                }
+
+                delta++;
+            }
+            while ((masterNext == -1) && (counter++ < 50));
+
+            returnValue.Add(master);
+            returnValue.Add(masterNext);
+            returnValue.Add(hide);
+            Console.WriteLine($"Final {master} {masterNext} {hide}");
+            return returnValue;
+        }
         private void process_button_advanced_list(Button obj)
         {
             String type = obj.Text;
@@ -7523,6 +7686,67 @@ namespace WindowsFormsApp
             show.Dock = DockStyle.Fill;
             show.Name = mark_text;
             show.Visible = false;
+            show.Click += (sender1, e1) =>
+            {
+                Panel child = ((sender1 as PictureBox).Parent as Panel);
+                Panel row = child.Parent as Panel;
+
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+
+                Panel destinationPanel = row.Parent as Panel;
+                List<int> position = findPositionMasterRow(destinationPanel);
+                if (position.Count > 0)
+                {
+                    int master = position[0];
+                    int masterNext = position[1];
+                    int hide = position[2];
+
+                    PictureBox pictureBox = row.Controls[2].Controls[0] as PictureBox;
+                    if (pictureBox.Image != null)
+                    {
+                        if (((master - masterNext) - hide) >= 2)
+                        {
+                            // Rotate the image by 270 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+                            // Hide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = false;
+                                }
+                            }
+                        }
+                        else if (((master - masterNext) - hide) == 1)
+                        {
+                            // Rotate the image by 90 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+                            // UnHide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = true;
+                                }
+                            }
+                        }
+                    }
+
+                    // Refresh the PictureBox to display the updated image
+                    pictureBox.Refresh();
+                }
+            };
 
 
             Panel P1 = new Panel();
@@ -7543,14 +7767,15 @@ namespace WindowsFormsApp
             radio.TabIndex = 0;
             radio.TabStop = true;
             radio.AutoCheck = false;
+            radio.Checked = true;
             radio.UseVisualStyleBackColor = true;
             radio.Click += (sender, e) =>
             {
                 // Select object
                 (sender as RadioButton).Checked = !(sender as RadioButton).Checked;
 
-                Panel parentPanel = ((Panel)radio.Parent);
-                Panel row = ((Panel)parentPanel.Parent);
+                Panel child = ((sender as RadioButton).Parent as Panel);
+                Panel row = child.Parent as Panel;
 
                 // Clean object select
                 foreach (Control control in row.Parent.Controls)
@@ -7580,8 +7805,8 @@ namespace WindowsFormsApp
             iconPictureBox.Size = new Size(32, 32); // Thiết lập kích thước của PictureBox
             iconPictureBox.Click += (sender1, e1) =>
             {
-                Panel parentPanel = ((Panel)iconPictureBox.Parent);
-                Panel row = ((Panel)parentPanel.Parent);
+                Panel child = ((sender1 as PictureBox).Parent as Panel);
+                Panel row = child.Parent as Panel;
 
                 // Clean object select
                 foreach (Control control in row.Parent.Controls)
@@ -7604,8 +7829,8 @@ namespace WindowsFormsApp
             label.TextAlign = ContentAlignment.MiddleLeft; // Canh giữa nội dung của Label
             label.Click += (sender1, e1) =>
             {
-                Panel parentPanel = ((Panel)label.Parent);
-                Panel row = ((Panel)parentPanel.Parent);
+                Panel child = ((sender1 as Label).Parent as Panel);
+                Panel row = child.Parent as Panel;
 
                 // Clean object select
                 foreach (Control control in row.Parent.Controls)
@@ -7617,6 +7842,67 @@ namespace WindowsFormsApp
                 }
 
                 row.BackColor = System.Drawing.Color.SteelBlue;
+            };
+            label.MouseDoubleClick += (sender1, e1) =>
+            {
+                Panel child = ((sender1 as Label).Parent as Panel);
+                Panel row = child.Parent as Panel;
+
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+
+                Panel destinationPanel = row.Parent as Panel;
+                List<int> position = findPositionMasterRow(destinationPanel);
+                if (position.Count > 0)
+                {
+                    int master = position[0];
+                    int masterNext = position[1];
+                    int hide = position[2];
+
+                    PictureBox pictureBox = row.Controls[2].Controls[0] as PictureBox;
+                    if (pictureBox.Image != null)
+                    {
+                        if (((master - masterNext) - hide) >= 2)
+                        {
+                            // Rotate the image by 270 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+                            // Hide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = false;
+                                }
+                            }
+                        }
+                        else if (((master - masterNext) - hide) == 1)
+                        {
+                            // Rotate the image by 90 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+                            // UnHide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = true;
+                                }
+                            }
+                        }
+                    }
+
+                    // Refresh the PictureBox to display the updated image
+                    pictureBox.Refresh();
+                }
             };
 
             Panel P3 = new Panel();
@@ -7632,6 +7918,7 @@ namespace WindowsFormsApp
             rowMaster.Controls.Add(P3);
             rowMaster.Controls.Add(P2);
             rowMaster.Controls.Add(P1);
+            rowMaster.Name = "row_master";
             rowMaster.Dock = System.Windows.Forms.DockStyle.Top;
             rowMaster.Location = new System.Drawing.Point(0, 59);
             rowMaster.Size = new System.Drawing.Size(694, 32);
@@ -7639,8 +7926,10 @@ namespace WindowsFormsApp
             rowMaster.BackColor = System.Drawing.Color.SteelBlue;
             rowMaster.Click += (sender1, e1) =>
             {
+                Panel row = sender1 as Panel;
+
                 // Clean object select
-                foreach (Control control in rowMaster.Parent.Controls)
+                foreach (Control control in row.Parent.Controls)
                 {
                     if ((control.BackColor == System.Drawing.Color.SteelBlue))
                     {
@@ -7648,9 +7937,68 @@ namespace WindowsFormsApp
                     }
                 }
 
-                rowMaster.BackColor = System.Drawing.Color.SteelBlue;
+                row.BackColor = System.Drawing.Color.SteelBlue;
             };
+            rowMaster.MouseDoubleClick += (sender1, e1) =>
+            {
+                Panel row = sender1 as Panel;
 
+                // Clean object select
+                foreach (Control control in row.Parent.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                row.BackColor = System.Drawing.Color.SteelBlue;
+
+                Panel destinationPanel = row.Parent as Panel;
+                List<int> position = findPositionMasterRow(destinationPanel);
+                if (position.Count > 0)
+                {
+                    int master = position[0];
+                    int masterNext = position[1];
+                    int hide = position[2];
+
+                    PictureBox pictureBox = row.Controls[2].Controls[0] as PictureBox;       
+                    if (pictureBox.Image != null)
+                    {
+                        if (((master - masterNext) - hide) >= 2)
+                        {
+                            // Rotate the image by 270 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+
+                            // Hide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = false;
+                                }
+                            }
+                        }
+                        else if (((master - masterNext) - hide) == 1)
+                        {
+                            // Rotate the image by 90 degrees
+                            pictureBox.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+
+                            // UnHide row
+                            foreach (Control control in destinationPanel.Controls)
+                            {
+                                if ((masterNext < destinationPanel.Controls.IndexOf(control)) && (destinationPanel.Controls.IndexOf(control) < master))
+                                {
+                                    control.Visible = true;
+                                }
+                            }
+                        }
+                    }
+
+                    // Refresh the PictureBox to display the updated image
+                    pictureBox.Refresh();
+                }
+            };
 
             if (type == new_loop_button.Text)
             {
@@ -7701,7 +8049,7 @@ namespace WindowsFormsApp
                 else if (this.panel96.Controls.Count > 1)
                 {
                     notify_form popup = new notify_form(false);
-                    popup.set_message("Setting is now in its maximum loop");
+                    popup.set_message("Setting is now in it's maximum loop");
                     popup.ShowDialog();
 
                     return;
@@ -7831,7 +8179,7 @@ namespace WindowsFormsApp
                 else if (this.panel98.Controls.Count > 1)
                 {
                     notify_form popup = new notify_form(false);
-                    popup.set_message("Setting is now in its maximum loop");
+                    popup.set_message("Setting is now in it's maximum loop");
                     popup.ShowDialog();
 
                     return;
@@ -7866,6 +8214,369 @@ namespace WindowsFormsApp
         private void new_command_button_Click(object sender, EventArgs e)
         {
             process_button_advanced_list(sender as Button);
+        }
+
+        private void add_layout_and_info(Panel destinationPanel, String info)
+        {
+            List<int> position = findPositionMasterRow(destinationPanel);
+
+            if (position.Count > 0)
+            {
+                int master = position[0];
+                int masterNext = position[1];
+
+                // Convert data
+                ddetailInfoProgram infoProgram = JsonConvert.DeserializeObject<ddetailInfoProgram>(info);
+
+                Label name_program = new Label();
+                name_program.AutoSize = true;
+                name_program.Dock = System.Windows.Forms.DockStyle.None;
+                name_program.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                name_program.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                name_program.Location = new System.Drawing.Point(0, 0);
+                name_program.Size = new System.Drawing.Size(64, 15);
+                name_program.TabIndex = 0;
+                name_program.Text = infoProgram.program;
+                name_program.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                name_program.Click += (sender1, e1) =>
+                {
+                    Panel child = ((sender1 as Label).Parent as Panel);
+                    Panel row = child.Parent as Panel;
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Label target = new Label();
+                target.AutoSize = true;
+                target.Dock = System.Windows.Forms.DockStyle.None;
+                target.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                target.Location = new System.Drawing.Point(0, 0);
+                target.Size = new System.Drawing.Size(54, 13);
+                target.TabIndex = 0;
+                if (infoProgram.type == 0)
+                    target.Text = "Play times";
+                else
+                    target.Text = "Unknown";
+                target.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                target.Click += (sender1, e1) =>
+                {
+                    Panel child = ((sender1 as Label).Parent as Panel);
+                    Panel row = child.Parent as Panel;
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Label execution_time = new Label();
+                execution_time.AutoSize = true;
+                execution_time.Dock = System.Windows.Forms.DockStyle.None;
+                execution_time.Location = new System.Drawing.Point(0, 0);
+                execution_time.RightToLeft = System.Windows.Forms.RightToLeft.No;
+                execution_time.Size = new System.Drawing.Size(13, 13);
+                execution_time.TabIndex = 0;
+                if (infoProgram.type == 0)
+                    execution_time.Text = infoProgram.value;
+                else
+                    execution_time.Text = "Unknown";
+                execution_time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                execution_time.Click += (sender1, e1) =>
+                {
+                    Panel child = ((sender1 as Label).Parent as Panel);
+                    Panel row = child.Parent as Panel;
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                // Tạo PictureBox cho biểu tượng (icon)
+                PictureBox iconPictureBox = new PictureBox();
+                iconPictureBox.Image = global::WindowsFormsApp.Properties.Resources.program_icon1; // Thiết lập hình ảnh từ resource của bạn
+                iconPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                iconPictureBox.Dock = DockStyle.Fill;
+                iconPictureBox.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
+                iconPictureBox.Click += (sender1, e1) =>
+                {
+                    Panel child = ((sender1 as PictureBox).Parent as Panel);
+                    Panel row = child.Parent as Panel;
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel P0 = new Panel();
+                P0.Dock = System.Windows.Forms.DockStyle.Left;
+                P0.Location = new System.Drawing.Point(0, 0);
+                P0.Size = new System.Drawing.Size(32, 32);
+                P0.TabIndex = 0;
+                P0.Click += (sender1, e1) =>
+                {
+                    Panel row = ((sender1 as Panel).Parent as Panel);
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel P1 = new Panel();
+                P1.Controls.Add(iconPictureBox);
+                P1.Dock = System.Windows.Forms.DockStyle.Left;
+                P1.Location = new System.Drawing.Point(54, 0);
+                P1.Size = new System.Drawing.Size(32, 32);
+                P1.TabIndex = 1;
+                P1.Click += (sender1, e1) =>
+                {
+                    Panel row = ((sender1 as Panel).Parent as Panel);
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel P2 = new Panel();
+                P2.Dock = System.Windows.Forms.DockStyle.Left;
+                P2.Location = new System.Drawing.Point(129, 0);
+                P2.Size = new System.Drawing.Size(194, 32);
+                P2.TabIndex = 2;
+                // Calculate the position to center the label in the panel
+                name_program.Location = new System.Drawing.Point((P2.Width - name_program.Width) / 2, (P2.Height - name_program.Height) / 2);
+                P2.Controls.Add(name_program);
+                P2.Click += (sender1, e1) =>
+                {
+                    Panel row = ((sender1 as Panel).Parent as Panel);
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel P3 = new Panel();
+                P3.Dock = System.Windows.Forms.DockStyle.Left;
+                P3.Location = new System.Drawing.Point(220, 0);
+                P3.Size = new System.Drawing.Size(100, 32);
+                P3.TabIndex = 3;
+                // Calculate the position to center the label in the panel
+                target.Location = new System.Drawing.Point((P3.Width - target.Width) / 2, (P3.Height - target.Height) / 2);
+                P3.Controls.Add(target);
+                P3.Click += (sender1, e1) =>
+                {
+                    Panel row = ((sender1 as Panel).Parent as Panel);
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel P4 = new Panel();
+                P4.Dock = System.Windows.Forms.DockStyle.Left;
+                P4.Location = new System.Drawing.Point(308, 0);
+                P4.Size = new System.Drawing.Size(88, 32);
+                P4.TabIndex = 4;
+                // Calculate the position to center the label in the panel
+                execution_time.Location = new System.Drawing.Point((P4.Width - execution_time.Width) / 2, (P4.Height - execution_time.Height) / 2);
+                P4.Controls.Add(execution_time);
+                P4.Click += (sender1, e1) =>
+                {
+                    Panel row = ((sender1 as Panel).Parent as Panel);
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                Panel rowMaster = new Panel();
+                rowMaster.Controls.Add(P4);
+                rowMaster.Controls.Add(P3);
+                rowMaster.Controls.Add(P2);
+                rowMaster.Controls.Add(P1);
+                rowMaster.Controls.Add(P0);
+                rowMaster.Dock = System.Windows.Forms.DockStyle.Top;
+                rowMaster.Location = new System.Drawing.Point(0, 60);
+                rowMaster.Size = new System.Drawing.Size(694, 32);
+                rowMaster.TabIndex = 3;
+                rowMaster.BackColor = System.Drawing.Color.SteelBlue;
+                rowMaster.Click += (sender1, e1) =>
+                {
+                    Panel row = sender1 as Panel;
+
+                    // Clean object select
+                    foreach (Control control in row.Parent.Controls)
+                    {
+                        if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                        {
+                            control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                        }
+                    }
+
+                    row.BackColor = System.Drawing.Color.SteelBlue;
+                };
+
+                // Clean object select
+                foreach (Control control in this.panel96.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        control.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                    }
+                }
+
+                destinationPanel.Controls.Add(rowMaster);
+
+                // Sử dụng SetChildIndex để đưa row lên đầu
+                destinationPanel.Controls.SetChildIndex(rowMaster, masterNext + 1);
+
+                // Active arrow icon in first row
+                if (((master + 1) - masterNext) == 2)
+                {
+                    foreach (Control child in destinationPanel.Controls[master + 1].Controls)
+                    {
+                        if (destinationPanel.Controls[master + 1].Controls.IndexOf(child) == 2)
+                        {
+                            PictureBox pictureBox = child.Controls[0] as PictureBox;
+
+                            if (pictureBox.Image != null)
+                            {
+                                pictureBox.Image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                                pictureBox.Refresh();
+                            }
+
+                            pictureBox.Visible = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void process_button_edit_list(Button obj)
+        {
+            List<String> list_program = new List<String>();
+
+            // Get list program
+            foreach (Control control in this.panel6.Controls)
+            {
+                foreach (Control child in control.Controls)
+                {
+                    if (control.Controls.IndexOf(child) == 0)
+                    {
+                        foreach (Control item in child.Controls)
+                        {
+                            if (child.Controls.IndexOf(item) == 1)
+                                list_program.Add(item.Text);
+                        }
+                    }
+                }
+            }
+
+            if (obj.Name == this.loop_edit.Name)
+            {
+                if (this.panel96.Controls.Count > 1)
+                {
+                    loop_form popup = new loop_form(list_program);
+                    popup.ConfirmClick += (sender, e) =>
+                    {
+                        if (e.program.Length > 0)
+                        {
+                            add_layout_and_info(this.panel96, JsonConvert.SerializeObject(
+                                new {
+                                    type    = 0,
+                                    program = e.program,
+                                    value   = e.value,
+                                }));
+                        }
+                    };
+                    popup.ShowDialog();
+                }
+            }
+            else if (obj.Name == this.timing_edit.Name)
+            {
+
+            }
+            else if (obj.Name == this.command_edit.Name)
+            {
+
+            }
+        }
+
+        private void loop_edit_Click(object sender, EventArgs e)
+        {
+            process_button_edit_list(sender as Button);
+        }
+
+        private void timing_edit_Click(object sender, EventArgs e)
+        {
+            process_button_edit_list(sender as Button);
+        }
+
+        private void command_edit_Click(object sender, EventArgs e)
+        {
+            process_button_edit_list(sender as Button);
         }
     }
 
@@ -8018,5 +8729,12 @@ namespace WindowsFormsApp
         public String IP_client { get; set; }
         public int type { get; set; }
         public List<string> program_list { get; set; }
+    }
+
+    public class ddetailInfoProgram
+    {
+        public int type { get; set; }
+        public string program { get; set; }
+        public string value { get; set; }
     }
 }

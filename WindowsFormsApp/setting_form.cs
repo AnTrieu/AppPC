@@ -122,21 +122,36 @@ namespace WindowsFormsApp
 
         private void Confirm_Click(object sender, EventArgs e)
         {
-            // Create an instance of ConfirmEventArgs and set any data you want to pass
-            ConfirmEventArgs eventArgs = new ConfirmEventArgs
+            if ((this.name_program.Text.Length > 0) && (this.width_resolution.Text.Length > 0) && (this.height_resolution.Text.Length > 0) && (this.width_real.Text.Length > 0) && (this.height_real.Text.Length > 0))
             {
-                name = this.name_program.Text,
-                width_resolution = this.width_resolution.Text,
-                height_resolution = this.height_resolution.Text,
-                width_real = this.width_real.Text,
-                height_real = this.height_real.Text,
-                bittrate_select = this.bittrate_select.Text
-            };
+                // Create an instance of ConfirmEventArgs and set any data you want to pass
+                ConfirmEventArgs eventArgs = new ConfirmEventArgs
+                {
+                    name = this.name_program.Text,
+                    width_resolution = this.width_resolution.Text,
+                    height_resolution = this.height_resolution.Text,
+                    width_real = this.width_real.Text,
+                    height_real = this.height_real.Text,
+                    bittrate_select = this.bittrate_select.Text
+                };
 
-            // Khi nút được nhấn, gọi sự kiện và truyền thông tin về control cha
-            ConfirmClick?.Invoke(this, eventArgs);
+                // Khi nút được nhấn, gọi sự kiện và truyền thông tin về control cha
+                ConfirmClick?.Invoke(this, eventArgs);
 
-            this.Close();
+                this.Close();
+            }
+            else if (this.name_program.Text.Length == 0)
+            {
+                MessageBox.Show("Please enter name", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if ((this.width_resolution.Text.Length == 0) || (this.height_resolution.Text.Length == 0))
+            {
+                MessageBox.Show("Please enter resolution", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if ((this.width_real.Text.Length > 0) && (this.height_real.Text.Length > 0))
+            {
+                MessageBox.Show("Please enter real", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
