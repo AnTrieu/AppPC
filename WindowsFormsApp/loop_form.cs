@@ -47,13 +47,38 @@ namespace WindowsFormsApp
         // Định nghĩa sự kiện bằng delegate ở trên
         public event EventHandler<ConfirmEventArgs> ConfirmClick;
 
-        public loop_form(List<String> list_program)
+        public loop_form(List<String> list_program, String program_select, string value)
         {
             this.list_program = list_program;
             InitializeComponent();
 
             this.comboBox1.DataSource = list_program;
             this.comboBox2.DataSource = new List<string> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" };
+
+            if ((program_select != null) && (value != null))
+            {
+                this.comboBox1.SelectedItem = program_select;
+
+                if (value.IndexOf(":") > -1)
+                {
+                    radioButton2_Click(null, null);
+
+                    // Parse the string to a TimeSpan object
+                    if (TimeSpan.TryParse(value, out TimeSpan time))
+                    {
+                        // Combine the TimeSpan with today's date to create a DateTime object
+                        DateTime dateTimeValue = DateTime.Today.Add(time);
+
+                        // Set the DateTimePicker value
+                        this.dateTimePicker.Value = dateTimeValue;
+                    }
+                }
+                else
+                {
+                    radioButton1_Click(null, null);
+                    this.comboBox2.SelectedItem = value;
+                }
+            }
         }
 
         private void InitializeComponent()
@@ -260,6 +285,7 @@ namespace WindowsFormsApp
 
         private void radioButton1_Click(object sender, EventArgs e)
         {
+            this.radioButton1.Checked = true;
             this.radioButton2.Checked = false;
             this.comboBox2.Enabled = true;
             this.dateTimePicker.Enabled = false;
@@ -268,6 +294,7 @@ namespace WindowsFormsApp
         private void radioButton2_Click(object sender, EventArgs e)
         {
             this.radioButton1.Checked = false;
+            this.radioButton2.Checked = true;
             this.comboBox2.Enabled = false;
             this.dateTimePicker.Enabled = true;
         }
