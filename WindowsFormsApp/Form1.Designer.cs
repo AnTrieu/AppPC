@@ -2449,9 +2449,9 @@
             // 
             this.tableLayoutPanel5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel5.ColumnCount = 4;
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 292F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel5.Controls.Add(this.label36, 0, 0);
             this.tableLayoutPanel5.Controls.Add(this.label43, 1, 0);
@@ -2474,7 +2474,7 @@
             this.label36.Location = new System.Drawing.Point(0, 0);
             this.label36.Margin = new System.Windows.Forms.Padding(0);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(292, 30);
+            this.label36.Size = new System.Drawing.Size(260, 30);
             this.label36.TabIndex = 0;
             this.label36.Text = "Instruction type";
             this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2484,7 +2484,7 @@
             this.label43.AutoSize = true;
             this.label43.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label43.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label43.Location = new System.Drawing.Point(292, 0);
+            this.label43.Location = new System.Drawing.Point(260, 0);
             this.label43.Margin = new System.Windows.Forms.Padding(0);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(100, 30);
@@ -2497,10 +2497,10 @@
             this.label44.AutoSize = true;
             this.label44.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label44.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label44.Location = new System.Drawing.Point(392, 0);
+            this.label44.Location = new System.Drawing.Point(360, 0);
             this.label44.Margin = new System.Windows.Forms.Padding(0);
             this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(100, 30);
+            this.label44.Size = new System.Drawing.Size(150, 30);
             this.label44.TabIndex = 2;
             this.label44.Text = "Execution time";
             this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2543,6 +2543,7 @@
             this.command_delete.Size = new System.Drawing.Size(25, 25);
             this.command_delete.TabIndex = 5;
             this.command_delete.UseVisualStyleBackColor = true;
+            this.command_delete.Click += new System.EventHandler(this.command_delete_Click);
             // 
             // label45
             // 
@@ -2658,9 +2659,9 @@
             // 
             this.tableLayoutPanel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel4.ColumnCount = 4;
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 292F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel4.Controls.Add(this.label17, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.label18, 1, 0);
@@ -2683,7 +2684,7 @@
             this.label17.Location = new System.Drawing.Point(0, 0);
             this.label17.Margin = new System.Windows.Forms.Padding(0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(292, 30);
+            this.label17.Size = new System.Drawing.Size(260, 30);
             this.label17.TabIndex = 0;
             this.label17.Text = "Instruction type";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2693,7 +2694,7 @@
             this.label18.AutoSize = true;
             this.label18.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label18.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label18.Location = new System.Drawing.Point(292, 0);
+            this.label18.Location = new System.Drawing.Point(260, 0);
             this.label18.Margin = new System.Windows.Forms.Padding(0);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(100, 30);
@@ -2706,10 +2707,10 @@
             this.label19.AutoSize = true;
             this.label19.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label19.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label19.Location = new System.Drawing.Point(392, 0);
+            this.label19.Location = new System.Drawing.Point(360, 0);
             this.label19.Margin = new System.Windows.Forms.Padding(0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(100, 30);
+            this.label19.Size = new System.Drawing.Size(150, 30);
             this.label19.TabIndex = 2;
             this.label19.Text = "Execution time";
             this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2752,6 +2753,7 @@
             this.timing_delete.Size = new System.Drawing.Size(25, 25);
             this.timing_delete.TabIndex = 5;
             this.timing_delete.UseVisualStyleBackColor = true;
+            this.timing_delete.Click += new System.EventHandler(this.timing_delete_Click);
             // 
             // label34
             // 
@@ -2868,9 +2870,9 @@
             // 
             this.tableLayoutPanel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.tableLayoutPanel3.ColumnCount = 4;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 292F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel3.Controls.Add(this.label9, 0, 0);
             this.tableLayoutPanel3.Controls.Add(this.label10, 1, 0);
@@ -2893,7 +2895,7 @@
             this.label9.Location = new System.Drawing.Point(0, 0);
             this.label9.Margin = new System.Windows.Forms.Padding(0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(292, 30);
+            this.label9.Size = new System.Drawing.Size(260, 30);
             this.label9.TabIndex = 0;
             this.label9.Text = "Instruction type";
             this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2903,7 +2905,7 @@
             this.label10.AutoSize = true;
             this.label10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label10.Location = new System.Drawing.Point(292, 0);
+            this.label10.Location = new System.Drawing.Point(260, 0);
             this.label10.Margin = new System.Windows.Forms.Padding(0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 30);
@@ -2916,10 +2918,10 @@
             this.label12.AutoSize = true;
             this.label12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label12.Location = new System.Drawing.Point(392, 0);
+            this.label12.Location = new System.Drawing.Point(360, 0);
             this.label12.Margin = new System.Windows.Forms.Padding(0);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(100, 30);
+            this.label12.Size = new System.Drawing.Size(150, 30);
             this.label12.TabIndex = 2;
             this.label12.Text = "Execution time";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -2962,6 +2964,7 @@
             this.loop_delete.Size = new System.Drawing.Size(25, 25);
             this.loop_delete.TabIndex = 5;
             this.loop_delete.UseVisualStyleBackColor = true;
+            this.loop_delete.Click += new System.EventHandler(this.loop_delete_Click);
             // 
             // label14
             // 

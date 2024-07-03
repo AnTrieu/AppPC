@@ -7745,10 +7745,6 @@ namespace WindowsFormsApp
             if (row == null)
                 return;
 
-            string program = row.Controls[2].Controls[0].Text;
-            string type = row.Controls[1].Controls[0].Text;
-            string value = row.Controls[0].Controls[0].Text;
-
             List<String> list_program = new List<String>();
 
             // Get list program
@@ -7767,15 +7763,67 @@ namespace WindowsFormsApp
                 }
             }
 
-            if (type == "Play times")
+            if (row.Controls[1].Controls[0].Text == "Play times")
             {
-                loop_form popup = new loop_form(list_program, program, value);
+                infoPlayTimes info = JsonConvert.DeserializeObject<infoPlayTimes>(row.Name);
+
+                loop_form popup = new loop_form(list_program, info.program, info.value);
                 popup.ConfirmClick += (sender1, e1) =>
                 {
                     if (e1.program.Length > 0)
                     {
-                        row.Controls[2].Controls[0].Text = e1.program;
-                        row.Controls[0].Controls[0].Text = e1.value;
+                        info.program = e1.program;
+                        info.value = e1.value;
+
+                        row.Controls[2].Controls[0].Text = info.program;
+                        row.Controls[0].Controls[0].Text = info.value;
+
+                        row.Name = JsonConvert.SerializeObject(info);
+                    }
+                };
+                popup.ShowDialog();
+            }
+            else if (row.Controls[1].Controls[0].Text == "Play shows")
+            {
+                infoPlayShows info = JsonConvert.DeserializeObject<infoPlayShows>(row.Name);
+
+                timing_loop popup = new timing_loop(list_program, info.startTime, info.endTime, info.loop, info.startDate, info.endDate, info.weeks);
+                popup.ConfirmClick += (sender1, e1) =>
+                {
+                    if (e1.program.Length > 0)
+                    {
+                        info.program = e1.program;
+                        info.startTime = e1.startTime;
+                        info.endTime = e1.endTime;
+                        info.loop = e1.loop;
+                        info.startDate = e1.startDate;
+                        info.endTime = e1.endTime;
+                        info.weeks = e1.weeks;
+
+                        row.Controls[2].Controls[0].Text = info.program;
+                        row.Controls[0].Controls[0].Text = info.startTime + " - " + info.endTime;
+
+                        row.Name = JsonConvert.SerializeObject(info);
+                    }
+                };
+                popup.ShowDialog();
+            }
+            else if (row.Controls[1].Controls[0].Text == "Play instructions")
+            {
+                infoPlayInstructions info = JsonConvert.DeserializeObject<infoPlayInstructions>(row.Name);
+
+                instruction_form popup = new instruction_form(list_program, info.program, info.value);
+                popup.ConfirmClick += (sender1, e1) =>
+                {
+                    if (e1.program.Length > 0)
+                    {
+                        info.program = e1.program;
+                        info.value = e1.value;
+
+                        row.Controls[2].Controls[0].Text = info.program;
+                        row.Controls[0].Controls[0].Text = info.value;
+
+                        row.Name = JsonConvert.SerializeObject(info);
                     }
                 };
                 popup.ShowDialog();
@@ -8174,7 +8222,7 @@ namespace WindowsFormsApp
             process_button_advanced_list(sender as Button);
         }
 
-        private void add_layout_and_info(Panel destinationPanel, String info)
+        private void add_layout_and_info(Panel destinationPanel, String infoDisplay, String infoBackup)
         {
             List<int> position = findPositionMasterRow(destinationPanel);
 
@@ -8182,9 +8230,9 @@ namespace WindowsFormsApp
             {
                 int master = position[0];
                 int masterNext = position[1];
-
+                
                 // Convert data
-                infoProgramFromPopup infoProgram = JsonConvert.DeserializeObject<infoProgramFromPopup>(info);
+                infoProgramFromPopup infoD = JsonConvert.DeserializeObject<infoProgramFromPopup>(infoDisplay);
 
                 Label name_program = new Label();
                 name_program.AutoSize = true;
@@ -8193,7 +8241,7 @@ namespace WindowsFormsApp
                 name_program.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                 name_program.Location = new System.Drawing.Point(0, 0);
                 name_program.TabIndex = 0;
-                name_program.Text = infoProgram.program;
+                name_program.Text = infoD.program;
                 name_program.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 name_program.Click += selectRow;
                 name_program.MouseDoubleClick += DoubleClick_ClientRow;
@@ -8204,10 +8252,14 @@ namespace WindowsFormsApp
                 target.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                 target.Location = new System.Drawing.Point(0, 0);
                 target.TabIndex = 0;
-                if (infoProgram.type == 0)
+                if (infoD.type == 1)
                     target.Text = "Play times";
+                else if (infoD.type == 2)
+                    target.Text = "Play shows";
+                else if (infoD.type == 3)
+                    target.Text = "Play instructions";
                 else
-                    target.Text = "Unknown";
+                    target.Text = "Unknown1";
                 target.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 target.Click += selectRow;
                 target.MouseDoubleClick += DoubleClick_ClientRow;
@@ -8218,10 +8270,7 @@ namespace WindowsFormsApp
                 execution_time.Location = new System.Drawing.Point(0, 0);
                 execution_time.RightToLeft = System.Windows.Forms.RightToLeft.No;
                 execution_time.TabIndex = 0;
-                if (infoProgram.type == 0)
-                    execution_time.Text = infoProgram.value;
-                else
-                    execution_time.Text = "Unknown";
+                execution_time.Text = infoD.value;
                 execution_time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 execution_time.Click += selectRow;
                 execution_time.MouseDoubleClick += DoubleClick_ClientRow;
@@ -8275,7 +8324,7 @@ namespace WindowsFormsApp
                 Panel P4 = new Panel();
                 P4.Dock = System.Windows.Forms.DockStyle.Left;
                 P4.Location = new System.Drawing.Point(308, 0);
-                P4.Size = new System.Drawing.Size(88, 32);
+                P4.Size = new System.Drawing.Size(150, 32);
                 P4.TabIndex = 4;
                 // Calculate the position to center the label in the panel
                 execution_time.Location = new System.Drawing.Point((P4.Width - execution_time.PreferredWidth) / 2, (P4.Height - execution_time.PreferredHeight) / 2);
@@ -8296,9 +8345,10 @@ namespace WindowsFormsApp
                 rowMaster.BackColor = System.Drawing.Color.SteelBlue;
                 rowMaster.Click += selectRow;
                 rowMaster.MouseDoubleClick += DoubleClick_ClientRow;
+                rowMaster.Name = infoBackup;
 
                 // Clean object select
-                foreach (Control control in this.panel96.Controls)
+                foreach (Control control in destinationPanel.Controls)
                 {
                     if ((control.BackColor == System.Drawing.Color.SteelBlue))
                     {
@@ -8362,11 +8412,19 @@ namespace WindowsFormsApp
                     {
                         if (e.program.Length > 0)
                         {
-                            add_layout_and_info(this.panel96, JsonConvert.SerializeObject(
+                            add_layout_and_info(this.panel96, 
+                                JsonConvert.SerializeObject(
                                 new {
-                                    type    = 0,
+                                    type    = 1,
                                     program = e.program,
                                     value   = e.value,
+                                }), 
+                                JsonConvert.SerializeObject(
+                                new
+                                {
+                                    type = 1,
+                                    program = e.program,
+                                    value = e.value,
                                 }));
                         }
                     };
@@ -8375,11 +8433,66 @@ namespace WindowsFormsApp
             }
             else if (obj.Name == this.timing_edit.Name)
             {
-
+                if (this.panel97.Controls.Count > 1)
+                {
+                    timing_loop popup = new timing_loop(list_program, null, null, null, null, null, null);
+                    popup.ConfirmClick += (sender, e) =>
+                    {
+                        if (e.program.Length > 0)
+                        {
+                            add_layout_and_info(this.panel97, 
+                                JsonConvert.SerializeObject(
+                                new
+                                {
+                                    type = 2,
+                                    program = e.program,
+                                    value = e.startTime + " - " + e.endTime,
+                                }),
+                                JsonConvert.SerializeObject(
+                                new
+                                {
+                                    type = 2,
+                                    program = e.program,
+                                    startTime = e.startTime,
+                                    endTime = e.endTime,
+                                    loop = e.loop,
+                                    startDate = e.startDate,
+                                    endDate = e.endDate,
+                                    weeks = e.weeks
+                                }));
+                        }
+                    };
+                    popup.ShowDialog();
+                }
             }
             else if (obj.Name == this.command_edit.Name)
             {
-
+                if (this.panel98.Controls.Count > 1)
+                {
+                    instruction_form popup = new instruction_form(list_program, null, null);
+                    popup.ConfirmClick += (sender, e) =>
+                    {
+                        if (e.program.Length > 0)
+                        {
+                            add_layout_and_info(this.panel98,
+                                JsonConvert.SerializeObject(
+                                new
+                                {
+                                    type = 3,
+                                    program = e.program,
+                                    value = e.value,
+                                }),
+                                JsonConvert.SerializeObject(
+                                new
+                                {
+                                    type = 3,
+                                    program = e.program,
+                                    value = e.value,
+                                }));
+                        }
+                    };
+                    popup.ShowDialog();
+                }
             }
         }
 
@@ -8396,6 +8509,82 @@ namespace WindowsFormsApp
         private void command_edit_Click(object sender, EventArgs e)
         {
             process_button_edit_list(sender as Button);
+        }
+
+        private void process_button_edelete_list(Button obj)
+        {
+            Panel destinationPanel = null;
+
+            if (obj.Name == this.loop_delete.Name)
+            {
+                destinationPanel = this.panel96;
+            }
+            else if (obj.Name == this.timing_delete.Name)
+            {
+                destinationPanel = this.panel97;
+            }
+            else if (obj.Name == this.command_delete.Name)
+            {
+                destinationPanel = this.panel98;
+            }
+
+            if (destinationPanel != null && destinationPanel.Controls.Count > 1)
+            {
+                // delete row
+                foreach (Control control in destinationPanel.Controls)
+                {
+                    if ((control.BackColor == System.Drawing.Color.SteelBlue))
+                    {
+                        if (control.Controls.Count != 3)
+                        {
+                            destinationPanel.Controls[destinationPanel.Controls.IndexOf(control) + 1].BackColor = System.Drawing.Color.SteelBlue;
+                            destinationPanel.Controls.Remove(control);
+                        }
+                        else
+                        {
+                            List<int> position = findPositionMasterRow(destinationPanel);
+                            if (position.Count > 0)
+                            {
+                                if ((position[0] + 1) < destinationPanel.Controls.Count)
+                                    destinationPanel.Controls[position[0] + 1].BackColor = System.Drawing.Color.SteelBlue;
+
+                                List<Control> controlsToRemove = new List<Control>();
+
+                                foreach (Control control1 in destinationPanel.Controls)
+                                {
+                                    if ((position[1] < destinationPanel.Controls.IndexOf(control1)) && (destinationPanel.Controls.IndexOf(control1) <= position[0]))
+                                    {
+                                        controlsToRemove.Add(control1);
+                                    }
+                                }
+                                foreach (Control control1 in controlsToRemove)
+                                {
+                                    destinationPanel.Controls.Remove(control1);
+                                }
+
+                                controlsToRemove.Clear();
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void loop_delete_Click(object sender, EventArgs e)
+        {
+            process_button_edelete_list(sender as Button);
+        }
+
+        private void timing_delete_Click(object sender, EventArgs e)
+        {
+            process_button_edelete_list(sender as Button);
+        }
+
+        private void command_delete_Click(object sender, EventArgs e)
+        {
+            process_button_edelete_list(sender as Button);
         }
     }
 
@@ -8551,6 +8740,31 @@ namespace WindowsFormsApp
     }
 
     public class infoProgramFromPopup
+    {
+        public int type { get; set; }
+        public string program { get; set; }
+        public string value { get; set; }
+    }
+
+    public class infoPlayTimes
+    {
+        public int type { get; set; }
+        public string program { get; set; }
+        public string value { get; set; }
+    }
+    public class infoPlayShows
+    {
+        public int type { get; set; }
+        public string program { get; set; }
+        public string startTime { get; set; }
+        public string endTime { get; set; }
+        public string loop { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public List<string> weeks { get; set; }
+    }
+
+    public class infoPlayInstructions
     {
         public int type { get; set; }
         public string program { get; set; }

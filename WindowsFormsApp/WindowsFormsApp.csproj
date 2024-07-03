@@ -117,6 +117,12 @@
     <Compile Include="device_form.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="instruction_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ltiming_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="notify_form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +151,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="export_form.resx">
       <DependentUpon>export_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="instruction_form.resx">
+      <DependentUpon>instruction_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ltiming_form.resx">
+      <DependentUpon>ltiming_form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="loop_form.resx">
       <DependentUpon>loop_form.cs</DependentUpon>
