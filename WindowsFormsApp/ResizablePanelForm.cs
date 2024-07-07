@@ -280,6 +280,31 @@ public class ResizablePanel : Panel
         Controls.SetChildIndex(bottom_right_point, 0);
     }
 
+    public void UninitializeResizeHandles()
+    {
+        for (int panelIndex = DestinationPanel.Controls.Count - 1; panelIndex >= 0; panelIndex--)
+        {
+            Control panel = DestinationPanel.Controls[panelIndex];
+
+            // Check if the control is a Panel
+            if (panel is Panel)
+            {
+                // Loop through controls in the panel in reverse order
+                for (int i = panel.Controls.Count - 1; i >= 0; i--)
+                {
+                    Control control = panel.Controls[i];
+
+                    // Check if the control is a Label
+                    if (control is Label)
+                    {
+                        // Remove the Label from the panel
+                        panel.Controls.RemoveAt(i);
+                    }
+                }
+            }
+        }
+    }
+
     private Label CreateResizeHandle(int x, int y, String Name)
     {
         Label handle = new Label

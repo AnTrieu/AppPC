@@ -56,3 +56,7 @@ C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.cs
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.csproj.CopyComplete
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.exe
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.pdb
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.notify_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.loop_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.timing_loop.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.instruction_form.resources
