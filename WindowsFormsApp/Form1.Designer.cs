@@ -391,7 +391,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 13);
             this.label1.TabIndex = 1;
-            this.label1.Text = "v1.0.2";
+            this.label1.Text = "v1.0.3";
             // 
             // panel2
             // 
@@ -3073,8 +3073,8 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(1500, 750);
-            this.Controls.Add(this.main_program);
             this.Controls.Add(this.main_release);
+            this.Controls.Add(this.main_program);
             this.Controls.Add(this.main_terminal);
             this.Controls.Add(this.content);
             this.Controls.Add(this.title);

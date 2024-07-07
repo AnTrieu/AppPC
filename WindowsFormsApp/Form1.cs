@@ -1224,7 +1224,7 @@ namespace WindowsFormsApp
             {
                 (sender as Button).BackgroundImage = normal_button();
 
-                List<string> program_list = new List<string> { };
+                List<string> program_list = new List<string> {};
 
                 // Search program is selected
                 foreach (Control control in this.panel71.Controls)
@@ -1252,8 +1252,14 @@ namespace WindowsFormsApp
                         }
                     }
                 }
-
-                if (program_list.Count > 0)
+                if (program_list.Count > 1)
+                {
+                    // Active message
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("Select an excessive number of programs.");
+                    popup.ShowDialog();
+                }
+                else if (program_list.Count == 1)
                 {
                     String IP_client = "";
 
@@ -1287,8 +1293,8 @@ namespace WindowsFormsApp
                     {
                         var detailPacket = new
                         {
-                            IP_client = IP_client,
-                            type = 0,
+                            IP_client    = IP_client,
+                            type         = 0,
                             program_list = program_list
                         };
 
@@ -1330,6 +1336,103 @@ namespace WindowsFormsApp
 
             this.Advanced.BackgroundImageLayout = ImageLayout.Stretch;
             this.Advanced.BackgroundImage = normal_button();
+            this.Advanced.MouseDown += (sender, e) =>
+            {
+                (sender as Button).BackgroundImage = select_button();
+            };
+            this.Advanced.MouseUp += (sender, e) =>
+            {
+                (sender as Button).BackgroundImage = normal_button();
+
+                String IP_client = "";
+                int type = -1;
+
+                foreach (Control control in this.panel84.Controls)
+                {
+                    if (control is Panel panel)
+                    {
+                        foreach (Control innerControl in panel.Controls)
+                        {
+                            if (innerControl is TableLayoutPanel tableLayoutPanel)
+                            {
+                                RadioButton radioObj = (RadioButton)tableLayoutPanel.GetControlFromPosition(0, 0);
+                                Label labelObj = (Label)tableLayoutPanel.GetControlFromPosition(2, 0);
+                                if (radioObj.Checked)
+                                {
+                                    IP_client = labelObj.Text;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (IP_client.Length == 0)
+                {
+                    // Active message
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("Please select the device to upload");
+                    popup.ShowDialog();
+                }
+                else
+                {
+                    List<string> program_list = new List<string> { };
+
+                    // Check type
+                    if (this.panel96.Controls.Count > 0)
+                    {
+                        type = 1;
+
+                        foreach (Control control in this.panel96.Controls)
+                        {
+                            if (control.Controls.Count == 5)
+                            {
+                                foreach (Control control1 in this.panel6.Controls)
+                                {
+                                    if ((control != this.panel34) && (control != this.panel33) && (control1.Controls.Count == 3) && (control1.Controls[0] is Panel))
+                                    {
+                                        if (control1.Controls[0].Controls[1].Text == control.Controls[2].Controls[0].Text)
+                                        {
+                                            program_list.Add(control1.Name);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }                        
+                    else if (this.panel97.Controls.Count > 0)
+                        type = 2;
+                    else if (this.panel98.Controls.Count > 0)
+                        type = 3;
+
+                    if (program_list.Count == 0)
+                    {
+                        // Active message
+                        notify_form popup = new notify_form(false);
+                        popup.set_message("Please select the program to upload");
+                        popup.ShowDialog();
+                    }
+                    else if (type > 0)
+                    {
+                        var detailPacket = new
+                        {
+                            IP_client = IP_client,
+                            type = type,
+                            program_list = program_list
+                        };
+
+                        process_form popup = new process_form();
+                        popup.Name = JsonConvert.SerializeObject(detailPacket);
+
+                        // Start a new thread for the dialog with parameters
+                        Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
+                        dialogThread.Start(popup);
+
+                        // Show the dialog asynchronously without blocking the UI thread
+                        popup.ShowDialog();
+                    }
+                }
+            };
             this.Advanced.Paint += (sender, e) =>
             {
                 Button obj = sender as Button;
@@ -1537,6 +1640,53 @@ namespace WindowsFormsApp
             }
         }
 
+        private Info_Window removeObjEmpty(Info_Window infoWindow)
+        {
+            // Check and remove empty obj
+            while (true)
+            {
+                int idx_remove = -1;
+                foreach (string obj in infoWindow.list)
+                {
+                    if ((idx_remove < 0) && (obj.Length == 0))
+                    {
+                        idx_remove = infoWindow.list.IndexOf(obj);
+                        infoWindow.list.Remove(obj);
+                        break;
+                    }
+                }
+                foreach (string obj in infoWindow.list_duration)
+                {
+                    if ((idx_remove >= 0) && (infoWindow.list_duration.IndexOf(obj) == idx_remove))
+                    {
+                        infoWindow.list_duration.Remove(obj);
+                        break;
+                    }
+                }
+                foreach (string obj in infoWindow.list_entrytime)
+                {
+                    if ((idx_remove >= 0) && (infoWindow.list_entrytime.IndexOf(obj) == idx_remove))
+                    {
+                        infoWindow.list_entrytime.Remove(obj);
+                        break;
+                    }
+                }
+                foreach (bool obj in infoWindow.selected)
+                {
+                    if ((idx_remove >= 0) && (infoWindow.selected.IndexOf(obj) == idx_remove))
+                    {
+                        infoWindow.selected.Remove(obj);
+                        break;
+                    }
+                }
+
+                if (idx_remove < 0)
+                    break;
+            }
+
+            return infoWindow;
+        }
+
         private void SendFileThread(object parameter)
         {
             //using (StreamWriter fileStream = new StreamWriter(outputPath))
@@ -1567,11 +1717,55 @@ namespace WindowsFormsApp
 
                 try
                 {
-                    if (sendDetailInfo.program_list.Count > 0)
+                    // Connect device
+                    clientSocket = new TcpClient();
+                    clientSocket.Connect(IP_client, 12345);
+
+                    // Get the network stream for receiving data
+                    networkStream = clientSocket.GetStream();
+
+                    int cntProgramSended = 0;
+                    foreach (string program in sendDetailInfo.program_list)
                     {
-                        
-                        var info_program = JsonConvert.DeserializeObject<Info_Program>(sendDetailInfo.program_list[0]);
-                            
+                        var info_program = JsonConvert.DeserializeObject<Info_Program>(program);
+
+                        // Find list windown
+                        List<Control> controlsListSelectTemp = null;
+                        foreach (Control control in this.panel6.Controls)
+                        {
+                            if ((control != this.panel34) && (control != this.panel33))
+                            {
+                                // get info show area
+                                var info_program1 = JsonConvert.DeserializeObject<Info_Program>(control.Name);
+                                
+                                if (info_program1.Name == info_program.Name)
+                                {
+                                    foreach (Control chill in control.Controls)
+                                    {
+                                        if (control.Controls.IndexOf(chill) == 2)
+                                        {
+                                            foreach (Control item in chill.Controls)
+                                            {
+                                                if (int.TryParse(item.Text, out int index) && index > 0 &&  controlsListSelect[index] != null)
+                                                {
+                                                    controlsListSelectTemp = controlsListSelect[index];
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Found it !!!
+                                if (controlsListSelectTemp != null)
+                                    break;
+                            }
+                        }
+
+                        // List windown empty
+                        if (controlsListSelectTemp == null)
+                            continue;
+
                         var flag_convert = false;
                         long longestDuration = 0;
 
@@ -1582,13 +1776,11 @@ namespace WindowsFormsApp
                         string contentFilePath = Path.Combine(outputBackgroundPath, $"{info_program.Name}.mp4");
 
                         // Convert video
-                        if (true && ((controlsListSelect[currentIdxList].Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                        if (true && ((controlsListSelectTemp.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                         {
                             int windown_left_expected = 0;
                             int percentage = 0, percentageK1 = 0;
                             int counter_windown_empty = 0;
-                            //int entry_time = 0;
-                            //int duration_time = 1;
                             List<long> listDuration = new List<long>();
 
                             if (!Directory.Exists(outputBackgroundPath))
@@ -1613,12 +1805,12 @@ namespace WindowsFormsApp
                             }
 
                             // Step 1: get all path video in program list
-                            foreach (Control control in controlsListSelect[currentIdxList])
+                            foreach (Control control in controlsListSelectTemp)
                             {
                                 if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                                 {
                                     // Deserialize JSON data from the Name property
-                                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                                    Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
                                     long longestDurationWindown = 0;
 
                                     for (int idx = 0; idx < infoWindow.list.Count; idx++)
@@ -1691,14 +1883,14 @@ namespace WindowsFormsApp
                             Console.WriteLine($"-> longestDuration: {longestDuration}");
 
                             // Step 2: convert video
-                            for (int i = controlsListSelect[currentIdxList].Count - 1; i >= 0; i--)
+                            for (int i = controlsListSelectTemp.Count - 1; i >= 0; i--)
                             {
-                                Control control = controlsListSelect[currentIdxList][i];
+                                Control control = controlsListSelectTemp[i];
                                 if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                                 {
                                     //Console.WriteLine(resizablePanel.Name);
-                                    Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                                    int idx_windown = controlsListSelect[currentIdxList].Count - i - 1;
+                                    Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+                                    int idx_windown = controlsListSelectTemp.Count - i - 1;
 
                                     if (idx_windown == 0)
                                     {
@@ -1851,9 +2043,6 @@ namespace WindowsFormsApp
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
-                                            if ((controlsListSelect[currentIdxList].Count - 4) == i)
-                                                Console.WriteLine(e.Data);
-
                                             //Console.WriteLine(e.Data);
                                             if (flag_cancel)
                                             {
@@ -1880,9 +2069,9 @@ namespace WindowsFormsApp
                                                         double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
 
                                                         if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
-                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty) * 2));
+                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelectTemp.Count - counter_windown_empty) * 2));
                                                         else
-                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
+                                                            percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelectTemp.Count - counter_windown_empty)));
 
                                                         // set process bar
                                                         dialog.Invoke((MethodInvoker)delegate
@@ -1902,12 +2091,12 @@ namespace WindowsFormsApp
                                         process.WaitForExit();
 
                                         if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
-                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty) * 2));
+                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelectTemp.Count - counter_windown_empty) * 2));
                                         else
-                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
+                                            percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelectTemp.Count - counter_windown_empty)));
 
 
-                                        if (((idx_windown + 1) >= controlsListSelect[currentIdxList].Count) && File.Exists(backgroundFilePath))
+                                        if (((idx_windown + 1) >= controlsListSelectTemp.Count) && File.Exists(backgroundFilePath))
                                         {
                                             File.Delete(backgroundFilePath);
                                         }
@@ -2024,7 +2213,7 @@ namespace WindowsFormsApp
 
                                                     double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
 
-                                                    percentage = percentageK1 + (int)((milliseconds * 100) / (2 * ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty))));
+                                                    percentage = percentageK1 + (int)((milliseconds * 100) / (2 * ((double)longestDuration * (controlsListSelectTemp.Count - counter_windown_empty))));
 
                                                     // set process bar
                                                     dialog.Invoke((MethodInvoker)delegate
@@ -2070,10 +2259,10 @@ namespace WindowsFormsApp
                         bool flagForceSucceed = false;
 
                         // Carculator total size                          
-                        if (!flag_convert && controlsListSelect[currentIdxList].Count > 0 && controlsListSelect[currentIdxList][0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
+                        if (!flag_convert && controlsListSelectTemp.Count > 0 && controlsListSelectTemp[0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
                         {
                             // Deserialize JSON data from the Name property
-                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
+                            Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name));
 
                             for (int idx = 0; idx < infoWindow.list.Count; idx++)
                             {
@@ -2091,7 +2280,7 @@ namespace WindowsFormsApp
                             }
                         }
                         // Empty windown in program
-                        else if (controlsListSelect[currentIdxList].Count == 0)
+                        else if (controlsListSelectTemp.Count == 0)
                         {
                             flagForceSucceed = true;
                         }
@@ -2129,21 +2318,15 @@ namespace WindowsFormsApp
                         }
                         else
                         {
-                            clientSocket = new TcpClient();
-                            clientSocket.Connect(IP_client, 12345);
-
-                            // Get the network stream for receiving data
-                            networkStream = clientSocket.GetStream();
-
-                            Boolean send_plan = false;
+                            Boolean send_program = false;
                             long sended_size = 0;
                             int percent = 0, percentK1 = -1;
 
                             // Send file                        
-                            if (!flag_convert && controlsListSelect[currentIdxList][0] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                            if (!flag_convert && controlsListSelectTemp[0] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                             {
                                 // Deserialize JSON data from the Name property
-                                Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                                Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
 
                                 for (int idx = 0; idx < infoWindow.list.Count; idx++)
                                 {
@@ -2155,7 +2338,7 @@ namespace WindowsFormsApp
                                         long length_file = receivedVideoFile.Length;
 
                                         // Active send plan
-                                        send_plan = true;
+                                        send_program = true;
 
                                         // Receive video data in chunks
                                         while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
@@ -2198,7 +2381,7 @@ namespace WindowsFormsApp
 
                                                 byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                                 Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-                                                //Console.WriteLine("-------------- " + Math.Max(bytesRead + 256, buffer.Length));
+                                                // Console.WriteLine("-------------- " + Math.Max(bytesRead + 256, buffer.Length));
                                                 networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
                                                 networkStream.Flush();
 
@@ -2259,8 +2442,8 @@ namespace WindowsFormsApp
                             }
                             else if (flag_convert)
                             {
-                                // Active send plan
-                                send_plan = true;
+                                // Active send program
+                                send_program = true;
 
                                 using (FileStream receivedVideoFile = new FileStream(contentFilePath, FileMode.Open, FileAccess.Read))
                                 {
@@ -2369,29 +2552,28 @@ namespace WindowsFormsApp
                                 }
                             }
 
-                            // Send plan for device
-                            if (send_plan)
+                            // Send program for device
+                            if (send_program)
                             {
-                                send_plan = false;
+                                send_program = false;
 
                                 List<Info_Window> info_windown = new List<Info_Window>();
-                                foreach (Control control in controlsListSelect[currentIdxList])
+                                foreach (Control control in controlsListSelectTemp)
                                 {
-                                    info_windown.Add(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name));
+                                    info_windown.Add(removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name)));
                                 }
                                 //Console.WriteLine($"---------------------------------------{longestDuration}");
 
                                 var detailPacket = new
                                 {
-                                    command = "SEND_PLAN",
+                                    command = "SEND_PROGRAM",
                                     durationProgramConvert = longestDuration,
-                                    info_program = JsonConvert.DeserializeObject<Info_Program>(sendDetailInfo.program_list[0]),
+                                    info_program = JsonConvert.DeserializeObject<Info_Program>(program),
                                     info_windown = info_windown
                                 };
 
                                 byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                 Array.Copy(jsonBytes, buffer, jsonBytes.Length);
-
                                 networkStream.Write(buffer, 0, buffer.Length);
                                 networkStream.Flush();
 
@@ -2402,8 +2584,90 @@ namespace WindowsFormsApp
                                 // Release memory
                                 jsonBytes = null;
                                 detailPacket = null;
+
+                                // Increate counter
+                                cntProgramSended++;
                             }
                         }
+                    }
+
+                    List<string> program_list = new List<string>();
+                    foreach (string program_detail in sendDetailInfo.program_list)
+                    {
+                        Info_Program infoProgram = JsonConvert.DeserializeObject<Info_Program>(program_detail);
+                        program_list.Add(infoProgram.Name);
+                    }
+
+                    // Only send submit when all program is sended succeed
+                    if ((program_list.Count > 0) && (cntProgramSended == sendDetailInfo.program_list.Count))
+                    {
+                        List<loop_type> detail_submit = new List<loop_type> {};
+
+
+                        if (sendDetailInfo.type == 0)
+                        {
+                            detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
+                            {
+                                loop     = "1",
+                                timeLoop = ""
+                            })));
+                        }
+                        else if (sendDetailInfo.type == 1)
+                        {
+                            foreach (string program in program_list)
+                            {
+                                foreach (Control control in this.panel96.Controls)
+                                {
+                                    if (control.Controls.Count == 5)
+                                    {
+                                        if (control.Controls[2].Controls[0].Text == program)
+                                        {
+                                            if (control.Controls[0].Controls[0].Text.IndexOf(":") >= 0)
+                                            {
+                                                detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
+                                                {
+                                                    loop     = "",
+                                                    timeLoop = (int) TimeSpan.Parse(control.Controls[0].Controls[0].Text).TotalMinutes
+                                                })));
+                                            }
+                                            else
+                                            {
+                                                detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
+                                                {
+                                                    loop     = control.Controls[0].Controls[0].Text,
+                                                    timeLoop = ""
+                                                })));
+                                            }                                           
+                                            
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                                
+                        }
+
+                        var detailPacket = new
+                        {
+                            command       = "SEND_SUBMIT",
+                            type          = sendDetailInfo.type,
+                            program_list  = program_list,
+                            detail_submit = ((sendDetailInfo.type == 0) || (sendDetailInfo.type == 1)) ? detail_submit : (sendDetailInfo.type == 2) ? detail_submit : detail_submit
+                        };
+                        
+                        byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                        Array.Copy(jsonBytes, buffer, jsonBytes.Length);
+                        // Console.WriteLine(JsonConvert.SerializeObject(detailPacket));
+                        networkStream.Write(buffer, 0, buffer.Length);
+                        networkStream.Flush();
+
+                        // Clean (reset) the buffer
+                        Array.Clear(buffer, 0, buffer.Length);
+                        Array.Clear(responseBuffer, 0, responseBuffer.Length);
+
+                        // Release memory
+                        jsonBytes = null;
+                        detailPacket = null;
                     }
 
                     dialog.Name = "Send file successfully";
@@ -3045,11 +3309,11 @@ namespace WindowsFormsApp
                 }
             }
 
-
             Panel index = new Panel();
             if (parent == this.panel71)
             {
                 RadioButton select = new RadioButton();
+                select.AutoCheck = false;
                 select.AutoEllipsis = true;
                 select.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
                 select.Checked = false;
@@ -3065,26 +3329,7 @@ namespace WindowsFormsApp
                 select.UseVisualStyleBackColor = false;
                 select.Click += (sender, e) =>
                 {
-                    // Only 1 program is selected in generated list
-                    foreach (Control control in parent.Controls)
-                    {
-                        if (control != this.panel75)
-                        {
-                            foreach (Control child in control.Controls)
-                            {
-                                if (control.Controls.IndexOf(child) == 2)
-                                {
-                                    foreach (Control item in child.Controls)
-                                    {
-                                        RadioButton buttonObj = item as RadioButton;
-                                        buttonObj.Checked = false;
-                                    }                                    
-                                }
-                            }
-                        }
-                    }
-
-                    (sender as RadioButton).Checked = true;
+                    (sender as RadioButton).Checked = !(sender as RadioButton).Checked;
                 };
                 index.Controls.Add(select);
                 index.Dock = System.Windows.Forms.DockStyle.Left;
@@ -6460,7 +6705,6 @@ namespace WindowsFormsApp
                         }
                         else if ((sender as Button).Name.Equals("Down"))
                         {
-                            Console.WriteLine(idx_select);
                             if ((0 <= idx_select) && (idx_select < (infoWindow1.selected.Count - 1)))
                             {
                                 infoWindow1.path_windown = "";
@@ -6620,7 +6864,6 @@ namespace WindowsFormsApp
 
                                 foreach (Control control2 in resizablePanel1.Controls)
                                 {
-                                    Console.WriteLine(control2);
                                     if (control2 is PictureBox)
                                     {
                                         PictureBox pictureBox = control2 as PictureBox;
@@ -8825,7 +9068,7 @@ namespace WindowsFormsApp
             process_button_edit_list(sender as Button);
         }
 
-        private void process_button_edelete_list(Button obj)
+        private void process_button_delete_list(Button obj)
         {
             Panel destinationPanel = null;
 
@@ -8888,17 +9131,17 @@ namespace WindowsFormsApp
 
         private void loop_delete_Click(object sender, EventArgs e)
         {
-            process_button_edelete_list(sender as Button);
+            process_button_delete_list(sender as Button);
         }
 
         private void timing_delete_Click(object sender, EventArgs e)
         {
-            process_button_edelete_list(sender as Button);
+            process_button_delete_list(sender as Button);
         }
 
         private void command_delete_Click(object sender, EventArgs e)
         {
-            process_button_edelete_list(sender as Button);
+            process_button_delete_list(sender as Button);
         }
     }
 
@@ -9084,5 +9327,11 @@ namespace WindowsFormsApp
         public int type { get; set; }
         public string program { get; set; }
         public string value { get; set; }
+    }
+
+    public class loop_type
+    {
+        public string loop { get; set; }
+        public string timeLoop { get; set; }
     }
 }
