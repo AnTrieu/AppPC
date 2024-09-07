@@ -131,7 +131,7 @@ namespace WindowsFormsApp
             this.width_resolution.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.width_resolution.ForeColor = System.Drawing.Color.White;
             this.width_resolution.Location = new System.Drawing.Point(135, 149);
-            this.width_resolution.MaxLength = 4;
+            this.width_resolution.MaxLength = 6;
             this.width_resolution.Name = "width_resolution";
             this.width_resolution.Size = new System.Drawing.Size(99, 30);
             this.width_resolution.TabIndex = 5;
@@ -143,7 +143,7 @@ namespace WindowsFormsApp
             this.height_resolution.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.height_resolution.ForeColor = System.Drawing.Color.White;
             this.height_resolution.Location = new System.Drawing.Point(271, 149);
-            this.height_resolution.MaxLength = 4;
+            this.height_resolution.MaxLength = 6;
             this.height_resolution.Name = "height_resolution";
             this.height_resolution.Size = new System.Drawing.Size(99, 30);
             this.height_resolution.TabIndex = 6;
@@ -279,7 +279,7 @@ namespace WindowsFormsApp
             this.height_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.height_real.ForeColor = System.Drawing.Color.White;
             this.height_real.Location = new System.Drawing.Point(271, 192);
-            this.height_real.MaxLength = 4;
+            this.height_real.MaxLength = 6;
             this.height_real.Name = "height_real";
             this.height_real.Size = new System.Drawing.Size(99, 30);
             this.height_real.TabIndex = 13;
@@ -302,7 +302,7 @@ namespace WindowsFormsApp
             this.width_real.Font = new System.Drawing.Font("Microsoft Tai Le", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.width_real.ForeColor = System.Drawing.Color.White;
             this.width_real.Location = new System.Drawing.Point(135, 190);
-            this.width_real.MaxLength = 4;
+            this.width_real.MaxLength = 6;
             this.width_real.Name = "width_real";
             this.width_real.Size = new System.Drawing.Size(99, 30);
             this.width_real.TabIndex = 11;

@@ -12,9 +12,9 @@ namespace WindowsFormsApp
 {
     public partial class process_form : Form
     {
-        private Panel panel1;
+        public Panel panel1;
         private Button close_button;
-        private Label label5;
+        public Label label5;
         private ErrorProvider errorProvider1;
         private System.ComponentModel.IContainer components;
         public PictureBox progressBar1;

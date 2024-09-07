@@ -1,9 +1,11 @@
 ﻿using Accord.Video.FFMPEG;
+using Newtonsoft.Json;
 //using Accord.Video.FFMPEG;
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using WindowsFormsApp;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Timer = System.Windows.Forms.Timer;
 
@@ -169,7 +171,7 @@ public class ResizablePanel : Panel
                         ret = true;
                         direction = 3;
                     }
-                    //Console.WriteLine(otherPanel.Name);
+
                     // Event callback
                     OnCustomMouseMoveEvent(EventArgs.Empty, this.Left, this.Top, this.Width, this.Height, false, otherPanel.Name, direction);
                 }
@@ -202,17 +204,18 @@ public class ResizablePanel : Panel
     {
         if (isMove)
         {
+            var info_program = JsonConvert.DeserializeObject<Info_Program>(this.Parent.Name);
             int deltaX = e.X - lastMousePosition.X;
             int deltaY = e.Y - lastMousePosition.Y;
 
             int newLeft = this.Left + deltaX;
             int newTop = this.Top + deltaY;
 
-            int maxX = this.Parent.Width - this.Width;
-            int maxY = this.Parent.Height - this.Height;
+            int maxX = info_program.width_area - this.Width;
+            int maxY = info_program.height_area - this.Height;
 
-            newLeft = Math.Max(0, Math.Min(newLeft, maxX));
-            newTop = Math.Max(0, Math.Min(newTop, maxY));
+            newLeft = Math.Max(info_program.x_area, Math.Min(newLeft, maxX + info_program.x_area));
+            newTop = Math.Max(info_program.y_area, Math.Min(newTop, maxY + info_program.y_area));
 
 
             // Kiểm tra va chạm với các đối tượng khác
@@ -329,35 +332,61 @@ public class ResizablePanel : Panel
             int deltaX = currentMousePosition.X - lastMousePosition.X;
             int deltaY = currentMousePosition.Y - lastMousePosition.Y;
 
+            var info_program = JsonConvert.DeserializeObject<Info_Program>(this.Parent.Name);
+
             // Áp dụng thay đổi kích thước dựa trên handle đang được kéo
             if (activeResizeHandle.Name.Equals("top-left")) // Top-left
             {
-                this.Left += deltaX;
-                this.Top += deltaY;
-                this.Width -= deltaX;
-                this.Height -= deltaY;
+                int newLeft = this.Left + deltaX;
+                int newTop = this.Top + deltaY;
+
+                if (((info_program.x_area <= newLeft) && (newLeft <= (info_program.x_area + info_program.width_area))) &&
+                    ((info_program.y_area <= newTop) && (newTop <= (info_program.y_area + info_program.height_area))))
+                {
+                    this.Left += deltaX;
+                    this.Top += deltaY;
+                    this.Width -= deltaX;
+                    this.Height -= deltaY;
+                }
             }
             else if (activeResizeHandle.Name.Equals("top-right")) // Top-right
             {
-                this.Top += deltaY;
-                this.Height -= deltaY;
+                int newLeft = this.Left + deltaX + this.Width;
+                int newTop = this.Top + deltaY;
 
-                if (DestinationPanel.Width >= (this.Left + this.Width + deltaX))
-                    this.Width += deltaX;                              
-            }
+                if (((info_program.x_area <= newLeft) && (newLeft <= (info_program.x_area + info_program.width_area))) &&
+                    ((info_program.y_area <= newTop) && (newTop <= (info_program.y_area + info_program.height_area))))
+                {
+                    this.Top += deltaY;
+                    this.Height -= deltaY;
+                    this.Width += deltaX;
+                }                          
+            }   
             else if (activeResizeHandle.Name.Equals("bottom-left")) // Bottom-left
             {
-                this.Left += deltaX;
-                this.Width -= deltaX;
-                this.Height += deltaY;
+                int newLeft = this.Left + deltaX;
+                int newTop = this.Top + deltaY + this.Height;
+
+                if (((info_program.x_area <= newLeft) && (newLeft <= (info_program.x_area + info_program.width_area))) &&
+                    ((info_program.y_area <= newTop) && (newTop <= (info_program.y_area + info_program.height_area))))
+                {
+                    this.Left += deltaX;
+                    this.Width -= deltaX;
+                    this.Height += deltaY;
+                }
+
             }
             else if (activeResizeHandle.Name.Equals("bottom-right")) // Bottom-right
             {
-                if (DestinationPanel.Width >= (this.Left + this.Width + deltaX))
-                    this.Width += deltaX;
+                int newLeft = this.Left + deltaX + this.Width;
+                int newTop = this.Top + deltaY + this.Height;
 
-                if (DestinationPanel.Height >= (this.Top + this.Height + deltaY))
-                    this.Height += deltaY;              
+                if (((info_program.x_area <= newLeft) && (newLeft <= (info_program.x_area + info_program.width_area))) &&
+                    ((info_program.y_area <= newTop) && (newTop <= (info_program.y_area + info_program.height_area))))
+                {
+                    this.Width += deltaX;
+                    this.Height += deltaY;
+                }           
             }
             //Console.WriteLine(this.Width);
             if (deltaX != 0 || deltaY != 0)

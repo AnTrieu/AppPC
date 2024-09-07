@@ -20,11 +20,11 @@ namespace WindowsFormsApp
         public TextBox textBox1;
         private Label label1;
         private Label label2;
-        private TextBox textBox2;
         private Button confirmButton;
         private Button button1;
         public TextBox textBox3;
         private Label label3;
+        public ComboBox comboBox2;
         public int ProgressValue = 0;
 
         [DllImport("user32.dll")]
@@ -65,7 +65,7 @@ namespace WindowsFormsApp
             InitializeComponent();
 
             this.textBox1.Text = AppDomain.CurrentDomain.BaseDirectory;
-
+            this.comboBox2.SelectedIndex = 0;
         }
 
         private void InitializeComponent()
@@ -79,11 +79,11 @@ namespace WindowsFormsApp
             this.label1 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.confirmButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
@@ -146,7 +146,7 @@ namespace WindowsFormsApp
             this.textBox1.ForeColor = System.Drawing.Color.White;
             this.textBox1.Location = new System.Drawing.Point(143, 45);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(304, 27);
+            this.textBox1.Size = new System.Drawing.Size(292, 27);
             this.textBox1.TabIndex = 13;
             // 
             // label2
@@ -157,19 +157,6 @@ namespace WindowsFormsApp
             this.label2.Size = new System.Drawing.Size(64, 22);
             this.label2.TabIndex = 14;
             this.label2.Text = "Mode:";
-            // 
-            // textBox2
-            // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.ForeColor = System.Drawing.Color.White;
-            this.textBox2.Location = new System.Drawing.Point(144, 89);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(334, 27);
-            this.textBox2.TabIndex = 15;
-            this.textBox2.Text = "Copy to box for play";
             // 
             // confirmButton
             // 
@@ -188,7 +175,7 @@ namespace WindowsFormsApp
             this.button1.FlatAppearance.BorderSize = 0;
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Image = ((System.Drawing.Image)(resources.GetObject("button1.Image")));
-            this.button1.Location = new System.Drawing.Point(454, 45);
+            this.button1.Location = new System.Drawing.Point(447, 45);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(30, 27);
             this.button1.TabIndex = 17;
@@ -216,15 +203,28 @@ namespace WindowsFormsApp
             this.label3.TabIndex = 18;
             this.label3.Text = "Name:";
             // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.comboBox2.ForeColor = System.Drawing.Color.White;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "Copy to box for play (None)",
+            "Copy to box for play (Sync)"});
+            this.comboBox2.Location = new System.Drawing.Point(144, 88);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(334, 28);
+            this.comboBox2.TabIndex = 21;
+            // 
             // export_form
             // 
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.ClientSize = new System.Drawing.Size(490, 236);
+            this.Controls.Add(this.comboBox2);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.confirmButton);
-            this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
@@ -252,7 +252,7 @@ namespace WindowsFormsApp
 
         private void confirm_button_Click(object sender, EventArgs e)
         {
-            if ((this.textBox1.Text.Length > 0) && (this.textBox2.Text.Length > 0) && (this.textBox3.Text.Length > 0))
+            if ((this.textBox1.Text.Length > 0) && (this.textBox3.Text.Length > 0))
             {
                 this.Close();
 
