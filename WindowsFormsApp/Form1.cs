@@ -2888,7 +2888,8 @@ namespace WindowsFormsApp
             {
                 var info_program = JsonConvert.DeserializeObject<Info_Program>(info_program_str);
 
-                if (int.TryParse(info_program.width_real, out int width) && int.TryParse(info_program.height_real, out int height))
+                if (int.TryParse(info_program.width_real, out int width_real) && int.TryParse(info_program.height_real, out int height_real) && 
+                    int.TryParse(info_program.width_resolution, out int width_resolution) && int.TryParse(info_program.height_resolution, out int height_resolution))
                 {
                     // Update pointer
                     currentIdxList = idxSelect;
@@ -2899,9 +2900,12 @@ namespace WindowsFormsApp
                     // Get the maximum allowable width and height based on the mainPanel's size
                     int width_contain = this.show.Width;
                     int height_contain = this.show.Height;
-                    int width_select = width;
-                    int height_select = height;
-                    float delta = (float)width_select / (float)height_select;
+                    if ((width_real != width_resolution) || (height_real != height_resolution))
+                    {
+                        width_contain = this.panel43.Width;
+                        height_contain = this.panel43.Height;
+                    }
+                    float delta = (float)width_real / (float)height_real;
                     float width_config = 0;
                     float height_config = 0;
                     do
@@ -2962,7 +2966,7 @@ namespace WindowsFormsApp
                         }
                     };
 
-                    this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+                    this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
 
                     // Add the inner panel to the main panel
                     this.panel43.Controls.Add(innerPanel);
@@ -3595,16 +3599,20 @@ namespace WindowsFormsApp
 
             popup.ConfirmClick += (sender1, e1) =>
             {
-                if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
+                if (int.TryParse(e1.width_real, out int width_real) && int.TryParse(e1.height_real, out int height_real) &&
+                    int.TryParse(e1.width_resolution, out int width_resolution) && int.TryParse(e1.height_resolution, out int height_resolution))
                 {
                     reinit(true);
 
                     // Get the maximum allowable width and height based on the mainPanel's size
                     int width_contain = this.show.Width;
                     int height_contain = this.show.Height;
-                    int width_select = width;
-                    int height_select = height;
-                    float delta = (float)width_select / (float)height_select;
+                    if ((width_real != width_resolution) || (height_real != height_resolution))
+                    {
+                        width_contain = this.panel43.Width;
+                        height_contain = this.panel43.Height;
+                    }
+                    float delta = (float)width_real / (float)height_real;
                     float width_config = 0;
                     float height_config = 0;
                     do
@@ -3665,14 +3673,14 @@ namespace WindowsFormsApp
                         }
                     };
 
-                    this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+                    this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
 
                     // Add the inner panel to the main panel
                     this.panel43.Controls.Add(innerPanel);
 
                     // Create list program
-                    add_layout_program(this.panel6, e1.name, width, height, JsonConvert.SerializeObject(infoProgram));
-                    add_layout_program(this.panel71, e1.name, width, height, null);
+                    add_layout_program(this.panel6, e1.name, width_real, height_real, JsonConvert.SerializeObject(infoProgram));
+                    add_layout_program(this.panel71, e1.name, width_real, height_real, null);
                 }
             };
 
@@ -3800,11 +3808,11 @@ namespace WindowsFormsApp
                         }
                         else
                         {
-                            int X = (sender as Control).PointToClient(new Point(e.X, e.Y)).X;
-                            int Y = (sender as Control).PointToClient(new Point(e.X, e.Y)).Y;
-                            int width_valid = (info_program.x_area + info_program.width_area - X) >= 100 ? 100 : info_program.x_area + info_program.width_area - X;
-                            int height_valid = (info_program.y_area + info_program.height_area - Y) >= 50 ? 50 : info_program.y_area + info_program.height_area - Y;
-
+                            int X = (sender as Control).PointToClient(new Point(e.X, e.Y)).X - info_program.x_area;
+                            int Y = (sender as Control).PointToClient(new Point(e.X, e.Y)).Y - info_program.y_area;
+                            int width_valid = (info_program.width_area - X) >= 100 ? 100 : info_program.width_area - X;
+                            int height_valid = (info_program.height_area - Y) >= 50 ? 50 : info_program.height_area - Y;
+                            
                             var info_windown = new
                             {
                                 name            = "Windown " + lenght_list,
@@ -3821,7 +3829,7 @@ namespace WindowsFormsApp
 
                             windown = new ResizablePanel(destinationPanel)
                             {
-                                Location        = new Point(X, Y),
+                                Location        = new Point(X + info_program.x_area, Y + info_program.y_area),
                                 Size            = new Size(width_valid, height_valid),
                                 BackColor       = Color.Transparent,
                                 Name            = JsonConvert.SerializeObject(info_windown),
@@ -5851,21 +5859,23 @@ namespace WindowsFormsApp
             {
                 if ((control != this.panel34) && (control != this.panel33) && (control.BackColor == System.Drawing.Color.SteelBlue))
                 {
-                    var info_program = JsonConvert.DeserializeObject<Info_Program>(control.Name);
-
                     setting_form popup = new setting_form();
                     popup.ConfirmClick += (sender1, e1) =>
                     {
-                        if (int.TryParse(e1.width_real, out int width) && int.TryParse(e1.height_real, out int height))
+                        if (int.TryParse(e1.width_real, out int width_real) && int.TryParse(e1.height_real, out int height_real) &&
+                            int.TryParse(e1.width_resolution, out int width_resolution) && int.TryParse(e1.height_resolution, out int height_resolution))
                         {
                             reinit(true);
 
                             // Get the maximum allowable width and height based on the mainPanel's size
                             int width_contain = this.show.Width;
                             int height_contain = this.show.Height;
-                            int width_select = width;
-                            int height_select = height;
-                            float delta = (float)width_select / (float)height_select;
+                            if ((width_real != width_resolution) || (height_real != height_resolution))
+                            {
+                                width_contain = this.panel43.Width;
+                                height_contain = this.panel43.Height;
+                            }
+                            float delta = (float)width_real / (float)height_real;
                             float width_config = 0;
                             float height_config = 0;
                             do
@@ -5925,7 +5935,7 @@ namespace WindowsFormsApp
                                 }
                             };
 
-                            this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+                            this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
 
                             // Add the inner panel to the main panel
                             this.panel43.Controls.Add(innerPanel);
@@ -5940,7 +5950,7 @@ namespace WindowsFormsApp
                                 {
                                     if (child.Controls.IndexOf(item) == 0)
                                     {
-                                        item.Text = $"{width}(W) x {height}(H)";
+                                        item.Text = $"{width_real}(W) x {height_real}(H)";
                                     }                                       
                                     else if (child.Controls.IndexOf(item) == 1)
                                     {
@@ -5961,7 +5971,7 @@ namespace WindowsFormsApp
                                         {
                                             if (child.Controls.IndexOf(item) == 0)
                                             {
-                                                item.Text = $"{width}(W) x {height}(H)";
+                                                item.Text = $"{width_real}(W) x {height_real}(H)";
                                             }
                                             else if (child.Controls.IndexOf(item) == 1)
                                             {
@@ -5974,6 +5984,8 @@ namespace WindowsFormsApp
                             }
                         }
                     };
+
+                    var info_program = JsonConvert.DeserializeObject<Info_Program>(control.Name);
 
                     popup.set_name_program(info_program.Name);
                     popup.set_resolution(info_program.width_resolution, info_program.height_resolution);
@@ -6133,9 +6145,12 @@ namespace WindowsFormsApp
                 // Get the maximum allowable width and height based on the mainPanel's size
                 int width_contain = this.show.Width;
                 int height_contain = this.show.Height;
-                int width_select = int.Parse(info_program.width_real);
-                int height_select = int.Parse(info_program.height_real);
-                float delta = (float)width_select / (float)height_select;
+                if ((int.Parse(info_program.width_real) != int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) != int.Parse(info_program.height_resolution)))
+                {
+                    width_contain = this.panel43.Width;
+                    height_contain = this.panel43.Height;
+                }
+                float delta = (float)int.Parse(info_program.width_real) / (float)int.Parse(info_program.height_real);
                 float width_config = 0;
                 float height_config = 0;
                 do
@@ -6176,7 +6191,7 @@ namespace WindowsFormsApp
                     control1.Height = (int)Math.Round(Normalize(control1.Height, 0, heightK1, 0, (int)(height_config * scale)));
                 }
 
-                this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - (int)(width_config * scale)) / 2), y - (int)((this.show.Height - (int)(height_config * scale)) / 4));
+                this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
 
                 // Update info
                 info_program.x_area = x;
@@ -6278,13 +6293,14 @@ namespace WindowsFormsApp
                             this.panel43.Controls.Clear();
 
                             // Get the maximum allowable width and height based on the mainPanel's size
-                            int width = int.Parse(program.info_program.width_real);
-                            int height = int.Parse(program.info_program.height_real);
                             int width_contain = this.show.Width;
                             int height_contain = this.show.Height;
-                            int width_select = width;
-                            int height_select = height;
-                            float delta = (float)width_select / (float)height_select;
+                            if ((int.Parse(program.info_program.width_real) != int.Parse(program.info_program.width_resolution)) || (int.Parse(program.info_program.height_real) != int.Parse(program.info_program.height_resolution)))
+                            {
+                                width_contain = this.panel43.Width;
+                                height_contain = this.panel43.Height;
+                            }
+                            float delta = (float)int.Parse(program.info_program.width_real) / (float)int.Parse(program.info_program.height_real);
                             float width_config = 0;
                             float height_config = 0;
                             do
@@ -6345,14 +6361,14 @@ namespace WindowsFormsApp
                                 }
                             };
 
-                            this.show.AutoScrollPosition = new System.Drawing.Point(x - (int)((this.show.Width - width_config) / 2), y - (int)((this.show.Height - height_config) / 4));
+                            this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
 
                             // Add the inner panel to the main panel
                             this.panel43.Controls.Add(innerPanel);
 
                             // Create list program
-                            add_layout_program(this.panel6, program.info_program.Name, width, height, JsonConvert.SerializeObject(infoProgram));
-                            add_layout_program(this.panel71, program.info_program.Name, width, height, null);
+                            add_layout_program(this.panel6, program.info_program.Name, int.Parse(program.info_program.width_real), int.Parse(program.info_program.height_real), JsonConvert.SerializeObject(infoProgram));
+                            add_layout_program(this.panel71, program.info_program.Name, int.Parse(program.info_program.width_real), int.Parse(program.info_program.height_real), null);
 
                             var visiblePanels = this.panel43.Controls
                                 .OfType<Panel>()
