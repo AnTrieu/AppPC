@@ -262,11 +262,20 @@
     <None Include="Resources\clock_icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\right_align.png" />
+    <None Include="Resources\top_align.png" />
+    <None Include="Resources\underline-text-option.png" />
     <None Include="Resources\text-icon.png" />
     <None Include="Resources\program_icon1.png" />
     <None Include="Resources\folder_not_found.png" />
     <None Include="Resources\arrow.png" />
     <None Include="Resources\calendar.png" />
+    <None Include="Resources\bold-text-option.png" />
+    <None Include="Resources\italic-option.png" />
+    <None Include="Resources\middle_align.png" />
+    <None Include="Resources\bottom_align.png" />
+    <None Include="Resources\left_align.png" />
+    <None Include="Resources\center_align.png" />
     <Content Include="Resources\plus-icon.png" />
     <None Include="Resources\tools-icon.png" />
     <None Include="Resources\net_bk.png" />

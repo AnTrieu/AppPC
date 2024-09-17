@@ -93,8 +93,8 @@ namespace WindowsFormsApp
             if (this.WindowState == FormWindowState.Maximized)
             {
                 this.panel6.Width = 450;
-                this.panel14.Width = 300;
-                this.panel40.Width = 300;
+                this.panel14.Width = 340;
+                this.panel40.Width = 340;
 
                 this.show_file.Height = 250;
 
@@ -104,7 +104,7 @@ namespace WindowsFormsApp
             {
                 this.panel6.Width = 350;
                 this.panel14.Width = 200;
-                this.panel40.Width = 260;
+                this.panel40.Width = 300;
 
                 this.show_file.Height = 250;
 
@@ -1458,8 +1458,8 @@ namespace WindowsFormsApp
                     {
                         var detailPacket = new
                         {
-                            IP_client = IP_client,
-                            type = type,
+                            IP_client    = IP_client,
+                            type         = type,
                             program_list = program_list
                         };
 
@@ -1680,6 +1680,43 @@ namespace WindowsFormsApp
             // Icon feature
             this.Webpage.MouseDown += PictureBox_MouseDown;
             this.Text.MouseDown += PictureBox_MouseDown;
+
+            /*** Modify text feature ***/
+            
+            // Font (Note: Need update mapping value to send device)
+            this.font_select.Items.Clear();
+            this.font_select.Items.Add("Arial");
+            this.font_select.Items.Add("Time New Roman");
+            this.font_select.Items.Add("Franklin Fothic Std Book Compressed");
+
+            // Size
+            this.size_select.Items.Clear();
+            for(int i= 1; i < 500; i++)
+            {
+                this.size_select.Items.Add(i.ToString());
+            }
+
+            // animation
+            this.animation_select.Items.Clear();
+            this.animation_select.Items.Add("None");
+            this.animation_select.Items.Add("Left to Right");
+            this.animation_select.Items.Add("Right to Left");
+            this.animation_select.Items.Add("Shift up");
+
+            // speed
+            this.speed_select.Items.Clear();
+            for (int i = 10; i <= 100; i+=10)
+            {
+                this.speed_select.Items.Add(i.ToString());
+            }
+
+            // background will be set when load list data
+
+            // style
+            this.style_select.Items.Clear();
+            this.style_select.Items.Add("None");
+            this.style_select.Items.Add("Style 1");
+            this.style_select.Items.Add("Style 2");
         }
 
 
@@ -3051,6 +3088,7 @@ namespace WindowsFormsApp
                                     windown_top     = info_windown_list[idx_window].windown_top,
                                     windown_left    = info_windown_list[idx_window].windown_left,
                                     list            = list_object,
+                                    list_text       = info_windown_list[idx_window].list_text,
                                     list_url        = info_windown_list[idx_window].list_url,
                                     list_duration   = info_windown_list[idx_window].list_duration,
                                     list_entrytime  = info_windown_list[idx_window].list_entrytime,
@@ -3259,8 +3297,11 @@ namespace WindowsFormsApp
 
                                                     if (name_file.Equals("Webpage"))
                                                     {
-                                                        infoWindow.list_url.Add("toantrungcloud.com");
+                                                        // Data not use
+                                                        infoWindow.list_text.Add("");
 
+                                                        // Data use
+                                                        infoWindow.list_url.Add("toantrungcloud.com");
                                                         infoWindow.list_entrytime.Add("0");
                                                         infoWindow.list_duration.Add("10");
                                                     }
@@ -3269,6 +3310,25 @@ namespace WindowsFormsApp
                                                         // Data not use
                                                         infoWindow.list_url.Add("");
 
+                                                        // Data use
+                                                        var info_text = new
+                                                        {
+                                                            display_time    = 5,
+                                                            font            = "Arial",
+                                                            size            = 48,
+                                                            function        = 2,
+                                                            vertical        = 2,
+                                                            horizontal      = 5,
+                                                            animation       = "None",
+                                                            E2E             = false,
+                                                            speed           = 50,
+                                                            style           = "None",
+                                                            background      = "None",
+                                                            Color           = "#FFFFFF",
+                                                            textarea        = "Hello World",
+                                                        };
+
+                                                        infoWindow.list_text.Add(JsonConvert.SerializeObject(info_text));
                                                         infoWindow.list_entrytime.Add("0");
                                                         infoWindow.list_duration.Add("10");
                                                     }
@@ -3276,33 +3336,37 @@ namespace WindowsFormsApp
                                                     {
                                                         // Data not use
                                                         infoWindow.list_url.Add("");
+                                                        infoWindow.list_text.Add("");
 
-                                                        // Is a video
-                                                        if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                                        // Data use
                                                         {
-                                                            infoWindow.list_entrytime.Add("0");
-                                                            infoWindow.list_duration.Add("10");
-                                                        }
-                                                        else
-                                                        {
-                                                            var flag_error = true;
-                                                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                                            mediaInfo.Open(name_file);
-
-                                                            if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                            // Is a video
+                                                            if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                                             {
-                                                                double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
-                                                                flag_error = false;
                                                                 infoWindow.list_entrytime.Add("0");
-                                                                infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                infoWindow.list_duration.Add("10");
                                                             }
-
-                                                            if (flag_error)
+                                                            else
                                                             {
-                                                                flag_error = false;
-                                                                infoWindow.list_entrytime.Add("");
-                                                                infoWindow.list_duration.Add("");
+                                                                var flag_error = true;
+                                                                var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                                mediaInfo.Open(name_file);
+
+                                                                if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                                {
+                                                                    double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                                    flag_error = false;
+                                                                    infoWindow.list_entrytime.Add("0");
+                                                                    infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                }
+
+                                                                if (flag_error)
+                                                                {
+                                                                    flag_error = false;
+                                                                    infoWindow.list_entrytime.Add("");
+                                                                    infoWindow.list_duration.Add("");
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -3381,6 +3445,7 @@ namespace WindowsFormsApp
                                             {
                                                 pictureBox.Image.Dispose();
                                             }
+                                            Console.WriteLine(pictureBox.Name);
                                             pictureBox.Image = windown_load.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
                                             pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
 
@@ -3790,9 +3855,10 @@ namespace WindowsFormsApp
                         string extension = System.IO.Path.GetExtension(objectName).ToLower();
 
                         string[] list_object = {objectName};
-                        string[] list_url = { "" };
-                        string[] list_duration = { "" };
-                        string[] list_entrytime = { "" };
+                        string[] list_url = {""};
+                        string[] list_text = {""};
+                        string[] list_duration = {""};
+                        string[] list_entrytime = {""};
                         bool[] list_selected = { true };
                         bool have_image = false;
 
@@ -3806,8 +3872,19 @@ namespace WindowsFormsApp
                         }
                         else if (objectName.Equals("Text"))
                         {
-                            // Data not use
-                            list_url[0] = "";
+                            list_text[0] = JsonConvert.SerializeObject(new {display_time = 5,
+                                                                            font = "Arial",
+                                                                            size = 48,
+                                                                            function = 2,
+                                                                            vertical = 2,
+                                                                            horizontal = 5,
+                                                                            animation = "None",
+                                                                            E2E = false,
+                                                                            speed = 50,
+                                                                            style = "None",
+                                                                            background = "None",
+                                                                            Color = "#FFFFFF",
+                                                                            textarea = "Hello World"});
 
                             // Type Text
                             list_entrytime[0] = "0";
@@ -3855,6 +3932,7 @@ namespace WindowsFormsApp
                                 windown_top     = 0,
                                 windown_left    = 0,
                                 list            = list_object,
+                                list_text       = list_text,
                                 list_url        = list_url,
                                 list_duration   = list_duration,
                                 list_entrytime  = list_entrytime,
@@ -3901,6 +3979,7 @@ namespace WindowsFormsApp
                                 windown_top     = (int)Math.Round(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))),
                                 windown_left    = (int)Math.Round(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))),
                                 list            = list_object,
+                                list_text       = list_text,
                                 list_url        = list_url,
                                 list_duration   = list_duration,
                                 list_entrytime  = list_entrytime,
@@ -4103,8 +4182,11 @@ namespace WindowsFormsApp
 
                                         if (name_file.Equals("Webpage"))
                                         {
-                                            infoWindow.list_url.Add("toantrungcloud.com");
+                                            // Data not use
+                                            infoWindow.list_text.Add("");
 
+                                            // Data use
+                                            infoWindow.list_url.Add("toantrungcloud.com");
                                             infoWindow.list_entrytime.Add("0");
                                             infoWindow.list_duration.Add("10");
                                         }
@@ -4113,6 +4195,24 @@ namespace WindowsFormsApp
                                             // Data not use
                                             infoWindow.list_url.Add("");
 
+                                            // Data use
+                                            var info_text = new
+                                            {
+                                                display_time    = 5,
+                                                font            = "Arial",
+                                                size            = 48,
+                                                function        = 2,
+                                                vertical        = 2,
+                                                horizontal      = 5,
+                                                animation       = "None",
+                                                E2E             = false,
+                                                speed           = 50,
+                                                style           = "None",
+                                                background      = "None",
+                                                Color           = "#FFFFFF",
+                                                textarea        = "Hello World",
+                                            };
+                                            infoWindow.list_text.Add(JsonConvert.SerializeObject(info_text));
                                             infoWindow.list_entrytime.Add("0");
                                             infoWindow.list_duration.Add("10");
                                         }
@@ -4120,36 +4220,40 @@ namespace WindowsFormsApp
                                         {
                                             // Data not use
                                             infoWindow.list_url.Add("");
+                                            infoWindow.list_text.Add("");
 
-                                            // Is a video
-                                            if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                            // Data use
                                             {
-                                                infoWindow.list_entrytime.Add("0");
-                                                infoWindow.list_duration.Add("10");
-                                            }
-                                            else
-                                            {
-                                                var flag_error = true;
-                                                var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                                mediaInfo.Open(name_file);
-
-                                                if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                // Is a video
+                                                if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                                 {
-                                                    flag_error = false;
-
-                                                    double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
                                                     infoWindow.list_entrytime.Add("0");
-                                                    infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                    infoWindow.list_duration.Add("10");
                                                 }
-
-                                                if (flag_error)
+                                                else
                                                 {
-                                                    flag_error = false;
-                                                    infoWindow.list_entrytime.Add("");
-                                                    infoWindow.list_duration.Add("");
-                                                }
+                                                    var flag_error = true;
+                                                    var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                    mediaInfo.Open(name_file);
 
+                                                    if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                    {
+                                                        flag_error = false;
+
+                                                        double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                        infoWindow.list_entrytime.Add("0");
+                                                        infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                    }
+
+                                                    if (flag_error)
+                                                    {
+                                                        flag_error = false;
+                                                        infoWindow.list_entrytime.Add("");
+                                                        infoWindow.list_duration.Add("");
+                                                    }
+
+                                                }
                                             }
                                         }
 
@@ -4410,14 +4514,14 @@ namespace WindowsFormsApp
                                 if (control1 is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name) && control1.Parent != null)
                                 {
                                     // Deserialize JSON data from the Name property
-                                    Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
+                                    Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name); 
                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                     {
                                         Color initialBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64))))); // Set to your initial color
                                         int index = int.Parse((sender as Control).Name);
                                         if (infoWindow1.selected[index])
                                         {
-                                            String path_file = infoWindow1.list[index];
+                                            String path_file = infoWindow1.list[index]; 
                                             string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
 
                                             // Filter type
@@ -4466,6 +4570,7 @@ namespace WindowsFormsApp
                                                 {
                                                     this.panel80.Visible = false;
                                                     this.panel100.Visible = false;
+                                                    this.panel101.Visible = false;
 
                                                     if (!infoWindow1.path_windown.Equals(path_file) || !panel_windown.updateTimer.Enabled)
                                                     {
@@ -4486,6 +4591,7 @@ namespace WindowsFormsApp
                                                 {
                                                     this.panel80.Visible = true;
                                                     this.panel100.Visible = false;
+                                                    this.panel101.Visible = false;
 
                                                     this.entrytime_select.Text = infoWindow1.list_entrytime[index];
                                                     this.duration_select.Text = infoWindow1.list_duration[index];
@@ -4525,6 +4631,7 @@ namespace WindowsFormsApp
                                             {
                                                 this.panel80.Visible = true;
                                                 this.panel100.Visible = true;
+                                                this.panel101.Visible = false;
 
                                                 this.url_select.Text = infoWindow1.list_url[index];
                                                 this.entrytime_select.Text = infoWindow1.list_entrytime[index];
@@ -4555,7 +4662,12 @@ namespace WindowsFormsApp
                                             }
                                             else if (type_file.Equals("Text"))
                                             {
+                                                this.panel80.Visible = true;
                                                 this.panel100.Visible = false;
+                                                this.panel101.Visible = true;
+
+                                                this.entrytime_select.Text = infoWindow1.list_entrytime[index];
+                                                this.duration_select.Text = infoWindow1.list_duration[index];
 
                                                 panel_windown.updateTimer.Stop();
 
@@ -4647,7 +4759,7 @@ namespace WindowsFormsApp
                             {
                                 if (control1 is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
                                 {
-                                    Console.WriteLine(resizablePanel1.Name);
+
                                     // Deserialize JSON data from the Name property
                                     Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
                                     infoWindow1.selectedMaster = false;
@@ -4660,7 +4772,6 @@ namespace WindowsFormsApp
                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                     {
                                         Control parentControl = (sender as Control).Parent.Parent;
-                                        Console.WriteLine(parentControl.Name);
                                         infoWindow1.selected[int.Parse(parentControl.Name)] = true;
                                     }
 
@@ -6643,6 +6754,7 @@ namespace WindowsFormsApp
                                             windown_top     = program.info_windown[idx_window].windown_top,
                                             windown_left    = program.info_windown[idx_window].windown_left,
                                             list            = list_object,
+                                            list_text       = program.info_windown[idx_window].list_text,
                                             list_url        = program.info_windown[idx_window].list_url,
                                             list_duration   = program.info_windown[idx_window].list_duration,
                                             list_entrytime  = program.info_windown[idx_window].list_entrytime,
@@ -6851,8 +6963,11 @@ namespace WindowsFormsApp
 
                                                             if (name_file.Equals("Webpage"))
                                                             {
-                                                                infoWindow.list_url.Add("toantrungcloud.com");
+                                                                // Data not use
+                                                                infoWindow.list_text.Add("");
 
+                                                                // Data use
+                                                                infoWindow.list_url.Add("toantrungcloud.com");
                                                                 infoWindow.list_entrytime.Add("0");
                                                                 infoWindow.list_duration.Add("10");
                                                             }
@@ -6861,6 +6976,24 @@ namespace WindowsFormsApp
                                                                 // Data not use
                                                                 infoWindow.list_url.Add("");
 
+                                                                // Data use
+                                                                var info_text = new
+                                                                {
+                                                                    display_time    = 5,
+                                                                    font            = "Arial",
+                                                                    size            = 48,
+                                                                    function        = 2,
+                                                                    vertical        = 2,
+                                                                    horizontal      = 5,
+                                                                    animation       = "None",
+                                                                    E2E             = false,
+                                                                    speed           = 50,
+                                                                    style           = "None",
+                                                                    background      = "None",
+                                                                    Color           = "#FFFFFF",
+                                                                    textarea        = "Hello World",
+                                                                };
+                                                                infoWindow.list_text.Add(JsonConvert.SerializeObject(info_text));
                                                                 infoWindow.list_entrytime.Add("0");
                                                                 infoWindow.list_duration.Add("10");
                                                             }
@@ -6868,33 +7001,37 @@ namespace WindowsFormsApp
                                                             {
                                                                 // Data not use
                                                                 infoWindow.list_url.Add("");
+                                                                infoWindow.list_text.Add("");
 
-                                                                // Is a video
-                                                                if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                                                // Data use
                                                                 {
-                                                                    infoWindow.list_entrytime.Add("0");
-                                                                    infoWindow.list_duration.Add("10");
-                                                                }
-                                                                else
-                                                                {
-                                                                    var flag_error = true;
-                                                                    var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                                                    mediaInfo.Open(name_file);
-
-                                                                    if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                                    // Is a video
+                                                                    if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                                                     {
-                                                                        double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
-                                                                        flag_error = false;
                                                                         infoWindow.list_entrytime.Add("0");
-                                                                        infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                        infoWindow.list_duration.Add("10");
                                                                     }
-
-                                                                    if (flag_error)
+                                                                    else
                                                                     {
-                                                                        flag_error = false;
-                                                                        infoWindow.list_entrytime.Add("");
-                                                                        infoWindow.list_duration.Add("");
+                                                                        var flag_error = true;
+                                                                        var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                                        mediaInfo.Open(name_file);
+
+                                                                        if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                                        {
+                                                                            double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                                            flag_error = false;
+                                                                            infoWindow.list_entrytime.Add("0");
+                                                                            infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                        }
+
+                                                                        if (flag_error)
+                                                                        {
+                                                                            flag_error = false;
+                                                                            infoWindow.list_entrytime.Add("");
+                                                                            infoWindow.list_duration.Add("");
+                                                                        }
                                                                     }
                                                                 }
                                                             }
@@ -7074,6 +7211,16 @@ namespace WindowsFormsApp
                                 infoWindow1.list_entrytime[idx_select] = infoWindow1.list_entrytime[idx_select - 1];
                                 infoWindow1.list_entrytime[idx_select - 1] = data_temp;
 
+                                // Switch data
+                                data_temp = infoWindow1.list_url[idx_select];
+                                infoWindow1.list_url[idx_select] = infoWindow1.list_url[idx_select - 1];
+                                infoWindow1.list_url[idx_select - 1] = data_temp;
+
+                                // Switch data
+                                data_temp = infoWindow1.list_text[idx_select];
+                                infoWindow1.list_text[idx_select] = infoWindow1.list_text[idx_select - 1];
+                                infoWindow1.list_text[idx_select - 1] = data_temp;
+
                                 infoWindow1.selected[idx_select] = false;
                                 infoWindow1.selected[idx_select - 1] = true;
                                 resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -7146,6 +7293,16 @@ namespace WindowsFormsApp
                                 data_temp = infoWindow1.list_entrytime[idx_select];
                                 infoWindow1.list_entrytime[idx_select] = infoWindow1.list_entrytime[idx_select + 1];
                                 infoWindow1.list_entrytime[idx_select + 1] = data_temp;
+
+                                // Switch data
+                                data_temp = infoWindow1.list_url[idx_select];
+                                infoWindow1.list_url[idx_select] = infoWindow1.list_url[idx_select + 1];
+                                infoWindow1.list_url[idx_select + 1] = data_temp;
+
+                                // Switch data
+                                data_temp = infoWindow1.list_text[idx_select];
+                                infoWindow1.list_text[idx_select] = infoWindow1.list_text[idx_select + 1];
+                                infoWindow1.list_text[idx_select + 1] = data_temp;
 
                                 infoWindow1.selected[idx_select] = false;
                                 infoWindow1.selected[idx_select + 1] = true;
@@ -7249,6 +7406,8 @@ namespace WindowsFormsApp
                             else if (infoWindow1.selected[idx_select])
                             {
                                 infoWindow1.list[idx_select] = "";
+                                infoWindow1.list_url[idx_select] = "";
+                                infoWindow1.list_text[idx_select] = "";
                                 infoWindow1.list_duration[idx_select] = "";
                                 infoWindow1.list_entrytime[idx_select] = "";
                                 infoWindow1.selected[idx_select] = false;
@@ -9565,6 +9724,14 @@ namespace WindowsFormsApp
         {
             process_button_delete_list(sender as Button);
         }
+
+        private void color_picker_Click(object sender, EventArgs e)
+        {
+            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
+            {
+                this.color_select.BackColor = colorDialog1.Color;
+            }
+        }
     }
 
     public static class ControlExtensions
@@ -9654,6 +9821,23 @@ namespace WindowsFormsApp
         public int height_area { get; set; }
     }
 
+    public class Info_Text
+    {
+        public int display_time { get; set; }
+        public string font { get; set; }
+        public int size { get; set; }
+        public int function { get; set; }
+        public int vertical { get; set; }
+        public int horizontal { get; set; }
+        public string animation { get; set; }
+        public Boolean E2E { get; set; }
+        public int speed { get; set; }
+        public string style { get; set; }
+        public string background { get; set; }
+        public string color { get; set; }
+        public string textarea { get; set; }
+    }
+
     public class Info_Window
     {
         public string Name { get; set; }
@@ -9664,6 +9848,7 @@ namespace WindowsFormsApp
         public int windown_top { get; set; }
         public int windown_left { get; set; }
         public List<string> list { get; set; }
+        public List<string> list_text { get; set; }
         public List<string> list_url { get; set; }
         public List<string> list_duration { get; set; }
         public List<string> list_entrytime { get; set; }

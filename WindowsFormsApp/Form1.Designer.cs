@@ -155,6 +155,37 @@
             this.entrytime_select = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.panel101 = new System.Windows.Forms.Panel();
+            this.background = new System.Windows.Forms.ComboBox();
+            this.label56 = new System.Windows.Forms.Label();
+            this.style_select = new System.Windows.Forms.ComboBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.speed_select = new System.Windows.Forms.ComboBox();
+            this.label54 = new System.Windows.Forms.Label();
+            this.e2e_select = new System.Windows.Forms.RadioButton();
+            this.animation_select = new System.Windows.Forms.ComboBox();
+            this.label53 = new System.Windows.Forms.Label();
+            this.panel105 = new System.Windows.Forms.Panel();
+            this.right_icon = new System.Windows.Forms.Button();
+            this.center_icon = new System.Windows.Forms.Button();
+            this.left_icon = new System.Windows.Forms.Button();
+            this.panel104 = new System.Windows.Forms.Panel();
+            this.bottom_icon = new System.Windows.Forms.Button();
+            this.middle_icon = new System.Windows.Forms.Button();
+            this.top_icon = new System.Windows.Forms.Button();
+            this.panel103 = new System.Windows.Forms.Panel();
+            this.underline_icon = new System.Windows.Forms.Button();
+            this.italic_icon = new System.Windows.Forms.Button();
+            this.bold_icon = new System.Windows.Forms.Button();
+            this.panel102 = new System.Windows.Forms.Panel();
+            this.color_select = new System.Windows.Forms.Panel();
+            this.size_select = new System.Windows.Forms.ComboBox();
+            this.font_select = new System.Windows.Forms.ComboBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.label52 = new System.Windows.Forms.Label();
+            this.panel100 = new System.Windows.Forms.Panel();
+            this.url_select = new System.Windows.Forms.TextBox();
+            this.label51 = new System.Windows.Forms.Label();
             this.panel81 = new System.Windows.Forms.Panel();
             this.name_select = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -252,9 +283,7 @@
             this.label50 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.panel100 = new System.Windows.Forms.Panel();
-            this.url_select = new System.Windows.Forms.TextBox();
-            this.label51 = new System.Windows.Forms.Label();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -302,6 +331,12 @@
             this.panel40.SuspendLayout();
             this.panel70.SuspendLayout();
             this.panel80.SuspendLayout();
+            this.panel101.SuspendLayout();
+            this.panel105.SuspendLayout();
+            this.panel104.SuspendLayout();
+            this.panel103.SuspendLayout();
+            this.panel102.SuspendLayout();
+            this.panel100.SuspendLayout();
             this.panel81.SuspendLayout();
             this.panel69.SuspendLayout();
             this.panel49.SuspendLayout();
@@ -343,7 +378,6 @@
             this.panel82.SuspendLayout();
             this.panel71.SuspendLayout();
             this.panel75.SuspendLayout();
-            this.panel100.SuspendLayout();
             this.SuspendLayout();
             // 
             // title
@@ -1785,6 +1819,7 @@
             // panel70
             // 
             this.panel70.Controls.Add(this.panel80);
+            this.panel70.Controls.Add(this.panel101);
             this.panel70.Controls.Add(this.panel100);
             this.panel70.Controls.Add(this.panel81);
             this.panel70.Controls.Add(this.panel69);
@@ -1803,7 +1838,7 @@
             this.panel80.Controls.Add(this.label8);
             this.panel80.Controls.Add(this.label6);
             this.panel80.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel80.Location = new System.Drawing.Point(0, 158);
+            this.panel80.Location = new System.Drawing.Point(0, 470);
             this.panel80.Name = "panel80";
             this.panel80.Size = new System.Drawing.Size(298, 81);
             this.panel80.TabIndex = 4;
@@ -1839,9 +1874,9 @@
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label8.Location = new System.Drawing.Point(0, 50);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(100, 17);
+            this.label8.Size = new System.Drawing.Size(104, 17);
             this.label8.TabIndex = 3;
-            this.label8.Text = "Duration time :";
+            this.label8.Text = " Duration time :";
             // 
             // label6
             // 
@@ -1849,9 +1884,378 @@
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(0, 10);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 17);
+            this.label6.Size = new System.Drawing.Size(83, 17);
             this.label6.TabIndex = 2;
-            this.label6.Text = "Entry time :";
+            this.label6.Text = " Entry time :";
+            // 
+            // panel101
+            // 
+            this.panel101.Controls.Add(this.background);
+            this.panel101.Controls.Add(this.label56);
+            this.panel101.Controls.Add(this.style_select);
+            this.panel101.Controls.Add(this.label55);
+            this.panel101.Controls.Add(this.speed_select);
+            this.panel101.Controls.Add(this.label54);
+            this.panel101.Controls.Add(this.e2e_select);
+            this.panel101.Controls.Add(this.animation_select);
+            this.panel101.Controls.Add(this.label53);
+            this.panel101.Controls.Add(this.panel105);
+            this.panel101.Controls.Add(this.panel104);
+            this.panel101.Controls.Add(this.panel103);
+            this.panel101.Controls.Add(this.panel102);
+            this.panel101.Controls.Add(this.size_select);
+            this.panel101.Controls.Add(this.font_select);
+            this.panel101.Controls.Add(this.textBox5);
+            this.panel101.Controls.Add(this.label52);
+            this.panel101.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel101.Location = new System.Drawing.Point(0, 158);
+            this.panel101.Name = "panel101";
+            this.panel101.Size = new System.Drawing.Size(298, 312);
+            this.panel101.TabIndex = 7;
+            // 
+            // background
+            // 
+            this.background.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.background.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.background.ForeColor = System.Drawing.Color.White;
+            this.background.FormattingEnabled = true;
+            this.background.ItemHeight = 20;
+            this.background.Location = new System.Drawing.Point(107, 281);
+            this.background.Name = "background";
+            this.background.Size = new System.Drawing.Size(140, 28);
+            this.background.TabIndex = 19;
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label56.Location = new System.Drawing.Point(0, 287);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(96, 17);
+            this.label56.TabIndex = 18;
+            this.label56.Text = " Background :";
+            // 
+            // style_select
+            // 
+            this.style_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.style_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.style_select.ForeColor = System.Drawing.Color.White;
+            this.style_select.FormattingEnabled = true;
+            this.style_select.ItemHeight = 20;
+            this.style_select.Location = new System.Drawing.Point(227, 241);
+            this.style_select.Name = "style_select";
+            this.style_select.Size = new System.Drawing.Size(57, 28);
+            this.style_select.TabIndex = 17;
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label55.Location = new System.Drawing.Point(174, 247);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(47, 17);
+            this.label55.TabIndex = 16;
+            this.label55.Text = "Style :";
+            // 
+            // speed_select
+            // 
+            this.speed_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.speed_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.speed_select.ForeColor = System.Drawing.Color.White;
+            this.speed_select.FormattingEnabled = true;
+            this.speed_select.ItemHeight = 20;
+            this.speed_select.Location = new System.Drawing.Point(107, 241);
+            this.speed_select.Name = "speed_select";
+            this.speed_select.Size = new System.Drawing.Size(57, 28);
+            this.speed_select.TabIndex = 15;
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label54.Location = new System.Drawing.Point(0, 247);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(61, 17);
+            this.label54.TabIndex = 14;
+            this.label54.Text = " Speed :";
+            // 
+            // e2e_select
+            // 
+            this.e2e_select.AutoSize = true;
+            this.e2e_select.Location = new System.Drawing.Point(253, 207);
+            this.e2e_select.Name = "e2e_select";
+            this.e2e_select.Size = new System.Drawing.Size(45, 17);
+            this.e2e_select.TabIndex = 13;
+            this.e2e_select.TabStop = true;
+            this.e2e_select.Text = "E2E";
+            this.e2e_select.UseVisualStyleBackColor = true;
+            // 
+            // animation_select
+            // 
+            this.animation_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.animation_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.animation_select.ForeColor = System.Drawing.Color.White;
+            this.animation_select.FormattingEnabled = true;
+            this.animation_select.ItemHeight = 20;
+            this.animation_select.Location = new System.Drawing.Point(107, 201);
+            this.animation_select.Name = "animation_select";
+            this.animation_select.Size = new System.Drawing.Size(140, 28);
+            this.animation_select.TabIndex = 12;
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label53.Location = new System.Drawing.Point(0, 207);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(74, 17);
+            this.label53.TabIndex = 11;
+            this.label53.Text = " Scrolling :";
+            // 
+            // panel105
+            // 
+            this.panel105.Controls.Add(this.right_icon);
+            this.panel105.Controls.Add(this.center_icon);
+            this.panel105.Controls.Add(this.left_icon);
+            this.panel105.Location = new System.Drawing.Point(200, 169);
+            this.panel105.Name = "panel105";
+            this.panel105.Size = new System.Drawing.Size(90, 26);
+            this.panel105.TabIndex = 10;
+            // 
+            // right_icon
+            // 
+            this.right_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.right_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.right_icon.FlatAppearance.BorderSize = 0;
+            this.right_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.right_icon.Image = global::WindowsFormsApp.Properties.Resources.right_align;
+            this.right_icon.Location = new System.Drawing.Point(60, 0);
+            this.right_icon.Name = "right_icon";
+            this.right_icon.Size = new System.Drawing.Size(30, 26);
+            this.right_icon.TabIndex = 9;
+            this.right_icon.UseVisualStyleBackColor = false;
+            // 
+            // center_icon
+            // 
+            this.center_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.center_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.center_icon.FlatAppearance.BorderSize = 0;
+            this.center_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.center_icon.Image = global::WindowsFormsApp.Properties.Resources.center_align;
+            this.center_icon.Location = new System.Drawing.Point(30, 0);
+            this.center_icon.Name = "center_icon";
+            this.center_icon.Size = new System.Drawing.Size(30, 26);
+            this.center_icon.TabIndex = 8;
+            this.center_icon.UseVisualStyleBackColor = false;
+            // 
+            // left_icon
+            // 
+            this.left_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.left_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.left_icon.FlatAppearance.BorderSize = 0;
+            this.left_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.left_icon.Image = global::WindowsFormsApp.Properties.Resources.left_align;
+            this.left_icon.Location = new System.Drawing.Point(0, 0);
+            this.left_icon.Name = "left_icon";
+            this.left_icon.Size = new System.Drawing.Size(30, 26);
+            this.left_icon.TabIndex = 7;
+            this.left_icon.UseVisualStyleBackColor = false;
+            // 
+            // panel104
+            // 
+            this.panel104.Controls.Add(this.bottom_icon);
+            this.panel104.Controls.Add(this.middle_icon);
+            this.panel104.Controls.Add(this.top_icon);
+            this.panel104.Location = new System.Drawing.Point(104, 169);
+            this.panel104.Name = "panel104";
+            this.panel104.Size = new System.Drawing.Size(90, 26);
+            this.panel104.TabIndex = 9;
+            // 
+            // bottom_icon
+            // 
+            this.bottom_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.bottom_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.bottom_icon.FlatAppearance.BorderSize = 0;
+            this.bottom_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bottom_icon.Image = global::WindowsFormsApp.Properties.Resources.bottom_align;
+            this.bottom_icon.Location = new System.Drawing.Point(60, 0);
+            this.bottom_icon.Name = "bottom_icon";
+            this.bottom_icon.Size = new System.Drawing.Size(30, 26);
+            this.bottom_icon.TabIndex = 6;
+            this.bottom_icon.UseVisualStyleBackColor = false;
+            // 
+            // middle_icon
+            // 
+            this.middle_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.middle_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.middle_icon.FlatAppearance.BorderSize = 0;
+            this.middle_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.middle_icon.Image = global::WindowsFormsApp.Properties.Resources.middle_align;
+            this.middle_icon.Location = new System.Drawing.Point(30, 0);
+            this.middle_icon.Name = "middle_icon";
+            this.middle_icon.Size = new System.Drawing.Size(30, 26);
+            this.middle_icon.TabIndex = 5;
+            this.middle_icon.UseVisualStyleBackColor = false;
+            // 
+            // top_icon
+            // 
+            this.top_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.top_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.top_icon.FlatAppearance.BorderSize = 0;
+            this.top_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.top_icon.Image = global::WindowsFormsApp.Properties.Resources.top_align;
+            this.top_icon.Location = new System.Drawing.Point(0, 0);
+            this.top_icon.Name = "top_icon";
+            this.top_icon.Size = new System.Drawing.Size(30, 26);
+            this.top_icon.TabIndex = 4;
+            this.top_icon.UseVisualStyleBackColor = false;
+            // 
+            // panel103
+            // 
+            this.panel103.Controls.Add(this.underline_icon);
+            this.panel103.Controls.Add(this.italic_icon);
+            this.panel103.Controls.Add(this.bold_icon);
+            this.panel103.Location = new System.Drawing.Point(8, 169);
+            this.panel103.Name = "panel103";
+            this.panel103.Size = new System.Drawing.Size(90, 26);
+            this.panel103.TabIndex = 8;
+            // 
+            // underline_icon
+            // 
+            this.underline_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.underline_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.underline_icon.FlatAppearance.BorderSize = 0;
+            this.underline_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.underline_icon.Image = global::WindowsFormsApp.Properties.Resources.underline_text_option;
+            this.underline_icon.Location = new System.Drawing.Point(60, 0);
+            this.underline_icon.Name = "underline_icon";
+            this.underline_icon.Size = new System.Drawing.Size(30, 26);
+            this.underline_icon.TabIndex = 3;
+            this.underline_icon.UseVisualStyleBackColor = false;
+            // 
+            // italic_icon
+            // 
+            this.italic_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.italic_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.italic_icon.FlatAppearance.BorderSize = 0;
+            this.italic_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.italic_icon.Image = global::WindowsFormsApp.Properties.Resources.italic_option;
+            this.italic_icon.Location = new System.Drawing.Point(30, 0);
+            this.italic_icon.Name = "italic_icon";
+            this.italic_icon.Size = new System.Drawing.Size(30, 26);
+            this.italic_icon.TabIndex = 1;
+            this.italic_icon.UseVisualStyleBackColor = false;
+            // 
+            // bold_icon
+            // 
+            this.bold_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.bold_icon.Dock = System.Windows.Forms.DockStyle.Left;
+            this.bold_icon.FlatAppearance.BorderSize = 0;
+            this.bold_icon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bold_icon.Image = global::WindowsFormsApp.Properties.Resources.bold_text_option;
+            this.bold_icon.Location = new System.Drawing.Point(0, 0);
+            this.bold_icon.Name = "bold_icon";
+            this.bold_icon.Size = new System.Drawing.Size(30, 26);
+            this.bold_icon.TabIndex = 2;
+            this.bold_icon.UseVisualStyleBackColor = false;
+            // 
+            // panel102
+            // 
+            this.panel102.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.panel102.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel102.Controls.Add(this.color_select);
+            this.panel102.Location = new System.Drawing.Point(217, 127);
+            this.panel102.Name = "panel102";
+            this.panel102.Size = new System.Drawing.Size(77, 28);
+            this.panel102.TabIndex = 7;
+            // 
+            // color_select
+            // 
+            this.color_select.BackColor = System.Drawing.Color.White;
+            this.color_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.color_select.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.color_select.Location = new System.Drawing.Point(11, 5);
+            this.color_select.Name = "color_select";
+            this.color_select.Size = new System.Drawing.Size(55, 17);
+            this.color_select.TabIndex = 1;
+            this.color_select.Click += new System.EventHandler(this.color_picker_Click);
+            // 
+            // size_select
+            // 
+            this.size_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.size_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.size_select.ForeColor = System.Drawing.Color.White;
+            this.size_select.FormattingEnabled = true;
+            this.size_select.Location = new System.Drawing.Point(125, 127);
+            this.size_select.Name = "size_select";
+            this.size_select.Size = new System.Drawing.Size(78, 28);
+            this.size_select.TabIndex = 6;
+            // 
+            // font_select
+            // 
+            this.font_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.font_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.font_select.ForeColor = System.Drawing.Color.White;
+            this.font_select.FormattingEnabled = true;
+            this.font_select.ItemHeight = 20;
+            this.font_select.Location = new System.Drawing.Point(4, 127);
+            this.font_select.Name = "font_select";
+            this.font_select.Size = new System.Drawing.Size(115, 28);
+            this.font_select.TabIndex = 5;
+            // 
+            // textBox5
+            // 
+            this.textBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox5.ForeColor = System.Drawing.Color.White;
+            this.textBox5.Location = new System.Drawing.Point(4, 36);
+            this.textBox5.Multiline = true;
+            this.textBox5.Name = "textBox5";
+            this.textBox5.Size = new System.Drawing.Size(290, 81);
+            this.textBox5.TabIndex = 4;
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label52.Location = new System.Drawing.Point(0, 10);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(69, 17);
+            this.label52.TabIndex = 0;
+            this.label52.Text = " Content :";
+            // 
+            // panel100
+            // 
+            this.panel100.Controls.Add(this.url_select);
+            this.panel100.Controls.Add(this.label51);
+            this.panel100.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel100.Location = new System.Drawing.Point(0, 119);
+            this.panel100.Name = "panel100";
+            this.panel100.Size = new System.Drawing.Size(298, 39);
+            this.panel100.TabIndex = 6;
+            this.panel100.Visible = false;
+            // 
+            // url_select
+            // 
+            this.url_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.url_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.url_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.url_select.ForeColor = System.Drawing.Color.White;
+            this.url_select.Location = new System.Drawing.Point(107, 10);
+            this.url_select.Name = "url_select";
+            this.url_select.Size = new System.Drawing.Size(141, 23);
+            this.url_select.TabIndex = 4;
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label51.Location = new System.Drawing.Point(0, 10);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(48, 17);
+            this.label51.TabIndex = 0;
+            this.label51.Text = " URL :";
             // 
             // panel81
             // 
@@ -3103,38 +3507,6 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // panel100
-            // 
-            this.panel100.Controls.Add(this.url_select);
-            this.panel100.Controls.Add(this.label51);
-            this.panel100.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel100.Location = new System.Drawing.Point(0, 119);
-            this.panel100.Name = "panel100";
-            this.panel100.Size = new System.Drawing.Size(298, 39);
-            this.panel100.TabIndex = 6;
-            this.panel100.Visible = false;
-            // 
-            // url_select
-            // 
-            this.url_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.url_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.url_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.url_select.ForeColor = System.Drawing.Color.White;
-            this.url_select.Location = new System.Drawing.Point(107, 10);
-            this.url_select.Name = "url_select";
-            this.url_select.Size = new System.Drawing.Size(141, 23);
-            this.url_select.TabIndex = 4;
-            // 
-            // label51
-            // 
-            this.label51.AutoSize = true;
-            this.label51.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label51.Location = new System.Drawing.Point(0, 10);
-            this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(44, 17);
-            this.label51.TabIndex = 0;
-            this.label51.Text = "URL :";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3215,6 +3587,14 @@
             this.panel70.ResumeLayout(false);
             this.panel80.ResumeLayout(false);
             this.panel80.PerformLayout();
+            this.panel101.ResumeLayout(false);
+            this.panel101.PerformLayout();
+            this.panel105.ResumeLayout(false);
+            this.panel104.ResumeLayout(false);
+            this.panel103.ResumeLayout(false);
+            this.panel102.ResumeLayout(false);
+            this.panel100.ResumeLayout(false);
+            this.panel100.PerformLayout();
             this.panel81.ResumeLayout(false);
             this.panel81.PerformLayout();
             this.panel69.ResumeLayout(false);
@@ -3277,8 +3657,6 @@
             this.panel71.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
-            this.panel100.ResumeLayout(false);
-            this.panel100.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3510,6 +3888,35 @@
         private System.Windows.Forms.Panel panel100;
         private System.Windows.Forms.TextBox url_select;
         private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.Panel panel101;
+        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.ComboBox font_select;
+        private System.Windows.Forms.ComboBox size_select;
+        private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.Panel panel102;
+        private System.Windows.Forms.Panel color_select;
+        private System.Windows.Forms.Panel panel105;
+        private System.Windows.Forms.Panel panel104;
+        private System.Windows.Forms.Panel panel103;
+        private System.Windows.Forms.Button italic_icon;
+        private System.Windows.Forms.Button bold_icon;
+        private System.Windows.Forms.Button underline_icon;
+        private System.Windows.Forms.Button bottom_icon;
+        private System.Windows.Forms.Button middle_icon;
+        private System.Windows.Forms.Button top_icon;
+        private System.Windows.Forms.Button right_icon;
+        private System.Windows.Forms.Button center_icon;
+        private System.Windows.Forms.Button left_icon;
+        private System.Windows.Forms.Label label53;
+        private System.Windows.Forms.RadioButton e2e_select;
+        private System.Windows.Forms.ComboBox animation_select;
+        private System.Windows.Forms.Label label54;
+        private System.Windows.Forms.ComboBox background;
+        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.ComboBox style_select;
+        private System.Windows.Forms.Label label55;
+        private System.Windows.Forms.ComboBox speed_select;
     }
 }
 
