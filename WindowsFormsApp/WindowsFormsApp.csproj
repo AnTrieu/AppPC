@@ -262,6 +262,7 @@
     <None Include="Resources\clock_icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\text-icon.png" />
     <None Include="Resources\program_icon1.png" />
     <None Include="Resources\folder_not_found.png" />
     <None Include="Resources\arrow.png" />

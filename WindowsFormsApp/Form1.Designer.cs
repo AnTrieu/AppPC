@@ -144,8 +144,10 @@
             this.panel42 = new System.Windows.Forms.Panel();
             this.new_resource = new System.Windows.Forms.Button();
             this.panel44 = new System.Windows.Forms.Panel();
+            this.panel99 = new System.Windows.Forms.Panel();
+            this.Text = new System.Windows.Forms.Button();
             this.panel45 = new System.Windows.Forms.Panel();
-            this.button14 = new System.Windows.Forms.Button();
+            this.Webpage = new System.Windows.Forms.Button();
             this.panel40 = new System.Windows.Forms.Panel();
             this.panel70 = new System.Windows.Forms.Panel();
             this.panel80 = new System.Windows.Forms.Panel();
@@ -250,6 +252,9 @@
             this.label50 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.panel100 = new System.Windows.Forms.Panel();
+            this.url_select = new System.Windows.Forms.TextBox();
+            this.label51 = new System.Windows.Forms.Label();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -292,6 +297,7 @@
             this.panel46.SuspendLayout();
             this.panel42.SuspendLayout();
             this.panel44.SuspendLayout();
+            this.panel99.SuspendLayout();
             this.panel45.SuspendLayout();
             this.panel40.SuspendLayout();
             this.panel70.SuspendLayout();
@@ -337,6 +343,7 @@
             this.panel82.SuspendLayout();
             this.panel71.SuspendLayout();
             this.panel75.SuspendLayout();
+            this.panel100.SuspendLayout();
             this.SuspendLayout();
             // 
             // title
@@ -1696,42 +1703,71 @@
             // 
             this.panel44.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.panel44.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel44.Controls.Add(this.panel99);
             this.panel44.Controls.Add(this.panel45);
             this.panel44.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel44.Location = new System.Drawing.Point(0, 0);
             this.panel44.Name = "panel44";
             this.panel44.Size = new System.Drawing.Size(796, 62);
             this.panel44.TabIndex = 0;
-            this.panel44.Visible = false;
+            // 
+            // panel99
+            // 
+            this.panel99.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel99.Controls.Add(this.Text);
+            this.panel99.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel99.Location = new System.Drawing.Point(75, 0);
+            this.panel99.Name = "panel99";
+            this.panel99.Size = new System.Drawing.Size(75, 60);
+            this.panel99.TabIndex = 1;
+            // 
+            // Text
+            // 
+            this.Text.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
+            this.Text.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Text.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Text.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Text.FlatAppearance.BorderSize = 0;
+            this.Text.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Text.ForeColor = System.Drawing.Color.White;
+            this.Text.Image = global::WindowsFormsApp.Properties.Resources.text_icon;
+            this.Text.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.Text.Location = new System.Drawing.Point(0, 0);
+            this.Text.Name = "Text";
+            this.Text.Size = new System.Drawing.Size(75, 60);
+            this.Text.TabIndex = 0;
+            this.Text.Text = "Text";
+            this.Text.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.Text.UseVisualStyleBackColor = true;
             // 
             // panel45
             // 
             this.panel45.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel45.Controls.Add(this.button14);
+            this.panel45.Controls.Add(this.Webpage);
             this.panel45.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel45.Location = new System.Drawing.Point(0, 0);
             this.panel45.Name = "panel45";
             this.panel45.Size = new System.Drawing.Size(75, 60);
             this.panel45.TabIndex = 0;
             // 
-            // button14
+            // Webpage
             // 
-            this.button14.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
-            this.button14.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button14.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button14.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button14.FlatAppearance.BorderSize = 0;
-            this.button14.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button14.ForeColor = System.Drawing.Color.White;
-            this.button14.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
-            this.button14.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.button14.Location = new System.Drawing.Point(0, 0);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(75, 60);
-            this.button14.TabIndex = 0;
-            this.button14.Text = "Webpage";
-            this.button14.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.button14.UseVisualStyleBackColor = true;
+            this.Webpage.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
+            this.Webpage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.Webpage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Webpage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Webpage.FlatAppearance.BorderSize = 0;
+            this.Webpage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.Webpage.ForeColor = System.Drawing.Color.White;
+            this.Webpage.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
+            this.Webpage.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.Webpage.Location = new System.Drawing.Point(0, 0);
+            this.Webpage.Name = "Webpage";
+            this.Webpage.Size = new System.Drawing.Size(75, 60);
+            this.Webpage.TabIndex = 0;
+            this.Webpage.Text = "Webpage";
+            this.Webpage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.Webpage.UseVisualStyleBackColor = true;
             // 
             // panel40
             // 
@@ -1749,13 +1785,14 @@
             // panel70
             // 
             this.panel70.Controls.Add(this.panel80);
+            this.panel70.Controls.Add(this.panel100);
             this.panel70.Controls.Add(this.panel81);
             this.panel70.Controls.Add(this.panel69);
             this.panel70.Controls.Add(this.panel49);
-            this.panel70.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel70.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel70.Location = new System.Drawing.Point(0, 30);
             this.panel70.Name = "panel70";
-            this.panel70.Size = new System.Drawing.Size(298, 200);
+            this.panel70.Size = new System.Drawing.Size(298, 631);
             this.panel70.TabIndex = 3;
             this.panel70.Visible = false;
             // 
@@ -1766,7 +1803,7 @@
             this.panel80.Controls.Add(this.label8);
             this.panel80.Controls.Add(this.label6);
             this.panel80.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel80.Location = new System.Drawing.Point(0, 119);
+            this.panel80.Location = new System.Drawing.Point(0, 158);
             this.panel80.Name = "panel80";
             this.panel80.Size = new System.Drawing.Size(298, 81);
             this.panel80.TabIndex = 4;
@@ -3066,6 +3103,38 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // panel100
+            // 
+            this.panel100.Controls.Add(this.url_select);
+            this.panel100.Controls.Add(this.label51);
+            this.panel100.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel100.Location = new System.Drawing.Point(0, 119);
+            this.panel100.Name = "panel100";
+            this.panel100.Size = new System.Drawing.Size(298, 39);
+            this.panel100.TabIndex = 6;
+            this.panel100.Visible = false;
+            // 
+            // url_select
+            // 
+            this.url_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.url_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.url_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.url_select.ForeColor = System.Drawing.Color.White;
+            this.url_select.Location = new System.Drawing.Point(107, 10);
+            this.url_select.Name = "url_select";
+            this.url_select.Size = new System.Drawing.Size(141, 23);
+            this.url_select.TabIndex = 4;
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label51.Location = new System.Drawing.Point(0, 10);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(44, 17);
+            this.label51.TabIndex = 0;
+            this.label51.Text = "URL :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3086,7 +3155,6 @@
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Control Application";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.title.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
@@ -3141,6 +3209,7 @@
             this.panel46.ResumeLayout(false);
             this.panel42.ResumeLayout(false);
             this.panel44.ResumeLayout(false);
+            this.panel99.ResumeLayout(false);
             this.panel45.ResumeLayout(false);
             this.panel40.ResumeLayout(false);
             this.panel70.ResumeLayout(false);
@@ -3208,6 +3277,8 @@
             this.panel71.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
+            this.panel100.ResumeLayout(false);
+            this.panel100.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3335,7 +3406,7 @@
         private System.Windows.Forms.Panel show_file;
         private System.Windows.Forms.Panel panel44;
         private System.Windows.Forms.Panel panel45;
-        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.Button Webpage;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Panel panel42;
         private System.Windows.Forms.Button new_resource;
@@ -3434,6 +3505,11 @@
         private System.Windows.Forms.Panel panel96;
         private System.Windows.Forms.Panel panel98;
         private System.Windows.Forms.Panel panel97;
+        private System.Windows.Forms.Panel panel99;
+        private System.Windows.Forms.Button Text;
+        private System.Windows.Forms.Panel panel100;
+        private System.Windows.Forms.TextBox url_select;
+        private System.Windows.Forms.Label label51;
     }
 }
 

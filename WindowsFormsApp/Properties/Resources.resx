@@ -124,6 +124,9 @@
   <data name="pc_total_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pc_total_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="program_icon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\program_icon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="net_bk" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\net_bk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -145,9 +148,6 @@
   <data name="trash_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\trash_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Logo Toan Trung_final-02" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Logo Toan Trung_final-02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="down-arrow_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\down-arrow_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -157,8 +157,8 @@
   <data name="max_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\max_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="restart_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\restart_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Logo Toan Trung_final-02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Logo Toan Trung_final-02.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="data-storage_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\data-storage_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -178,14 +178,17 @@
   <data name="terminal_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\terminal_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="restart_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\restart_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="volume_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\volume_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\program_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="close_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="open-folder_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\open-folder_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="browser-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\browser-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -199,8 +202,8 @@
   <data name="clock_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\clock_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="open-folder_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\open-folder_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="program_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\program_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="usb_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\usb_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -220,7 +223,7 @@
   <data name="close_white_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\close_white_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="program_icon1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\program_icon1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="text-icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\text-icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

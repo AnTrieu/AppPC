@@ -1227,6 +1227,35 @@ namespace WindowsFormsApp
                 }
             };
 
+            this.url_select.KeyPress += (sender1, e1) =>
+            {
+                // Do nothing
+            };
+            this.url_select.TextChanged += (sender1, e1) =>
+            {
+                TextBox obj = sender1 as TextBox;
+
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                // Update value
+                                infoWindow.list_url[index] = obj.Text;
+                                resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+                            }
+                        }
+                    }
+                }
+            };
+
             this.General.BackgroundImageLayout = ImageLayout.Stretch;
             this.General.BackgroundImage = normal_button();
             this.General.MouseDown += (sender, e) =>
@@ -1646,8 +1675,11 @@ namespace WindowsFormsApp
                         }
                     });
                 }
-
             }, null, 0, 1000);
+
+            // Icon feature
+            this.Webpage.MouseDown += PictureBox_MouseDown;
+            this.Text.MouseDown += PictureBox_MouseDown;
         }
 
 
@@ -2966,7 +2998,7 @@ namespace WindowsFormsApp
                         }
                     };
 
-                    this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
+                    this.show.AutoScrollPosition = new System.Drawing.Point(x - ((this.show.Width - ((int)width_config + 30)) / 2), y - ((this.show.Height - ((int)height_config + 30)) / 2));
 
                     // Add the inner panel to the main panel
                     this.panel43.Controls.Add(innerPanel);
@@ -3019,6 +3051,7 @@ namespace WindowsFormsApp
                                     windown_top     = info_windown_list[idx_window].windown_top,
                                     windown_left    = info_windown_list[idx_window].windown_left,
                                     list            = list_object,
+                                    list_url        = info_windown_list[idx_window].list_url,
                                     list_duration   = info_windown_list[idx_window].list_duration,
                                     list_entrytime  = info_windown_list[idx_window].list_entrytime,
                                     selected        = list_selected
@@ -3224,32 +3257,53 @@ namespace WindowsFormsApp
                                                     string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                                     this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                                    // Is a video
-                                                    if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                                    if (name_file.Equals("Webpage"))
                                                     {
+                                                        infoWindow.list_url.Add("toantrungcloud.com");
+
+                                                        infoWindow.list_entrytime.Add("0");
+                                                        infoWindow.list_duration.Add("10");
+                                                    }
+                                                    else if (name_file.Equals("Text"))
+                                                    {
+                                                        // Data not use
+                                                        infoWindow.list_url.Add("");
+
                                                         infoWindow.list_entrytime.Add("0");
                                                         infoWindow.list_duration.Add("10");
                                                     }
                                                     else
                                                     {
-                                                        var flag_error = true;
-                                                        var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                                        mediaInfo.Open(name_file);
+                                                        // Data not use
+                                                        infoWindow.list_url.Add("");
 
-                                                        if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                        // Is a video
+                                                        if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                                         {
-                                                            double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
-                                                            flag_error = false;
                                                             infoWindow.list_entrytime.Add("0");
-                                                            infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                            infoWindow.list_duration.Add("10");
                                                         }
-
-                                                        if (flag_error)
+                                                        else
                                                         {
-                                                            flag_error = false;
-                                                            infoWindow.list_entrytime.Add("");
-                                                            infoWindow.list_duration.Add("");
+                                                            var flag_error = true;
+                                                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                            mediaInfo.Open(name_file);
+
+                                                            if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                            {
+                                                                double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                                flag_error = false;
+                                                                infoWindow.list_entrytime.Add("0");
+                                                                infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                            }
+
+                                                            if (flag_error)
+                                                            {
+                                                                flag_error = false;
+                                                                infoWindow.list_entrytime.Add("");
+                                                                infoWindow.list_duration.Add("");
+                                                            }
                                                         }
                                                     }
 
@@ -3643,10 +3697,10 @@ namespace WindowsFormsApp
                     // Create the inner panel based on the adjusted width and height
                     Panel innerPanel = new Panel
                     {
-                        Name        = JsonConvert.SerializeObject(infoProgram),
-                        Dock        = DockStyle.Fill,
-                        BackColor   = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
-                        AllowDrop   = true
+                        Name                = JsonConvert.SerializeObject(infoProgram),
+                        Dock                = DockStyle.Fill,
+                        BackColor           = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54))))),
+                        AllowDrop           = true
                     };
 
                     // Đăng ký sự kiện DragDrop và DragEnter cho Panel
@@ -3673,7 +3727,7 @@ namespace WindowsFormsApp
                         }
                     };
 
-                    this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
+                    this.show.AutoScrollPosition = new System.Drawing.Point(x - ((this.show.Width - ((int)width_config + 30)) / 2), y - ((this.show.Height - ((int)height_config + 30)) / 2));
 
                     // Add the inner panel to the main panel
                     this.panel43.Controls.Add(innerPanel);
@@ -3735,31 +3789,55 @@ namespace WindowsFormsApp
                         string objectName = e.Data.GetData("PictureBoxName") as string;
                         string extension = System.IO.Path.GetExtension(objectName).ToLower();
 
-                        string[] list_object = { objectName };
+                        string[] list_object = {objectName};
+                        string[] list_url = { "" };
                         string[] list_duration = { "" };
                         string[] list_entrytime = { "" };
                         bool[] list_selected = { true };
                         bool have_image = false;
 
-                        // Is a video
-                        if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
+                        if (objectName.Equals("Webpage"))
                         {
+                            // Type Webpage
+                            list_url[0] = "toantrungcloud.com";
+
                             list_entrytime[0] = "0";
                             list_duration[0] = "10";
-                            have_image = true;
+                        }
+                        else if (objectName.Equals("Text"))
+                        {
+                            // Data not use
+                            list_url[0] = "";
+
+                            // Type Text
+                            list_entrytime[0] = "0";
+                            list_duration[0] = "10";
+                            
                         }
                         else
                         {
+                            // Data not use
+                            list_url[0] = "";
 
-                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                            mediaInfo.Open(objectName);
-
-                            if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                            // Is a video
+                            if (extension == ".jpg" || extension == ".bmp" || extension == ".png" || extension == ".gif")
                             {
-                                double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
                                 list_entrytime[0] = "0";
-                                list_duration[0] = durationMilliseconds.ToString();
+                                list_duration[0] = "10";
+                                have_image = true;
+                            }
+                            else
+                            {
+                                var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                mediaInfo.Open(objectName);
+
+                                if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                {
+                                    double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                    list_entrytime[0] = "0";
+                                    list_duration[0] = durationMilliseconds.ToString();
+                                }
                             }
                         }
 
@@ -3777,11 +3855,12 @@ namespace WindowsFormsApp
                                 windown_top     = 0,
                                 windown_left    = 0,
                                 list            = list_object,
+                                list_url        = list_url,
                                 list_duration   = list_duration,
                                 list_entrytime  = list_entrytime,
                                 selected        = list_selected
                             };
-  
+
                             windown = new ResizablePanel(destinationPanel)
                             {
                                 Location        = new Point(info_program.x_area, info_program.y_area),
@@ -3822,6 +3901,7 @@ namespace WindowsFormsApp
                                 windown_top     = (int)Math.Round(Normalize(Y, 0, max_app_height, 0, int.Parse(info_program.height_real))),
                                 windown_left    = (int)Math.Round(Normalize(X, 0, max_app_width, 0, int.Parse(info_program.width_real))),
                                 list            = list_object,
+                                list_url        = list_url,
                                 list_duration   = list_duration,
                                 list_entrytime  = list_entrytime,
                                 selected        = list_selected
@@ -4021,35 +4101,56 @@ namespace WindowsFormsApp
                                         string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                         this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                        // Is a video
-                                        if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                        if (name_file.Equals("Webpage"))
                                         {
+                                            infoWindow.list_url.Add("toantrungcloud.com");
+
+                                            infoWindow.list_entrytime.Add("0");
+                                            infoWindow.list_duration.Add("10");
+                                        }
+                                        else if (name_file.Equals("Text"))
+                                        {
+                                            // Data not use
+                                            infoWindow.list_url.Add("");
+
                                             infoWindow.list_entrytime.Add("0");
                                             infoWindow.list_duration.Add("10");
                                         }
                                         else
                                         {
-                                            var flag_error = true;
-                                            var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                            mediaInfo.Open(name_file);
+                                            // Data not use
+                                            infoWindow.list_url.Add("");
 
-                                            if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                            // Is a video
+                                            if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                             {
-                                                flag_error = false;
-
-                                                double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
                                                 infoWindow.list_entrytime.Add("0");
-                                                infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                infoWindow.list_duration.Add("10");
                                             }
-
-                                            if (flag_error)
+                                            else
                                             {
-                                                flag_error = false;
-                                                infoWindow.list_entrytime.Add("");
-                                                infoWindow.list_duration.Add("");
-                                            }
+                                                var flag_error = true;
+                                                var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                mediaInfo.Open(name_file);
 
+                                                if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                {
+                                                    flag_error = false;
+
+                                                    double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                    infoWindow.list_entrytime.Add("0");
+                                                    infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                }
+
+                                                if (flag_error)
+                                                {
+                                                    flag_error = false;
+                                                    infoWindow.list_entrytime.Add("");
+                                                    infoWindow.list_duration.Add("");
+                                                }
+
+                                            }
                                         }
 
                                         infoWindow.list.Add(name_file);
@@ -4128,7 +4229,7 @@ namespace WindowsFormsApp
 
                         controlsListSelect[currentIdxList].Insert(0, windown);
                         destinationPanel.Controls.AddRange(controlsListSelect[currentIdxList].ToArray());
-
+ 
                         // Draw windown list
                         draw_list_windown(controlsListSelect[currentIdxList]);
                     }
@@ -4242,6 +4343,7 @@ namespace WindowsFormsApp
                     windown_name_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                     windown_name_label.ForeColor = System.Drawing.Color.White;
                     windown_name_label.Text = infoWindow.Name;
+
                     // Now center the label
                     windown_name_label.Location = new System.Drawing.Point(10, (title_Panel.Height - windown_name_label.PreferredHeight) / 2);
                     windown_name_label.MouseDown += (sender, e) =>
@@ -4281,12 +4383,17 @@ namespace WindowsFormsApp
                     for (int i = infoWindow.list.Count - 1; i >= 0; i--)
                     {
                         String selectfilePath = infoWindow.list[i];
-                        if (!File.Exists(selectfilePath))
+                        if (!selectfilePath.Equals("Webpage") && !selectfilePath.Equals("Text") && !File.Exists(selectfilePath))
                             continue;
 
-                        String typeFile = "Video";
+                        String typeFile = "Video/Image";
                         string extension = System.IO.Path.GetExtension(selectfilePath).ToLower();
                         Image videoFrame = null;
+
+                        if (selectfilePath.Equals("Webpage"))
+                            typeFile = "Webpage";
+                        else if (selectfilePath.Equals("Text"))
+                            typeFile = "Text";
 
                         Panel item_Panel = new Panel();
                         item_Panel.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
@@ -4310,8 +4417,15 @@ namespace WindowsFormsApp
                                         int index = int.Parse((sender as Control).Name);
                                         if (infoWindow1.selected[index])
                                         {
-                                            String path_file = infoWindow1.list[int.Parse((sender as Control).Name)];
+                                            String path_file = infoWindow1.list[index];
                                             string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
+
+                                            // Filter type
+                                            String type_file = "Video/Image";
+                                            if (path_file.Equals("Webpage"))
+                                                type_file = "Webpage";
+                                            else if (path_file.Equals("Text"))
+                                                type_file = "Text";
 
                                             initialBorderColor = Color.LightBlue;
 
@@ -4341,42 +4455,80 @@ namespace WindowsFormsApp
 
                                             ResizablePanel panel_windown = control1 as ResizablePanel;
                                             panel_windown.InitializeResizeHandles();
-
-                                            // Is a video
-                                            if (extension_1 == ".mp4" || extension_1 == ".avi" ||
-                                                extension_1 == ".wmv" || extension_1 == ".mpg" ||
-                                                extension_1 == ".rmvp" || extension_1 == ".mov" ||
-                                                extension_1 == ".dat" || extension_1 == ".flv")
+                                            
+                                            if (type_file.Equals("Video/Image"))
                                             {
-                                                this.panel80.Visible = false;
-
-                                                if (!infoWindow1.path_windown.Equals(path_file) || !panel_windown.updateTimer.Enabled)
+                                                // Is a video
+                                                if (extension_1 == ".mp4" || extension_1 == ".avi" ||
+                                                    extension_1 == ".wmv" || extension_1 == ".mpg" ||
+                                                    extension_1 == ".rmvp" || extension_1 == ".mov" ||
+                                                    extension_1 == ".dat" || extension_1 == ".flv")
                                                 {
-                                                    // update data
-                                                    infoWindow1.path_windown = path_file;
-                                                    resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+                                                    this.panel80.Visible = false;
+                                                    this.panel100.Visible = false;
+
+                                                    if (!infoWindow1.path_windown.Equals(path_file) || !panel_windown.updateTimer.Enabled)
+                                                    {
+                                                        // update data
+                                                        infoWindow1.path_windown = path_file;
+                                                        resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+
+                                                        panel_windown.updateTimer.Stop();
+                                                        panel_windown.videoFileReader.Close();
+
+                                                        panel_windown.videoFileReader.Open(path_file);
+                                                        panel_windown.updateTimer.Interval = 1000 / (int)panel_windown.videoFileReader.FrameRate.Value;
+                                                        panel_windown.updateTimer.Start();
+                                                    }
+                                                }
+                                                else if (extension_1 == ".jpg" || extension_1 == ".bmp" ||
+                                                         extension_1 == ".png" || extension_1 == ".gif")
+                                                {
+                                                    this.panel80.Visible = true;
+                                                    this.panel100.Visible = false;
+
+                                                    this.entrytime_select.Text = infoWindow1.list_entrytime[index];
+                                                    this.duration_select.Text = infoWindow1.list_duration[index];
+
+                                                    if (!infoWindow1.path_windown.Equals(path_file))
+                                                    {
+                                                        // update data
+                                                        infoWindow1.path_windown = path_file;
+                                                        resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
+                                                    }
 
                                                     panel_windown.updateTimer.Stop();
-                                                    panel_windown.videoFileReader.Close();
-                                                    
-                                                    panel_windown.videoFileReader.Open(path_file);
-                                                    panel_windown.updateTimer.Interval = 1000 / (int)panel_windown.videoFileReader.FrameRate.Value;
-                                                    panel_windown.updateTimer.Start();
+
+                                                    // Iterate through each control in the panel
+                                                    foreach (Control control_1 in panel_windown.Controls)
+                                                    {
+                                                        // Check if the control is a PictureBox
+                                                        if (control_1 is PictureBox)
+                                                        {
+                                                            // You've found the PictureBox inside the Panel
+                                                            PictureBox pictureBoxInPanel = (PictureBox)control_1;
+
+                                                            // Now you can work with pictureBoxInPanel as needed
+                                                            if (pictureBoxInPanel.Image != null)
+                                                            {
+                                                                pictureBoxInPanel.Image.Dispose();
+                                                            }
+                                                            pictureBoxInPanel.Image = System.Drawing.Image.FromFile(path_file); // Set a new image
+
+                                                            // Break out of the loop if you only need the first PictureBox
+                                                            break;
+                                                        }
+                                                    }
                                                 }
                                             }
-                                            else if (extension_1 == ".jpg" || extension_1 == ".bmp" ||
-                                                     extension_1 == ".png" || extension_1 == ".gif")
+                                            else if (type_file.Equals("Webpage"))
                                             {
                                                 this.panel80.Visible = true;
+                                                this.panel100.Visible = true;
+
+                                                this.url_select.Text = infoWindow1.list_url[index];
                                                 this.entrytime_select.Text = infoWindow1.list_entrytime[index];
                                                 this.duration_select.Text = infoWindow1.list_duration[index];
-
-                                                if (!infoWindow1.path_windown.Equals(path_file))
-                                                {
-                                                    // update data
-                                                    infoWindow1.path_windown = path_file;
-                                                    resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
-                                                }
 
                                                 panel_windown.updateTimer.Stop();
 
@@ -4394,14 +4546,40 @@ namespace WindowsFormsApp
                                                         {
                                                             pictureBoxInPanel.Image.Dispose();
                                                         }
-                                                        pictureBoxInPanel.Image = System.Drawing.Image.FromFile(path_file); // Set a new image
+                                                        pictureBoxInPanel.Image = Properties.Resources.browser_icon;
 
                                                         // Break out of the loop if you only need the first PictureBox
                                                         break;
                                                     }
                                                 }
                                             }
+                                            else if (type_file.Equals("Text"))
+                                            {
+                                                this.panel100.Visible = false;
 
+                                                panel_windown.updateTimer.Stop();
+
+                                                // Iterate through each control in the panel
+                                                foreach (Control control_1 in panel_windown.Controls)
+                                                {
+                                                    // Check if the control is a PictureBox
+                                                    if (control_1 is PictureBox)
+                                                    {
+                                                        // You've found the PictureBox inside the Panel
+                                                        PictureBox pictureBoxInPanel = (PictureBox)control_1;
+
+                                                        // Now you can work with pictureBoxInPanel as needed
+                                                        if (pictureBoxInPanel.Image != null)
+                                                        {
+                                                            pictureBoxInPanel.Image.Dispose();
+                                                        }
+                                                        pictureBoxInPanel.Image = Properties.Resources.text_icon;
+
+                                                        // Break out of the loop if you only need the first PictureBox
+                                                        break;
+                                                    }
+                                                }
+                                            }
 
                                             // Draw a border with a different color and thickness
                                             using (Pen pen = new Pen(initialBorderColor, 2)) // You can change Color.Red to your desired color
@@ -4421,27 +4599,38 @@ namespace WindowsFormsApp
                         picture_Panel.Location = new System.Drawing.Point(0, 0);
                         picture_Panel.Size = new System.Drawing.Size(60, 80);
 
-                        // Is a video
-                        if (extension == ".mp4" || extension == ".avi" ||
+                        if (typeFile.Equals("Video/Image"))
+                        {
+                            // Is a video
+                            if (extension == ".mp4" || extension == ".avi" ||
                             extension == ".wmv" || extension == ".mpg" ||
                             extension == ".rmvp" || extension == ".mov" ||
                             extension == ".dat" || extension == ".flv")
-                        {
-                            // Load the video file
-                            Accord.Video.FFMPEG.VideoFileReader videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
-                            videoFileReader.Open(selectfilePath);
-                                                                                  
-                            // Get the first frame
-                            videoFrame = videoFileReader.ReadVideoFrame(10);
-                            
-                            // Close the video file reader
-                            videoFileReader.Close();
+                            {
+                                // Load the video file
+                                Accord.Video.FFMPEG.VideoFileReader videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
+                                videoFileReader.Open(selectfilePath);
+
+                                // Get the first frame
+                                videoFrame = videoFileReader.ReadVideoFrame(10);
+
+                                // Close the video file reader
+                                videoFileReader.Close();
+                            }
+                            else if (extension == ".jpg" || extension == ".bmp" ||
+                                     extension == ".png" || extension == ".gif")
+                            {
+                                videoFrame = System.Drawing.Image.FromFile(selectfilePath);
+                                typeFile = "Image";
+                            }
                         }
-                        else if (extension == ".jpg" || extension == ".bmp" ||
-                            extension == ".png" || extension == ".gif")
+                        else if (typeFile.Equals("Webpage"))
                         {
-                            videoFrame = System.Drawing.Image.FromFile(selectfilePath);
-                            typeFile = "Image";
+                            videoFrame = Properties.Resources.browser_icon;
+                        }
+                        else if (typeFile.Equals("Text"))
+                        {
+                            videoFrame = Properties.Resources.text_icon;
                         }
 
                         // Create PictureBox for the image
@@ -4500,7 +4689,7 @@ namespace WindowsFormsApp
                         name_label.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
                         name_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
                         name_label.ForeColor = System.Drawing.Color.White;
-                        name_label.Text = typeFile;
+                        name_label.Text = typeFile.Equals("Video/Image") ? "Video" : typeFile;
                         name_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                         name_label.MouseClick += (sender, e) =>
                         {
@@ -5607,6 +5796,55 @@ namespace WindowsFormsApp
                         }
                     }
                 }
+                else if (parentControl is Panel)
+                {
+                    Button featureIcon = (sender as Button);
+
+                    // Check list item exist
+                    foreach (Control control in this.panel43.Controls)
+                    {
+                        if (control is Panel panel_chill && panel_chill.Visible)
+                        {
+                            // Show image
+                            if (featureIcon.Name.Equals(this.Webpage.Name))
+                            {
+                                drappPictureBox.Image = Properties.Resources.browser_icon;
+                                drappPictureBox.Visible = true;
+                                drappPictureBox.Location = new Point(Cursor.Position.X - this.Location.X, Cursor.Position.Y - this.Location.Y - 80);
+
+                                // Tạo một DataObject để chứa thông tin cần truyền đi
+                                DataObject data = new DataObject();
+                                data.SetData("PictureBoxImage", Properties.Resources.browser_icon);     // Chuyển hình ảnh
+                                data.SetData("PictureBoxName", featureIcon.Name);                       // Chuyển tên
+
+                                featureIcon.DoDragDrop(data, DragDropEffects.Move);
+
+                                // Hide image
+                                drappPictureBox.Visible = false;
+
+                                this.show.AutoScrollPosition = new System.Drawing.Point(Math.Abs(this.show.AutoScrollPosition.X), Math.Abs(this.show.AutoScrollPosition.Y));
+                            }
+                            else if (featureIcon.Name.Equals(this.Text.Name))
+                            {
+                                drappPictureBox.Image = Properties.Resources.text_icon;
+                                drappPictureBox.Visible = true;
+                                drappPictureBox.Location = new Point(Cursor.Position.X - this.Location.X, Cursor.Position.Y - this.Location.Y - 80);
+
+                                // Tạo một DataObject để chứa thông tin cần truyền đi
+                                DataObject data = new DataObject();
+                                data.SetData("PictureBoxImage", Properties.Resources.text_icon);        // Chuyển hình ảnh
+                                data.SetData("PictureBoxName", featureIcon.Name);                       // Chuyển tên
+
+                                featureIcon.DoDragDrop(data, DragDropEffects.Move);
+
+                                // Hide image
+                                drappPictureBox.Visible = false;
+
+                                this.show.AutoScrollPosition = new System.Drawing.Point(Math.Abs(this.show.AutoScrollPosition.X), Math.Abs(this.show.AutoScrollPosition.Y));
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -5935,7 +6173,7 @@ namespace WindowsFormsApp
                                 }
                             };
 
-                            this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
+                            this.show.AutoScrollPosition = new System.Drawing.Point(x - ((this.show.Width - ((int)width_config + 30)) / 2), y - ((this.show.Height - ((int)height_config + 30)) / 2));
 
                             // Add the inner panel to the main panel
                             this.panel43.Controls.Add(innerPanel);
@@ -6191,7 +6429,7 @@ namespace WindowsFormsApp
                     control1.Height = (int)Math.Round(Normalize(control1.Height, 0, heightK1, 0, (int)(height_config * scale)));
                 }
 
-                this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
+                this.show.AutoScrollPosition = new System.Drawing.Point(x - ((this.show.Width - ((int)width_config + 30)) / 2), y - ((this.show.Height - ((int)height_config + 30)) / 2));
 
                 // Update info
                 info_program.x_area = x;
@@ -6361,7 +6599,7 @@ namespace WindowsFormsApp
                                 }
                             };
 
-                            this.show.AutoScrollPosition = new System.Drawing.Point(x, y);
+                            this.show.AutoScrollPosition = new System.Drawing.Point(x - ((this.show.Width - ((int)width_config + 30)) / 2), y - ((this.show.Height - ((int)height_config + 30)) / 2));
 
                             // Add the inner panel to the main panel
                             this.panel43.Controls.Add(innerPanel);
@@ -6405,6 +6643,7 @@ namespace WindowsFormsApp
                                             windown_top     = program.info_windown[idx_window].windown_top,
                                             windown_left    = program.info_windown[idx_window].windown_left,
                                             list            = list_object,
+                                            list_url        = program.info_windown[idx_window].list_url,
                                             list_duration   = program.info_windown[idx_window].list_duration,
                                             list_entrytime  = program.info_windown[idx_window].list_entrytime,
                                             selected        = list_selected
@@ -6610,32 +6849,53 @@ namespace WindowsFormsApp
                                                             string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                                             this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                                            // Is a video
-                                                            if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
+                                                            if (name_file.Equals("Webpage"))
                                                             {
+                                                                infoWindow.list_url.Add("toantrungcloud.com");
+
+                                                                infoWindow.list_entrytime.Add("0");
+                                                                infoWindow.list_duration.Add("10");
+                                                            }
+                                                            else if (name_file.Equals("Text"))
+                                                            {
+                                                                // Data not use
+                                                                infoWindow.list_url.Add("");
+
                                                                 infoWindow.list_entrytime.Add("0");
                                                                 infoWindow.list_duration.Add("10");
                                                             }
                                                             else
                                                             {
-                                                                var flag_error = true;
-                                                                var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
-                                                                mediaInfo.Open(name_file);
+                                                                // Data not use
+                                                                infoWindow.list_url.Add("");
 
-                                                                if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                                // Is a video
+                                                                if (extension1 == ".jpg" || extension1 == ".bmp" || extension1 == ".png" || extension1 == ".gif")
                                                                 {
-                                                                    double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
-
-                                                                    flag_error = false;
                                                                     infoWindow.list_entrytime.Add("0");
-                                                                    infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                    infoWindow.list_duration.Add("10");
                                                                 }
-
-                                                                if (flag_error)
+                                                                else
                                                                 {
-                                                                    flag_error = false;
-                                                                    infoWindow.list_entrytime.Add("");
-                                                                    infoWindow.list_duration.Add("");
+                                                                    var flag_error = true;
+                                                                    var mediaInfo = new MediaInfo.DotNetWrapper.MediaInfo();
+                                                                    mediaInfo.Open(name_file);
+
+                                                                    if (double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration")) > 0)
+                                                                    {
+                                                                        double durationMilliseconds = double.Parse(mediaInfo.Get(StreamKind.General, 0, "Duration"));
+
+                                                                        flag_error = false;
+                                                                        infoWindow.list_entrytime.Add("0");
+                                                                        infoWindow.list_duration.Add(durationMilliseconds.ToString());
+                                                                    }
+
+                                                                    if (flag_error)
+                                                                    {
+                                                                        flag_error = false;
+                                                                        infoWindow.list_entrytime.Add("");
+                                                                        infoWindow.list_duration.Add("");
+                                                                    }
                                                                 }
                                                             }
 
@@ -9404,6 +9664,7 @@ namespace WindowsFormsApp
         public int windown_top { get; set; }
         public int windown_left { get; set; }
         public List<string> list { get; set; }
+        public List<string> list_url { get; set; }
         public List<string> list_duration { get; set; }
         public List<string> list_entrytime { get; set; }
         public List<bool> selected { get; set; }
