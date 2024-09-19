@@ -1217,6 +1217,52 @@ namespace WindowsFormsApp
             this.Width_Info.KeyPress += NumericTextBox_KeyPress;
             this.Width_Info.TextChanged += TextBox_TextChanged;
 
+            this.displaytime_select.KeyPress += (sender1, e1) =>
+            {
+                // Kiểm tra nếu ký tự không phải là số hoặc không phải là ký tự điều khiển (ví dụ: backspace)
+                if (!char.IsControl(e1.KeyChar) && !char.IsDigit(e1.KeyChar))
+                {
+                    // Không cho phép nhập ký tự không phải số
+                    e1.Handled = true;
+                }
+            };
+            this.displaytime_select.TextChanged += (sender1, e1) =>
+            {
+                TextBox obj = sender1 as TextBox;
+                obj.Text = obj.Text.Length > 0 ? int.Parse(obj.Text).ToString() : "0";
+                obj.Select(obj.Text.Length, 0);
+
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null && obj.Text.Length > 0)
+                                {
+                                    // Reint value
+                                    info_text.display_time = int.Parse(obj.Text);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
             this.entrytime_select.KeyPress += (sender1, e1) =>
             {
                 // Kiểm tra nếu ký tự không phải là số hoặc không phải là ký tự điều khiển (ví dụ: backspace)
@@ -1347,7 +1393,6 @@ namespace WindowsFormsApp
 
                                     break;
                                 }
-
                             }
                         }
                     }
@@ -2307,46 +2352,20 @@ namespace WindowsFormsApp
 
         private Info_Window removeObjEmpty(Info_Window infoWindow)
         {
-            // Check and remove empty obj
+            // Loop to remove empty objects
             while (true)
             {
-                int idx_remove = -1;
-                foreach (string obj in infoWindow.list)
-                {
-                    if ((idx_remove < 0) && (obj.Length == 0))
-                    {
-                        idx_remove = infoWindow.list.IndexOf(obj);
-                        infoWindow.list.Remove(obj);
-                        break;
-                    }
-                }
-                foreach (string obj in infoWindow.list_duration)
-                {
-                    if ((idx_remove >= 0) && (infoWindow.list_duration.IndexOf(obj) == idx_remove))
-                    {
-                        infoWindow.list_duration.Remove(obj);
-                        break;
-                    }
-                }
-                foreach (string obj in infoWindow.list_entrytime)
-                {
-                    if ((idx_remove >= 0) && (infoWindow.list_entrytime.IndexOf(obj) == idx_remove))
-                    {
-                        infoWindow.list_entrytime.Remove(obj);
-                        break;
-                    }
-                }
-                foreach (bool obj in infoWindow.selected)
-                {
-                    if ((idx_remove >= 0) && (infoWindow.selected.IndexOf(obj) == idx_remove))
-                    {
-                        infoWindow.selected.Remove(obj);
-                        break;
-                    }
-                }
+                int idx_remove = infoWindow.list.FindIndex(obj => obj.Length == 0);
 
                 if (idx_remove < 0)
                     break;
+
+                infoWindow.list.RemoveAt(idx_remove);
+                infoWindow.list_url.RemoveAt(idx_remove);
+                infoWindow.list_text.RemoveAt(idx_remove);
+                infoWindow.list_duration.RemoveAt(idx_remove);
+                infoWindow.list_entrytime.RemoveAt(idx_remove);
+                infoWindow.selected.RemoveAt(idx_remove);
             }
 
             return infoWindow;
@@ -5626,12 +5645,27 @@ namespace WindowsFormsApp
 
                         LabelInPanel.ForeColor = System.Drawing.ColorTranslator.FromHtml(info_text.color);
 
+
+                        // display time
+                        if (info_text.animation.Equals("Shift up"))
+                        {
+                            if (!panel106.Visible)
+                                panel106.Visible = true;
+
+                            displaytime_select.Text = info_text.display_time.ToString();
+                        }
+                        else
+                        {
+                            if (panel106.Visible)
+                                panel106.Visible = false;
+                        }
+
                         // background
                         if (!this.background_select.Items.Contains(info_text.background))
                             this.background_select.SelectedItem = 0;
                         else
                             this.background_select.SelectedItem = info_text.background;
-
+                        
                         if (info_text.background.Equals("None"))
                         {
                             if (control1.BackgroundImage != null)
@@ -5658,7 +5692,7 @@ namespace WindowsFormsApp
                             }
 
                             if (path_file.Length > 0)
-                            {
+                            {                              
                                 control1.BackgroundImage = System.Drawing.Image.FromFile(path_file);
                                 control1.BackgroundImageLayout = ImageLayout.Stretch;
                             }

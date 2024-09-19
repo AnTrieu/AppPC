@@ -284,6 +284,9 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
+            this.panel106 = new System.Windows.Forms.Panel();
+            this.displaytime_select = new System.Windows.Forms.TextBox();
+            this.label57 = new System.Windows.Forms.Label();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -378,6 +381,7 @@
             this.panel82.SuspendLayout();
             this.panel71.SuspendLayout();
             this.panel75.SuspendLayout();
+            this.panel106.SuspendLayout();
             this.SuspendLayout();
             // 
             // title
@@ -1819,6 +1823,7 @@
             // panel70
             // 
             this.panel70.Controls.Add(this.panel80);
+            this.panel70.Controls.Add(this.panel106);
             this.panel70.Controls.Add(this.panel101);
             this.panel70.Controls.Add(this.panel100);
             this.panel70.Controls.Add(this.panel81);
@@ -1838,7 +1843,7 @@
             this.panel80.Controls.Add(this.label8);
             this.panel80.Controls.Add(this.label6);
             this.panel80.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel80.Location = new System.Drawing.Point(0, 470);
+            this.panel80.Location = new System.Drawing.Point(0, 509);
             this.panel80.Name = "panel80";
             this.panel80.Size = new System.Drawing.Size(298, 81);
             this.panel80.TabIndex = 4;
@@ -3514,6 +3519,39 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // panel106
+            // 
+            this.panel106.Controls.Add(this.displaytime_select);
+            this.panel106.Controls.Add(this.label57);
+            this.panel106.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel106.Location = new System.Drawing.Point(0, 470);
+            this.panel106.Name = "panel106";
+            this.panel106.Size = new System.Drawing.Size(298, 39);
+            this.panel106.TabIndex = 8;
+            this.panel106.Visible = false;
+            // 
+            // displaytime_select
+            // 
+            this.displaytime_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.displaytime_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.displaytime_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaytime_select.ForeColor = System.Drawing.Color.White;
+            this.displaytime_select.Location = new System.Drawing.Point(107, 10);
+            this.displaytime_select.Name = "displaytime_select";
+            this.displaytime_select.Size = new System.Drawing.Size(141, 23);
+            this.displaytime_select.TabIndex = 5;
+            this.displaytime_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label57.Location = new System.Drawing.Point(0, 10);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(92, 17);
+            this.label57.TabIndex = 0;
+            this.label57.Text = " Display time:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3664,6 +3702,8 @@
             this.panel71.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
+            this.panel106.ResumeLayout(false);
+            this.panel106.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3924,6 +3964,9 @@
         private System.Windows.Forms.ComboBox style_select;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.ComboBox speed_select;
+        private System.Windows.Forms.Panel panel106;
+        private System.Windows.Forms.TextBox displaytime_select;
+        private System.Windows.Forms.Label label57;
     }
 }
 
