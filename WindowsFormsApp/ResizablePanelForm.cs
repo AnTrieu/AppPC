@@ -13,7 +13,6 @@ public class ResizablePanel : Panel
 {
     private const int ResizeHandleSize = 10;
     private bool isResizing;
-    private bool isReStart;
     private bool isMove;
     private bool isAutoMove;
     private Point lastMousePosition;
@@ -21,7 +20,6 @@ public class ResizablePanel : Panel
     private Label activeResizeHandle;
 
     public VideoFileReader videoFileReader = null;
-    public Timer updateTimer = null;
 
     // Determine the dynamic snap distance based on the distance between centers
     private int snapDistance = 10;
@@ -409,22 +407,9 @@ public class ResizablePanel : Panel
 
         // Active resize event
         isResizing = true;
-        isReStart = false;
-
-        if (updateTimer.Enabled)
-        {
-            isReStart = true;
-            updateTimer.Stop();
-        }
 
         lastMousePosition = Cursor.Position;
         activeResizeHandle.DoDragDrop(activeResizeHandle, DragDropEffects.Move);
-
-        if(isReStart)
-        {
-            isReStart = false;
-            updateTimer.Start();
-        }
 
         // De-Active resize event
         isResizing = false;

@@ -27,6 +27,9 @@ using System.Timers;
 using static System.Windows.Forms.AxHost;
 using System.ComponentModel;
 using System.Reflection;
+using System.Drawing.Text;
+using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 namespace WindowsFormsApp
 {    
@@ -49,7 +52,8 @@ namespace WindowsFormsApp
         private int countProgram = 0;
         private int currentIdxList = 0;
         private System.Threading.Timer timerSystem;
-        private List<Control>[] controlsListSelect = new List<Control>[100];        
+        private List<Control>[] controlsListSelect = new List<Control>[100];
+        private PrivateFontCollection privateFonts = null;
 
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd,
@@ -90,11 +94,11 @@ namespace WindowsFormsApp
             this.panel37.Width = (this.panel36.Width - 500) / 2;
             this.panel38.Width = (this.panel36.Width - 500) / 2;
 
+            this.panel40.Width = 300;
             if (this.WindowState == FormWindowState.Maximized)
             {
                 this.panel6.Width = 450;
                 this.panel14.Width = 340;
-                this.panel40.Width = 340;
 
                 this.show_file.Height = 250;
 
@@ -104,7 +108,7 @@ namespace WindowsFormsApp
             {
                 this.panel6.Width = 350;
                 this.panel14.Width = 200;
-                this.panel40.Width = 300;
+                
 
                 this.show_file.Height = 250;
 
@@ -905,16 +909,16 @@ namespace WindowsFormsApp
                     var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
 
                     // Left
-                    int X = this.textBox1.Text.Length > 0 ? int.Parse(this.textBox1.Text) : 0;
+                    int X = this.X_Info.Text.Length > 0 ? int.Parse(this.X_Info.Text) : 0;
 
                     // Top
-                    int Y = this.textBox2.Text.Length > 0 ? int.Parse(this.textBox2.Text) : 0;
+                    int Y = this.Y_Info.Text.Length > 0 ? int.Parse(this.Y_Info.Text) : 0;
 
                     // width
-                    int width = this.textBox4.Text.Length > 0 ? int.Parse(this.textBox4.Text) : 0;
+                    int width = this.Width_Info.Text.Length > 0 ? int.Parse(this.Width_Info.Text) : 0;
 
                     // height
-                    int height = this.textBox3.Text.Length > 0 ? int.Parse(this.textBox3.Text) : 0;
+                    int height = this.Height_info.Text.Length > 0 ? int.Parse(this.Height_info.Text) : 0;
 
                     foreach (Control control in controlsListSelect[currentIdxList])
                     {
@@ -932,10 +936,10 @@ namespace WindowsFormsApp
                                 if ((left_expect + width_expect) > info_program.width_area)
                                 {
                                     if (objInput.Name.Equals("textBox1"))
-                                        X = int.Parse(info_program.width_real) - int.Parse(this.textBox4.Text) + 0;
+                                        X = int.Parse(info_program.width_real) - int.Parse(this.Width_Info.Text) + 0;
 
                                     if (objInput.Name.Equals("textBox4"))
-                                        width = int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text) + 0;
+                                        width = int.Parse(info_program.width_real) - int.Parse(this.X_Info.Text) + 0;
 
                                     left_expect = (int)Math.Round(Normalize(X, 0, int.Parse(info_program.width_real), 0, info_program.width_area));
                                     width_expect = (int)Math.Round(Normalize(width, 0, int.Parse(info_program.width_real), 0, info_program.width_area));
@@ -948,10 +952,10 @@ namespace WindowsFormsApp
                                 if ((top_expect + height_expect) > info_program.height_area)
                                 {
                                     if (objInput.Name.Equals("textBox2"))
-                                        Y = int.Parse(info_program.height_real) - int.Parse(this.textBox3.Text) + 0;
+                                        Y = int.Parse(info_program.height_real) - int.Parse(this.Height_info.Text) + 0;
 
                                     if (objInput.Name.Equals("textBox3"))
-                                        height = int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text) + 0;
+                                        height = int.Parse(info_program.height_real) - int.Parse(this.Y_Info.Text) + 0;
 
                                     top_expect = (int)Math.Round(Normalize(Y, 0, int.Parse(info_program.height_real), 0, info_program.height_area));
                                     height_expect = (int)Math.Round(Normalize(height, 0, int.Parse(info_program.height_real), 0, info_program.height_area));
@@ -962,23 +966,23 @@ namespace WindowsFormsApp
                                     resizablePanel.Top = top_expect;
 
                                 // update detail location
-                                if (this.textBox4.Text.Length > 0)
-                                    infoWindow.windown_width = int.Parse(this.textBox4.Text);
+                                if (this.Width_Info.Text.Length > 0)
+                                    infoWindow.windown_width = int.Parse(this.Width_Info.Text);
                                 else
                                     infoWindow.windown_width = 0;
 
-                                if (this.textBox3.Text.Length > 0)
-                                    infoWindow.windown_height = int.Parse(this.textBox3.Text);
+                                if (this.Height_info.Text.Length > 0)
+                                    infoWindow.windown_height = int.Parse(this.Height_info.Text);
                                 else
                                     infoWindow.windown_height = 0;
 
-                                if (this.textBox2.Text.Length > 0)
-                                    infoWindow.windown_top = int.Parse(this.textBox2.Text);
+                                if (this.Y_Info.Text.Length > 0)
+                                    infoWindow.windown_top = int.Parse(this.Y_Info.Text);
                                 else
                                     infoWindow.windown_top = 0;
 
-                                if (this.textBox1.Text.Length > 0)
-                                    infoWindow.windown_left = int.Parse(this.textBox1.Text);
+                                if (this.X_Info.Text.Length > 0)
+                                    infoWindow.windown_left = int.Parse(this.X_Info.Text);
                                 else
                                     infoWindow.windown_left = 0;
 
@@ -987,10 +991,10 @@ namespace WindowsFormsApp
                         }
                     }
 
-                    this.textBox1.Text = X.ToString();
-                    this.textBox2.Text = Y.ToString();
-                    this.textBox4.Text = width.ToString();
-                    this.textBox3.Text = height.ToString();
+                    this.X_Info.Text = X.ToString();
+                    this.Y_Info.Text = Y.ToString();
+                    this.Width_Info.Text = width.ToString();
+                    this.Height_info.Text = height.ToString();
                 }
             }
         }
@@ -1021,10 +1025,30 @@ namespace WindowsFormsApp
                     // Ghi lại các dòng còn lại vào tệp "material.data"
                     using (StreamWriter sw = new StreamWriter("material.data"))
                     {
+                        string itemK1 = this.background_select.SelectedItem as string;
+                        this.background_select.Items.Clear();
+                        this.background_select.Items.Add("None");
+
                         foreach (string line in linesToKeep)
                         {
-                            sw.WriteLine(line);
+                            if (File.Exists(line))
+                            {
+                                // Add list backgroud text mode
+                                string extension = System.IO.Path.GetExtension(line).ToLower();
+                                if (extension == ".jpg" || extension == ".bmp" ||
+                                    extension == ".png" || extension == ".gif")
+                                {
+                                    this.background_select.Items.Add(System.IO.Path.GetFileName(line));
+                                }
+
+                                sw.WriteLine(line);
+                            }
                         }
+
+                        if (!this.background_select.Items.Contains(itemK1))
+                            this.background_select.SelectedItem = 0;
+                        else
+                            this.background_select.SelectedItem = itemK1;
                     }
                 }
                 else if (file_select == null)
@@ -1080,6 +1104,44 @@ namespace WindowsFormsApp
         public Form1()
         {
             InitializeComponent();
+
+            /*** Modify text feature ***/
+            // Font (Note: Need update mapping value to send device)
+            this.font_select.Items.Clear();
+            this.font_select.Items.Add("Arial");
+            this.font_select.Items.Add("Time New Roman");
+            this.font_select.Items.Add("Franklin Fothic Std Book Compressed");
+
+            // Size
+            this.size_select.Items.Clear();
+            for (int i = 1; i < 500; i++)
+            {
+                this.size_select.Items.Add(i.ToString());
+            }
+
+            // animation
+            this.animation_select.Items.Clear();
+            this.animation_select.Items.Add("None");
+            this.animation_select.Items.Add("Left to Right");
+            this.animation_select.Items.Add("Right to Left");
+            this.animation_select.Items.Add("Shift up");
+
+            // speed
+            this.speed_select.Items.Clear();
+            for (int i = 10; i <= 100; i += 10)
+            {
+                this.speed_select.Items.Add(i.ToString());
+            }
+
+            // background will be set when load list data
+            this.background_select.Items.Clear();
+            this.background_select.Items.Add("None");
+
+            // style
+            this.style_select.Items.Clear();
+            this.style_select.Items.Add("None");
+            this.style_select.Items.Add("Style 1");
+            this.style_select.Items.Add("Style 2");
 
             // Đăng ký sự kiện FormClosing
             this.FormClosing += MainForm_FormClosing;
@@ -1146,14 +1208,14 @@ namespace WindowsFormsApp
             this.new_command_button.Paint += new PaintEventHandler(DashedBorderButton_Paint);
             this.new_resource.Paint += new PaintEventHandler(DashedBorderButton_Paint);
 
-            this.textBox1.KeyPress += NumericTextBox_KeyPress;
-            this.textBox1.TextChanged += TextBox_TextChanged;
-            this.textBox2.KeyPress += NumericTextBox_KeyPress;
-            this.textBox2.TextChanged += TextBox_TextChanged;
-            this.textBox3.KeyPress += NumericTextBox_KeyPress;
-            this.textBox3.TextChanged += TextBox_TextChanged;
-            this.textBox4.KeyPress += NumericTextBox_KeyPress;
-            this.textBox4.TextChanged += TextBox_TextChanged;
+            this.X_Info.KeyPress += NumericTextBox_KeyPress;
+            this.X_Info.TextChanged += TextBox_TextChanged;
+            this.Y_Info.KeyPress += NumericTextBox_KeyPress;
+            this.Y_Info.TextChanged += TextBox_TextChanged;
+            this.Height_info.KeyPress += NumericTextBox_KeyPress;
+            this.Height_info.TextChanged += TextBox_TextChanged;
+            this.Width_Info.KeyPress += NumericTextBox_KeyPress;
+            this.Width_Info.TextChanged += TextBox_TextChanged;
 
             this.entrytime_select.KeyPress += (sender1, e1) =>
             {
@@ -1227,10 +1289,7 @@ namespace WindowsFormsApp
                 }
             };
 
-            this.url_select.KeyPress += (sender1, e1) =>
-            {
-                // Do nothing
-            };
+
             this.url_select.TextChanged += (sender1, e1) =>
             {
                 TextBox obj = sender1 as TextBox;
@@ -1250,6 +1309,540 @@ namespace WindowsFormsApp
                                 // Update value
                                 infoWindow.list_url[index] = obj.Text;
                                 resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.textarea_select.TextChanged += (sender1, e1) =>
+            {
+                TextBox obj = sender1 as TextBox;
+
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+ 
+                                if (info_text != null && obj.Text.Length > 0)
+                                {
+                                    // Reint value
+                                    info_text.textarea = obj.Text.Length > 0 ? obj.Text.Replace("\r\n", "!@#$%1").Replace(" ", "!@#$%2") : obj.Text;
+ 
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.font_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.font = this.font_select.SelectedItem.ToString();
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.size_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.size = int.Parse(this.size_select.SelectedItem.ToString());
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.color_select.Click += (sender, e) =>
+            {
+                if (this.colorDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    foreach (Control control in controlsListSelect[currentIdxList])
+                    {
+                        if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                        {
+                            // Deserialize JSON data from the Name property
+                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                            foreach (bool selected in infoWindow.selected)
+                            {
+                                int index = infoWindow.selected.IndexOf(selected);
+                                if (selected)
+                                {
+                                    var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                    if (info_text != null)
+                                    {
+                                        this.color_select.BackColor = colorDialog1.Color;
+
+                                        // Reint value
+                                        info_text.color = $"#{this.color_select.BackColor.R:X2}{this.color_select.BackColor.G:X2}{this.color_select.BackColor.B:X2}";
+
+                                        // Update layout
+                                        processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                        // Update value
+                                        infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                        resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                        break;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            void Function_Click(object sender, EventArgs e)
+            {
+                Button btnObj = (Button) sender;
+
+                if (btnObj.BackColor == System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64))))))
+                    btnObj.BackColor = System.Drawing.Color.LightBlue;
+                else
+                    btnObj.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    if (this.underline_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.function |= 4;
+                                    else
+                                        info_text.function &= 0xfb;
+
+                                    if (this.italic_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.function |= 2;
+                                    else
+                                        info_text.function &= 0xfd;
+
+                                    if (this.bold_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.function |= 1;
+                                    else
+                                        info_text.function &= 0xfe;
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            this.bold_icon.Click += Function_Click;
+            this.italic_icon.Click += Function_Click;
+            this.underline_icon.Click += Function_Click;
+
+            void Vertical_Click(object sender, EventArgs e)
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    this.top_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                    this.middle_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                    this.bottom_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+                                    ((Button)sender).BackColor = System.Drawing.Color.LightBlue;
+
+                                    // Reint value
+                                    if (this.top_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.vertical = 1;
+                                    else if (this.middle_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.vertical = 2;
+                                    else
+                                        info_text.vertical = 3;
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            this.top_icon.Click += Vertical_Click;
+            this.middle_icon.Click += Vertical_Click;
+            this.bottom_icon.Click += Vertical_Click;
+
+            void Horizontal_Click(object sender, EventArgs e)
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    this.left_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                    this.center_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                                    this.right_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+                                    ((Button)sender).BackColor = System.Drawing.Color.LightBlue;
+
+                                    // Reint value
+                                    if (this.left_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.horizontal = 4;
+                                    else if (this.center_icon.BackColor == System.Drawing.Color.LightBlue)
+                                        info_text.horizontal = 5;
+                                    else
+                                        info_text.horizontal = 6;
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            this.left_icon.Click += Horizontal_Click;
+            this.center_icon.Click += Horizontal_Click;
+            this.right_icon.Click += Horizontal_Click;
+
+            this.animation_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.animation = this.animation_select.SelectedItem.ToString();
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.animation_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.animation = this.animation_select.SelectedItem.ToString();
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.speed_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.speed = int.Parse(this.speed_select.SelectedItem.ToString());
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.style_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.style = this.style_select.SelectedItem.ToString();
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.e2e_select.Click += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    RadioButton clickedRadioButton = sender as RadioButton;
+                                    if (clickedRadioButton.Checked)
+                                        clickedRadioButton.Checked = false;
+                                    else
+                                        clickedRadioButton.Checked = true;
+
+                                    // Reint value
+                                    info_text.E2E = clickedRadioButton.Checked;
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+            };
+
+            this.background_select.SelectionChangeCommitted += (sender, e) =>
+            {
+                foreach (Control control in controlsListSelect[currentIdxList])
+                {
+                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                    {
+                        // Deserialize JSON data from the Name property
+                        Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+
+                        foreach (bool selected in infoWindow.selected)
+                        {
+                            int index = infoWindow.selected.IndexOf(selected);
+                            if (selected)
+                            {
+                                var info_text = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[index]);
+
+                                if (info_text != null)
+                                {
+                                    // Reint value
+                                    info_text.background = this.background_select.SelectedItem.ToString();
+
+                                    // Update layout
+                                    processActionText(resizablePanel, info_text, infoWindow.list_entrytime[index], infoWindow.list_duration[index]);
+
+                                    // Update value
+                                    infoWindow.list_text[index] = JsonConvert.SerializeObject(info_text);
+                                    resizablePanel.Name = JsonConvert.SerializeObject(infoWindow);
+
+                                    break;
+                                }
+
                             }
                         }
                     }
@@ -1294,6 +1887,7 @@ namespace WindowsFormsApp
                         }
                     }
                 }
+
                 if (program_list.Count > 1)
                 {
                     // Active message
@@ -1681,42 +2275,11 @@ namespace WindowsFormsApp
             this.Webpage.MouseDown += PictureBox_MouseDown;
             this.Text.MouseDown += PictureBox_MouseDown;
 
-            /*** Modify text feature ***/
-            
-            // Font (Note: Need update mapping value to send device)
-            this.font_select.Items.Clear();
-            this.font_select.Items.Add("Arial");
-            this.font_select.Items.Add("Time New Roman");
-            this.font_select.Items.Add("Franklin Fothic Std Book Compressed");
-
-            // Size
-            this.size_select.Items.Clear();
-            for(int i= 1; i < 500; i++)
-            {
-                this.size_select.Items.Add(i.ToString());
-            }
-
-            // animation
-            this.animation_select.Items.Clear();
-            this.animation_select.Items.Add("None");
-            this.animation_select.Items.Add("Left to Right");
-            this.animation_select.Items.Add("Right to Left");
-            this.animation_select.Items.Add("Shift up");
-
-            // speed
-            this.speed_select.Items.Clear();
-            for (int i = 10; i <= 100; i+=10)
-            {
-                this.speed_select.Items.Add(i.ToString());
-            }
-
-            // background will be set when load list data
-
-            // style
-            this.style_select.Items.Clear();
-            this.style_select.Items.Add("None");
-            this.style_select.Items.Add("Style 1");
-            this.style_select.Items.Add("Style 2");
+            // Load Font file
+            privateFonts = new PrivateFontCollection();
+            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "fonts", "arial.ttf"));                              // Arial
+            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "fonts", "timenewroman.ttf"));                       // Time New Roman
+            privateFonts.AddFontFile(Path.Combine(Application.StartupPath, "fonts", "FranklinFothicStdBookCompressed.ttf"));    // Franklin Fothic Std Book Compressed
         }
 
 
@@ -3122,23 +3685,23 @@ namespace WindowsFormsApp
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
 
-                                            this.textBox1.Text = Math.Round(Normalize(X1, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
-                                            this.textBox2.Text = Math.Round(Normalize(Y1, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
+                                            this.X_Info.Text = Math.Round(Normalize(X1 - info_program.x_area, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
+                                            this.Y_Info.Text = Math.Round(Normalize(Y1 - info_program.y_area, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
                                             if (active_select)
                                             {
-                                                this.textBox4.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
-                                                this.textBox3.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
+                                                this.Width_Info.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
+                                                this.Height_info.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
                                             }
 
                                             if (direction == 1)
                                             {
                                                 Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                                this.textBox1.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
+                                                this.X_Info.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
                                             }
                                             else if (direction == 3)
                                             {
                                                 Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                                this.textBox2.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
+                                                this.Y_Info.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
                                             }
 
                                             // Select first item
@@ -3149,14 +3712,13 @@ namespace WindowsFormsApp
                                                     // Deserialize JSON data from the Name property
                                                     Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
 
-
                                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                                     {
                                                         // update detail location
-                                                        infoWindow1.windown_width = int.Parse(this.textBox4.Text);
-                                                        infoWindow1.windown_height = int.Parse(this.textBox3.Text);
-                                                        infoWindow1.windown_top = int.Parse(this.textBox2.Text);
-                                                        infoWindow1.windown_left = int.Parse(this.textBox1.Text);
+                                                        infoWindow1.windown_width = int.Parse(this.Width_Info.Text);
+                                                        infoWindow1.windown_height = int.Parse(this.Height_info.Text);
+                                                        infoWindow1.windown_top = int.Parse(this.Y_Info.Text);
+                                                        infoWindow1.windown_left = int.Parse(this.X_Info.Text);
 
                                                     }
 
@@ -3192,10 +3754,10 @@ namespace WindowsFormsApp
                                                         this.panel70.Visible = true;
                                                         this.panel70.Name = infoWindow.Name;
 
-                                                        this.textBox1.Text = infoWindow1.windown_left.ToString();
-                                                        this.textBox2.Text = infoWindow1.windown_top.ToString();
-                                                        this.textBox4.Text = infoWindow1.windown_width.ToString();
-                                                        this.textBox3.Text = infoWindow1.windown_height.ToString();
+                                                        this.X_Info.Text = infoWindow1.windown_left.ToString();
+                                                        this.Y_Info.Text = infoWindow1.windown_top.ToString();
+                                                        this.Width_Info.Text = infoWindow1.windown_width.ToString();
+                                                        this.Height_info.Text = infoWindow1.windown_height.ToString();
                                                     }
 
                                                     resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -3208,14 +3770,14 @@ namespace WindowsFormsApp
                                             }
 
                                             // Check again
-                                            if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
+                                            if ((int.Parse(this.X_Info.Text) + int.Parse(this.Width_Info.Text)) > int.Parse(info_program.width_real))
                                             {
-                                                this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
+                                                this.Width_Info.Text = (int.Parse(info_program.width_real) - int.Parse(this.X_Info.Text)).ToString();
                                             }
 
-                                            if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
+                                            if ((int.Parse(this.Y_Info.Text) + int.Parse(this.Height_info.Text)) > int.Parse(info_program.height_real))
                                             {
-                                                this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
+                                                this.Height_info.Text = (int.Parse(info_program.height_real) - int.Parse(this.Y_Info.Text)).ToString();
                                             }
 
                                             // Select first item
@@ -3240,10 +3802,10 @@ namespace WindowsFormsApp
                                                         }
 
                                                         // update detai location
-                                                        infoWindow1.windown_width = int.Parse(this.textBox4.Text);
-                                                        infoWindow1.windown_height = int.Parse(this.textBox3.Text);
-                                                        infoWindow1.windown_top = int.Parse(this.textBox2.Text);
-                                                        infoWindow1.windown_left = int.Parse(this.textBox1.Text);
+                                                        infoWindow1.windown_width = int.Parse(this.Width_Info.Text);
+                                                        infoWindow1.windown_height = int.Parse(this.Height_info.Text);
+                                                        infoWindow1.windown_top = int.Parse(this.Y_Info.Text);
+                                                        infoWindow1.windown_left = int.Parse(this.X_Info.Text);
                                                     }
 
                                                     resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -3262,6 +3824,9 @@ namespace WindowsFormsApp
 
                                     windown_load.CustomEventDragDrop += (sender1, e1) =>
                                     {
+                                        // Clean text area
+                                        this.textarea_select.Text = "";
+
                                         // Unselect all
                                         foreach (Control control in controlsListSelect[currentIdxList])
                                         {
@@ -3316,7 +3881,7 @@ namespace WindowsFormsApp
                                                             display_time    = 5,
                                                             font            = "Arial",
                                                             size            = 48,
-                                                            function        = 2,
+                                                            function        = 0,
                                                             vertical        = 2,
                                                             horizontal      = 5,
                                                             animation       = "None",
@@ -3395,10 +3960,50 @@ namespace WindowsFormsApp
                                     if (File.Exists(objectName))
                                         windown_load.videoFileReader.Open(objectName);
 
-                                    long total_frame = 0;
+                                    // Create lable
+                                    Label textBox = new Label();
+                                    textBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                                    textBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
+                                    textBox.AutoSize = false;
+                                    textBox.AutoEllipsis = true;
+                                    textBox.Width = info_program.width_area;
+                                    textBox.Anchor = AnchorStyles.None;
+                                    textBox.Font = new Font("Arial", 12, FontStyle.Regular);
+                                    textBox.MouseDown += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseDown(sender1, e1);
+                                    };
+                                    textBox.MouseUp += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseUp(sender1, e1);
+                                    };
+                                    textBox.MouseMove += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseMove(sender1, e1);
+                                    };
+
+                                    // Tạo và thêm Panel chứa Label
+                                    Panel textPanel = new Panel();
+                                    textPanel.BackColor = Color.Transparent;
+                                    textPanel.Dock = DockStyle.Fill;
+                                    textPanel.Controls.Add(textBox);
+                                    textPanel.MouseDown += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseDown(sender1, e1);
+                                    };
+                                    textPanel.MouseUp += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseUp(sender1, e1);
+                                    };
+                                    textPanel.MouseMove += (sender1, e1) =>
+                                    {
+                                        windown_load.maunalActiveMouseMove(sender1, e1);
+                                    };
+                                    windown_load.Controls.Add(textPanel);
 
                                     // Create PictureBox for the image
                                     PictureBox pictureBox = new PictureBox();
+                                    pictureBox.BackColor = Color.Transparent;
                                     pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
                                     pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                                     pictureBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
@@ -3417,43 +4022,6 @@ namespace WindowsFormsApp
                                     };
                                     windown_load.Controls.Add(pictureBox);
 
-
-                                    windown_load.updateTimer = new Timer();
-                                    if (File.Exists(objectName))
-                                        windown_load.updateTimer.Interval = 1000 / (int)windown_load.videoFileReader.FrameRate.Value;
-                                    windown_load.updateTimer.Tick += (sender1, e1) =>
-                                    {
-                                        if (InvokeRequired)
-                                        {
-                                            Invoke(new MethodInvoker(delegate { /* Công việc giao diện người dùng */}));
-                                        }
-                                        else
-                                        {
-                                            if (total_frame != windown_load.videoFileReader.FrameCount)
-                                            {
-                                                total_frame = windown_load.videoFileReader.FrameCount;
-                                                pictureBox.Name = "0";
-                                            }
-                                            else if (int.Parse(pictureBox.Name) > total_frame)
-                                            {
-                                                pictureBox.Name = "0";
-                                            }
-
-                                            // Get the first frame
-                                            // Giải phóng hình ảnh cũ trước khi gán hình ảnh mới
-                                            if (pictureBox.Image != null)
-                                            {
-                                                pictureBox.Image.Dispose();
-                                            }
-                                            Console.WriteLine(pictureBox.Name);
-                                            pictureBox.Image = windown_load.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
-                                            pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
-
-                                        }
-                                    };
-                                    if (File.Exists(objectName))
-                                        windown_load.updateTimer.Start();
-                                   
                                     controlsListSelect[currentIdxList].Insert(0, windown_load);
                                     destinationPanel.Controls.AddRange(controlsListSelect[currentIdxList].ToArray());
                                 }
@@ -3872,19 +4440,19 @@ namespace WindowsFormsApp
                         }
                         else if (objectName.Equals("Text"))
                         {
-                            list_text[0] = JsonConvert.SerializeObject(new {display_time = 5,
-                                                                            font = "Arial",
-                                                                            size = 48,
-                                                                            function = 2,
-                                                                            vertical = 2,
-                                                                            horizontal = 5,
-                                                                            animation = "None",
-                                                                            E2E = false,
-                                                                            speed = 50,
-                                                                            style = "None",
-                                                                            background = "None",
-                                                                            Color = "#FFFFFF",
-                                                                            textarea = "Hello World"});
+                            list_text[0] = JsonConvert.SerializeObject(new {display_time    = 5,
+                                                                            font            = "Arial",
+                                                                            size            = 48,
+                                                                            function        = 0,
+                                                                            vertical        = 2,
+                                                                            horizontal      = 5,
+                                                                            animation       = "None",
+                                                                            E2E             = false,
+                                                                            speed           = 50,
+                                                                            style           = "None",
+                                                                            background      = "None",
+                                                                            Color           = "#FFFFFF",
+                                                                            textarea        = "Hello World"});
 
                             // Type Text
                             list_entrytime[0] = "0";
@@ -3948,10 +4516,10 @@ namespace WindowsFormsApp
                                 AllowDrop       = true
                             };
 
-                            this.textBox1.Text  = "0";
-                            this.textBox2.Text  = "0";
-                            this.textBox4.Text  = Math.Round(Normalize(max_app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
-                            this.textBox3.Text  = Math.Round(Normalize(max_app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
+                            this.X_Info.Text  = "0";
+                            this.Y_Info.Text  = "0";
+                            this.Width_Info.Text  = Math.Round(Normalize(max_app_width, 0, max_app_width, 0, int.Parse(info_program.width_real))).ToString();
+                            this.Height_info.Text  = Math.Round(Normalize(max_app_height, 0, max_app_height, 0, int.Parse(info_program.height_real))).ToString();
 
                             this.panel70.Visible = true;
                             this.panel70.Name = info_windown.name;
@@ -4010,26 +4578,26 @@ namespace WindowsFormsApp
                                 this.panel70.Visible = true;
                                 this.panel70.Name = infoWindow.Name;
                                 //Console.WriteLine((Normalize(X, 0, showPanel.Width, 0, int.Parse(info_program.width_real))));
-                                this.textBox1.Text = Math.Round(Normalize(X - info_program.x_area, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
-                                this.textBox2.Text = Math.Round(Normalize(Y - info_program.y_area, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
+                                this.X_Info.Text = Math.Round(Normalize(X - info_program.x_area, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
+                                this.Y_Info.Text = Math.Round(Normalize(Y - info_program.y_area, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
                                 if (active_select)
                                 {
-                                    this.textBox4.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
-                                    this.textBox3.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
+                                    this.Width_Info.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(info_program.width_real))).ToString();
+                                    this.Height_info.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(info_program.height_real))).ToString();
                                 }
 
                                 // Event Collision
                                 if (direction == 1)
                                 {
                                     Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                    this.textBox1.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
+                                    this.X_Info.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
                                 }
                                 else if (direction == 3)
                                 {
                                     Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                    this.textBox2.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
+                                    this.Y_Info.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
                                 }
-
+                                
                                 // Select first item
                                 foreach (Control control1 in controlsListSelect[currentIdxList])
                                 {
@@ -4041,10 +4609,10 @@ namespace WindowsFormsApp
                                         if (infoWindow1.Name.Equals(infoWindow.Name))
                                         {
                                             // update detail location
-                                            infoWindow1.windown_width   = int.Parse(this.textBox4.Text);
-                                            infoWindow1.windown_height  = int.Parse(this.textBox3.Text);
-                                            infoWindow1.windown_top     = int.Parse(this.textBox2.Text);
-                                            infoWindow1.windown_left    = int.Parse(this.textBox1.Text);
+                                            infoWindow1.windown_width   = int.Parse(this.Width_Info.Text);
+                                            infoWindow1.windown_height  = int.Parse(this.Height_info.Text);
+                                            infoWindow1.windown_top     = int.Parse(this.Y_Info.Text);
+                                            infoWindow1.windown_left    = int.Parse(this.X_Info.Text);
 
                                             resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
                                         }
@@ -4078,10 +4646,10 @@ namespace WindowsFormsApp
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
 
-                                            this.textBox1.Text = infoWindow1.windown_left.ToString();
-                                            this.textBox2.Text = infoWindow1.windown_top.ToString();
-                                            this.textBox4.Text = infoWindow1.windown_width.ToString();
-                                            this.textBox3.Text = infoWindow1.windown_height.ToString();
+                                            this.X_Info.Text = infoWindow1.windown_left.ToString();
+                                            this.Y_Info.Text = infoWindow1.windown_top.ToString();
+                                            this.Width_Info.Text = infoWindow1.windown_width.ToString();
+                                            this.Height_info.Text = infoWindow1.windown_height.ToString();
                                         }
                                     }
                                 }
@@ -4092,14 +4660,14 @@ namespace WindowsFormsApp
                                 }
 
                                 // Check again
-                                if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
+                                if ((int.Parse(this.X_Info.Text) + int.Parse(this.Width_Info.Text)) > int.Parse(info_program.width_real))
                                 {
-                                    this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
+                                    this.Width_Info.Text = (int.Parse(info_program.width_real) - int.Parse(this.X_Info.Text)).ToString();
                                 }
 
-                                if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
+                                if ((int.Parse(this.Y_Info.Text) + int.Parse(this.Height_info.Text)) > int.Parse(info_program.height_real))
                                 {
-                                    this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
+                                    this.Height_info.Text = (int.Parse(info_program.height_real) - int.Parse(this.Y_Info.Text)).ToString();
                                 }
 
                                 // Select first item
@@ -4125,10 +4693,10 @@ namespace WindowsFormsApp
                                             }
 
                                             // update detail location
-                                            infoWindow1.windown_width   = int.Parse(this.textBox4.Text);
-                                            infoWindow1.windown_height  = int.Parse(this.textBox3.Text);
-                                            infoWindow1.windown_top     = int.Parse(this.textBox2.Text);
-                                            infoWindow1.windown_left    = int.Parse(this.textBox1.Text);
+                                            infoWindow1.windown_width   = int.Parse(this.Width_Info.Text);
+                                            infoWindow1.windown_height  = int.Parse(this.Height_info.Text);
+                                            infoWindow1.windown_top     = int.Parse(this.Y_Info.Text);
+                                            infoWindow1.windown_left    = int.Parse(this.X_Info.Text);
                                         }
 
                                         resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -4147,6 +4715,9 @@ namespace WindowsFormsApp
 
                         windown.CustomEventDragDrop += (sender1, e1) =>
                         {
+                            // Clean text area
+                            this.textarea_select.Text = "";
+
                             // Unselect all
                             foreach (Control control in controlsListSelect[currentIdxList])
                             {
@@ -4201,7 +4772,7 @@ namespace WindowsFormsApp
                                                 display_time    = 5,
                                                 font            = "Arial",
                                                 size            = 48,
-                                                function        = 2,
+                                                function        = 0,
                                                 vertical        = 2,
                                                 horizontal      = 5,
                                                 animation       = "None",
@@ -4279,14 +4850,52 @@ namespace WindowsFormsApp
                         // Load the video file
                         windown.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
 
-                        long total_frame = 0;
+                        // Create lable
+                        Label textBox = new Label();
+                        textBox.BackColor = Color.Transparent;
+                        textBox.AutoSize = false;
+                        textBox.AutoEllipsis = true;
+                        textBox.Width = info_program.width_area;
+                        textBox.Anchor = AnchorStyles.None;
+                        textBox.Font = new Font("Arial", 12, FontStyle.Regular);
+                        textBox.MouseDown += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseDown(sender1, e1);
+                        };
+                        textBox.MouseUp += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseUp(sender1, e1);
+                        };
+                        textBox.MouseMove += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseMove(sender1, e1);
+                        };
+
+                        // Tạo và thêm Panel chứa Label
+                        Panel textPanel = new Panel();
+                        textPanel.BackColor = Color.Transparent;
+                        textPanel.Dock = DockStyle.Fill;
+                        textPanel.Controls.Add(textBox);
+                        textPanel.MouseDown += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseDown(sender1, e1);
+                        };
+                        textPanel.MouseUp += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseUp(sender1, e1);
+                        };
+                        textPanel.MouseMove += (sender1, e1) =>
+                        {
+                            windown.maunalActiveMouseMove(sender1, e1);
+                        };
+                        windown.Controls.Add(textPanel);
 
                         // Create PictureBox for the image
                         PictureBox pictureBox = new PictureBox();
-                        pictureBox.Dock       = System.Windows.Forms.DockStyle.Fill;
-                        pictureBox.SizeMode   = PictureBoxSizeMode.StretchImage;
-                        pictureBox.Padding    = new System.Windows.Forms.Padding(1, 1, 1, 1);
-                        pictureBox.Name       = "0";
+                        pictureBox.BackColor = Color.Transparent;
+                        pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                        pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                        pictureBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
                         pictureBox.MouseDown += (sender1, e1) =>
                         {
                             windown.maunalActiveMouseDown(sender1, e1);
@@ -4300,36 +4909,6 @@ namespace WindowsFormsApp
                             windown.maunalActiveMouseMove(sender1, e1);
                         };
                         windown.Controls.Add(pictureBox);
-
-                        windown.updateTimer = new Timer();
-                        windown.updateTimer.Tick += (sender1, e1) =>
-                        {
-                            if (InvokeRequired)
-                            {
-                                Invoke(new MethodInvoker(delegate { /* Công việc giao diện người dùng */ }));
-                            }
-                            else
-                            {
-                                if (total_frame != windown.videoFileReader.FrameCount)
-                                {
-                                    total_frame = windown.videoFileReader.FrameCount;
-                                    pictureBox.Name = "0";
-                                }
-                                else if (int.Parse(pictureBox.Name) >= (total_frame >= 2 ? (total_frame - 2) : total_frame))
-                                {
-                                    pictureBox.Name = "0";
-                                }
-
-                                // Get the first frame
-                                // Giải phóng hình ảnh cũ trước khi gán hình ảnh mới
-                                if (pictureBox.Image != null)
-                                {
-                                    pictureBox.Image.Dispose();
-                                }
-                                pictureBox.Image = windown.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
-                                pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
-                            }
-                        };
 
                         controlsListSelect[currentIdxList].Insert(0, windown);
                         destinationPanel.Controls.AddRange(controlsListSelect[currentIdxList].ToArray());
@@ -4514,14 +5093,14 @@ namespace WindowsFormsApp
                                 if (control1 is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name) && control1.Parent != null)
                                 {
                                     // Deserialize JSON data from the Name property
-                                    Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name); 
+                                    Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
+
                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                     {
-                                        Color initialBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64))))); // Set to your initial color
                                         int index = int.Parse((sender as Control).Name);
                                         if (infoWindow1.selected[index])
                                         {
-                                            String path_file = infoWindow1.list[index]; 
+                                            String path_file = infoWindow1.list[index];
                                             string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
 
                                             // Filter type
@@ -4531,59 +5110,82 @@ namespace WindowsFormsApp
                                             else if (path_file.Equals("Text"))
                                                 type_file = "Text";
 
-                                            initialBorderColor = Color.LightBlue;
-
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
                                             this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(infoWindow1.list[index]);
 
-                                            int max_app_width = control1.Parent.Width - 0;
-                                            int max_app_height = control1.Parent.Height - 0;
-                                            var info_program = JsonConvert.DeserializeObject<Info_Program>(control1.Parent.Name);
+                                            int max_app_width = resizablePanel1.Parent.Width;
+                                            int max_app_height = resizablePanel1.Parent.Height;
+                                            var info_program = JsonConvert.DeserializeObject<Info_Program>(resizablePanel1.Parent.Name);
 
-                                            this.textBox1.Text = infoWindow1.windown_left.ToString();
-                                            this.textBox2.Text = infoWindow1.windown_top.ToString();
-                                            this.textBox4.Text = infoWindow1.windown_width.ToString();
-                                            this.textBox3.Text = infoWindow1.windown_height.ToString();
+                                            this.X_Info.Text = infoWindow1.windown_left.ToString();
+                                            this.Y_Info.Text = infoWindow1.windown_top.ToString();
+                                            this.Width_Info.Text = infoWindow1.windown_width.ToString();
+                                            this.Height_info.Text = infoWindow1.windown_height.ToString();
 
                                             // Check again
-                                            if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(info_program.width_real))
+                                            if ((int.Parse(this.X_Info.Text) + int.Parse(this.Width_Info.Text)) > int.Parse(info_program.width_real))
                                             {
-                                                this.textBox4.Text = (int.Parse(info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
+                                                this.Width_Info.Text = (int.Parse(info_program.width_real) - int.Parse(this.X_Info.Text)).ToString();
                                             }
 
-                                            if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(info_program.height_real))
+                                            if ((int.Parse(this.Y_Info.Text) + int.Parse(this.Height_info.Text)) > int.Parse(info_program.height_real))
                                             {
-                                                this.textBox3.Text = (int.Parse(info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
+                                                this.Height_info.Text = (int.Parse(info_program.height_real) - int.Parse(this.Y_Info.Text)).ToString();
                                             }
 
-                                            ResizablePanel panel_windown = control1 as ResizablePanel;
-                                            panel_windown.InitializeResizeHandles();
-                                            
                                             if (type_file.Equals("Video/Image"))
                                             {
                                                 // Is a video
-                                                if (extension_1 == ".mp4" || extension_1 == ".avi" ||
-                                                    extension_1 == ".wmv" || extension_1 == ".mpg" ||
+                                                if (extension_1 == ".mp4"  || extension_1 == ".avi" ||
+                                                    extension_1 == ".wmv"  || extension_1 == ".mpg" ||
                                                     extension_1 == ".rmvp" || extension_1 == ".mov" ||
-                                                    extension_1 == ".dat" || extension_1 == ".flv")
+                                                    extension_1 == ".dat"  || extension_1 == ".flv")
                                                 {
                                                     this.panel80.Visible = false;
                                                     this.panel100.Visible = false;
                                                     this.panel101.Visible = false;
 
-                                                    if (!infoWindow1.path_windown.Equals(path_file) || !panel_windown.updateTimer.Enabled)
+                                                    if (!infoWindow1.path_windown.Equals(path_file))
                                                     {
                                                         // update data
                                                         infoWindow1.path_windown = path_file;
                                                         resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
 
-                                                        panel_windown.updateTimer.Stop();
-                                                        panel_windown.videoFileReader.Close();
+                                                        resizablePanel1.videoFileReader.Close();
+                                                        resizablePanel1.videoFileReader.Open(path_file);
+                                                    }
 
-                                                        panel_windown.videoFileReader.Open(path_file);
-                                                        panel_windown.updateTimer.Interval = 1000 / (int)panel_windown.videoFileReader.FrameRate.Value;
-                                                        panel_windown.updateTimer.Start();
+                                                    // Iterate through each control in the panel
+                                                    foreach (Control control_1 in resizablePanel1.Controls)
+                                                    {
+                                                        // Check if the control is a Panel  
+                                                        if (control_1 is Panel)
+                                                        {
+                                                            if (control_1.Visible)
+                                                                control_1.Visible = false;
+                                                        }
+                                                        // Check if the control is a PictureBox
+                                                        else if (control_1 is PictureBox)
+                                                        {
+                                                            // You've found the PictureBox inside the Panel
+                                                            PictureBox pictureBoxInPanel = (PictureBox) control_1;
+
+                                                            if (!pictureBoxInPanel.Name.Equals(path_file))
+                                                            {
+                                                                // Now you can work with pictureBoxInPanel as needed
+                                                                if (pictureBoxInPanel.Image != null)
+                                                                {
+                                                                    pictureBoxInPanel.Image.Dispose();
+                                                                    pictureBoxInPanel.Image = null;
+                                                                }
+                                                                pictureBoxInPanel.Image = resizablePanel1.videoFileReader.ReadVideoFrame((int)((resizablePanel1.videoFileReader.FrameCount * 10) / 100));
+                                                                pictureBoxInPanel.Name = path_file;
+                                                            }
+
+                                                            // Break out of the loop if you only need the first PictureBox
+                                                            break;
+                                                        }
                                                     }
                                                 }
                                                 else if (extension_1 == ".jpg" || extension_1 == ".bmp" ||
@@ -4603,23 +5205,32 @@ namespace WindowsFormsApp
                                                         resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
                                                     }
 
-                                                    panel_windown.updateTimer.Stop();
-
                                                     // Iterate through each control in the panel
-                                                    foreach (Control control_1 in panel_windown.Controls)
+                                                    foreach (Control control_1 in resizablePanel1.Controls)
                                                     {
+                                                        // Check if the control is a Panel  
+                                                        if (control_1 is Panel)
+                                                        {
+                                                            if (control_1.Visible)
+                                                                control_1.Visible = false;
+                                                        }
                                                         // Check if the control is a PictureBox
-                                                        if (control_1 is PictureBox)
+                                                        else if (control_1 is PictureBox)
                                                         {
                                                             // You've found the PictureBox inside the Panel
                                                             PictureBox pictureBoxInPanel = (PictureBox)control_1;
 
-                                                            // Now you can work with pictureBoxInPanel as needed
-                                                            if (pictureBoxInPanel.Image != null)
+                                                            if (!pictureBoxInPanel.Name.Equals(path_file))
                                                             {
-                                                                pictureBoxInPanel.Image.Dispose();
+                                                                // Now you can work with pictureBoxInPanel as needed
+                                                                if (pictureBoxInPanel.Image != null)
+                                                                {
+                                                                    pictureBoxInPanel.Image.Dispose();
+                                                                    pictureBoxInPanel.Image = null;
+                                                                }
+                                                                pictureBoxInPanel.Image = System.Drawing.Image.FromFile(path_file); // Set a new image
+                                                                pictureBoxInPanel.Name = path_file;
                                                             }
-                                                            pictureBoxInPanel.Image = System.Drawing.Image.FromFile(path_file); // Set a new image
 
                                                             // Break out of the loop if you only need the first PictureBox
                                                             break;
@@ -4637,23 +5248,32 @@ namespace WindowsFormsApp
                                                 this.entrytime_select.Text = infoWindow1.list_entrytime[index];
                                                 this.duration_select.Text = infoWindow1.list_duration[index];
 
-                                                panel_windown.updateTimer.Stop();
-
                                                 // Iterate through each control in the panel
-                                                foreach (Control control_1 in panel_windown.Controls)
+                                                foreach (Control control_1 in resizablePanel1.Controls)
                                                 {
+                                                    // Check if the control is a Panel  
+                                                    if (control_1 is Panel)
+                                                    {
+                                                        if (control_1.Visible)
+                                                            control_1.Visible = false;
+                                                    }
                                                     // Check if the control is a PictureBox
-                                                    if (control_1 is PictureBox)
+                                                    else if (control_1 is PictureBox)
                                                     {
                                                         // You've found the PictureBox inside the Panel
                                                         PictureBox pictureBoxInPanel = (PictureBox)control_1;
 
-                                                        // Now you can work with pictureBoxInPanel as needed
-                                                        if (pictureBoxInPanel.Image != null)
+                                                        if (!pictureBoxInPanel.Name.Equals(path_file))
                                                         {
-                                                            pictureBoxInPanel.Image.Dispose();
+                                                            // Now you can work with pictureBoxInPanel as needed
+                                                            if (pictureBoxInPanel.Image != null)
+                                                            {
+                                                                pictureBoxInPanel.Image.Dispose();
+                                                                pictureBoxInPanel.Image = null;
+                                                            }
+                                                            pictureBoxInPanel.Image = Properties.Resources.browser_icon;
+                                                            pictureBoxInPanel.Name = this.Webpage.Name;
                                                         }
-                                                        pictureBoxInPanel.Image = Properties.Resources.browser_icon;
 
                                                         // Break out of the loop if you only need the first PictureBox
                                                         break;
@@ -4666,35 +5286,11 @@ namespace WindowsFormsApp
                                                 this.panel100.Visible = false;
                                                 this.panel101.Visible = true;
 
-                                                this.entrytime_select.Text = infoWindow1.list_entrytime[index];
-                                                this.duration_select.Text = infoWindow1.list_duration[index];
-
-                                                panel_windown.updateTimer.Stop();
-
-                                                // Iterate through each control in the panel
-                                                foreach (Control control_1 in panel_windown.Controls)
-                                                {
-                                                    // Check if the control is a PictureBox
-                                                    if (control_1 is PictureBox)
-                                                    {
-                                                        // You've found the PictureBox inside the Panel
-                                                        PictureBox pictureBoxInPanel = (PictureBox)control_1;
-
-                                                        // Now you can work with pictureBoxInPanel as needed
-                                                        if (pictureBoxInPanel.Image != null)
-                                                        {
-                                                            pictureBoxInPanel.Image.Dispose();
-                                                        }
-                                                        pictureBoxInPanel.Image = Properties.Resources.text_icon;
-
-                                                        // Break out of the loop if you only need the first PictureBox
-                                                        break;
-                                                    }
-                                                }
+                                                processActionText(resizablePanel1, JsonConvert.DeserializeObject<Info_Text>(infoWindow1.list_text[index]), infoWindow1.list_entrytime[index], infoWindow1.list_duration[index]);
                                             }
 
                                             // Draw a border with a different color and thickness
-                                            using (Pen pen = new Pen(initialBorderColor, 2)) // You can change Color.Red to your desired color
+                                            using (Pen pen = new Pen(Color.LightBlue, 2)) // You can change Color.Red to your desired color
                                             {
                                                 e.Graphics.DrawRectangle(pen, item_Panel.Padding.Left, 0, item_Panel.Width - 1 - item_Panel.Padding.Left, item_Panel.Height - 1);
                                             }
@@ -4754,6 +5350,9 @@ namespace WindowsFormsApp
 
                         pictureBox.MouseDown += (sender, e) =>
                         {
+                            // Clear textarea
+                            this.textarea_select.Text = "";
+
                             // Unselect all
                             foreach (Control control1 in lists)
                             {
@@ -4804,6 +5403,9 @@ namespace WindowsFormsApp
                         name_label.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
                         name_label.MouseClick += (sender, e) =>
                         {
+                            // Clear textarea
+                            this.textarea_select.Text = "";
+
                             // Unselect all
                             foreach (Control control1 in lists)
                             {
@@ -4845,14 +5447,11 @@ namespace WindowsFormsApp
                     this.list_windowns.Controls.Add(title_Panel);
                     this.list_windowns.Controls.Add(delta_Panel1);
 
+                    // Update show area
+
                     // Update background windown
                     if (infoWindow.list.Count == 0)
                     {
-                        if (resizablePanel.updateTimer != null)
-                        {
-                            resizablePanel.updateTimer.Stop();
-                        }
-
                         if (resizablePanel.videoFileReader != null)
                         {
                             resizablePanel.videoFileReader.Close();
@@ -4866,6 +5465,206 @@ namespace WindowsFormsApp
                                 pictureBoxInPanel.Image = null;
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        private void processActionText(ResizablePanel resizablePanel, Info_Text info_text, string entrytime, string duration)
+        {
+            // Resize child panels in program list (panel43)
+            var visiblePanels = this.panel43.Controls
+                .OfType<Panel>()
+                .Where(panel => panel.Visible);
+
+            foreach (var panel_chill in visiblePanels)
+            {
+                var info_program = JsonConvert.DeserializeObject<Info_Program>(panel_chill.Name);
+
+                if (this.textarea_select.Text.Length == 0)
+                    this.textarea_select.Text = info_text.textarea.Replace("!@#$%1", "\n").Replace("!@#$%2", " ");
+
+                this.font_select.SelectedItem = info_text.font;
+                this.size_select.SelectedItem = info_text.size.ToString();
+
+                // Function
+                if (((info_text.function >> 2) & 1) == 1)
+                    this.underline_icon.BackColor = Color.LightBlue;
+                else
+                    this.underline_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                if (((info_text.function >> 1) & 1) == 1)
+                    this.italic_icon.BackColor = Color.LightBlue;
+                else
+                    this.italic_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                if (((info_text.function >> 0) & 1) == 1)
+                    this.bold_icon.BackColor = Color.LightBlue;
+                else
+                    this.bold_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+
+                // vertical
+                this.top_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                this.middle_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                this.bottom_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                if (info_text.vertical == 1)
+                    this.top_icon.BackColor = Color.LightBlue;
+                else if (info_text.vertical == 2)
+                    this.middle_icon.BackColor = Color.LightBlue;
+                else if (info_text.vertical == 3)
+                    this.bottom_icon.BackColor = Color.LightBlue;
+
+                // horizontal
+                this.left_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                this.center_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                this.right_icon.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+                if (info_text.horizontal == 4)
+                    this.left_icon.BackColor = Color.LightBlue;
+                else if (info_text.horizontal == 5)
+                    this.center_icon.BackColor = Color.LightBlue;
+                else if (info_text.horizontal == 6)
+                    this.right_icon.BackColor = Color.LightBlue;
+
+                // Animation
+                this.animation_select.SelectedItem = info_text.animation;
+
+                // E2E
+                this.e2e_select.Checked = info_text.E2E;
+
+                // speed
+                this.speed_select.SelectedItem = info_text.speed.ToString();
+
+                // style
+                this.style_select.SelectedItem = info_text.style;
+
+                this.color_select.BackColor = System.Drawing.ColorTranslator.FromHtml(info_text.color);
+                this.entrytime_select.Text = entrytime;
+                this.duration_select.Text = duration;
+
+                // Iterate through each control in the panel
+                foreach (Control control1 in resizablePanel.Controls)
+                {
+                    // Check if the control is a Panel
+                    if (control1 is Panel)
+                    {
+                        if (!control1.Visible)
+                            control1.Visible = true;
+
+                        Label LabelInPanel = (Label)control1.Controls[0];
+
+                        // Set font + size
+                        FontFamily font = new FontFamily("Arial");
+                        if (info_text.font.Equals("Arial"))
+                            font = privateFonts.Families[0];
+                        else if (info_text.font.Equals("Time New Roman"))
+                            font = privateFonts.Families[1];
+                        else if (info_text.font.Equals("Franklin Fothic Std Book Compressed"))
+                            font = privateFonts.Families[2];
+
+                        // set function
+                        FontStyle function = FontStyle.Regular;
+                        if (((info_text.function >> 2) & 1) == 1)
+                            function |= FontStyle.Underline;
+                        if (((info_text.function >> 1) & 1) == 1)
+                            function |= FontStyle.Italic;
+                        if (((info_text.function >> 0) & 1) == 1)
+                            function |= FontStyle.Bold;
+                        
+                        int size_normalize = (info_text.size * info_program.height_area) / int.Parse(info_program.height_real);
+                        if ((LabelInPanel.Font.Size != size_normalize) || !LabelInPanel.Font.Name.Equals(font.Name) || (LabelInPanel.Font.Style != function))
+                            LabelInPanel.Font = new Font(font, size_normalize, function);
+
+                        LabelInPanel.Height = LabelInPanel.Font.Height;
+                        if (info_text.animation.Equals("Shift up"))
+                            LabelInPanel.Height = info_program.height_area;
+
+                        LabelInPanel.Text = info_text.textarea.Replace("!@#$%1", "").Replace("!@#$%2", " ");
+                        if (info_text.animation.Equals("Shift up"))
+                            LabelInPanel.Text = info_text.textarea.Replace("!@#$%1", "\n").Replace("!@#$%2", " ");
+
+                        // Set TextAlign 
+                        if ((info_text.vertical == 1) && (info_text.horizontal == 4))
+                            LabelInPanel.TextAlign = ContentAlignment.TopLeft;
+                        else if ((info_text.vertical == 1) && (info_text.horizontal == 5))
+                            LabelInPanel.TextAlign = ContentAlignment.TopCenter;
+                        else if ((info_text.vertical == 1) && (info_text.horizontal == 6))
+                            LabelInPanel.TextAlign = ContentAlignment.TopRight;
+                        else if ((info_text.vertical == 2) && (info_text.horizontal == 4))
+                            LabelInPanel.TextAlign = ContentAlignment.MiddleLeft;
+                        else if ((info_text.vertical == 2) && (info_text.horizontal == 5))
+                            LabelInPanel.TextAlign = ContentAlignment.MiddleCenter;
+                        else if ((info_text.vertical == 2) && (info_text.horizontal == 6))
+                            LabelInPanel.TextAlign = ContentAlignment.MiddleRight;
+                        else if ((info_text.vertical == 3) && (info_text.horizontal == 4))
+                            LabelInPanel.TextAlign = ContentAlignment.BottomLeft;
+                        else if ((info_text.vertical == 3) && (info_text.horizontal == 5))
+                            LabelInPanel.TextAlign = ContentAlignment.BottomCenter;
+                        else if ((info_text.vertical == 3) && (info_text.horizontal == 6))
+                            LabelInPanel.TextAlign = ContentAlignment.BottomRight;
+
+                        // Center the Label within the Panel by setting its Location
+                        if (info_text.vertical == 1)
+                        {
+                            LabelInPanel.Location = new Point(
+                                  (control1.Width - LabelInPanel.Width) / 2,    // X position: Center horizontally
+                                  0                                             // Y position: Center vertically
+                            );
+                        }
+                        else if (info_text.vertical == 2)
+                        {
+                            LabelInPanel.Location = new Point(
+                                  (control1.Width - LabelInPanel.Width) / 2,    // X position: Center horizontally
+                                  (control1.Height - LabelInPanel.Height) / 2   // Y position: Center vertically
+                            );
+
+                        }
+                        else if (info_text.vertical == 3)
+                        {
+                            LabelInPanel.Location = new Point(
+                              (control1.Width - LabelInPanel.Width) / 2,        // X position: Center horizontally
+                              (control1.Height - LabelInPanel.Height)           // Y position: Center vertically
+                            );
+                        }
+
+                        LabelInPanel.ForeColor = System.Drawing.ColorTranslator.FromHtml(info_text.color);
+
+                        // background
+                        if (!this.background_select.Items.Contains(info_text.background))
+                            this.background_select.SelectedItem = 0;
+                        else
+                            this.background_select.SelectedItem = info_text.background;
+
+                        if (info_text.background.Equals("None"))
+                        {
+                            if (control1.BackgroundImage != null)
+                            {
+                                control1.BackgroundImage.Dispose();
+                                control1.BackgroundImage = null;
+                            }                            
+                        }
+                        else
+                        {
+                            // Find path item
+                            string path_file = "";
+                            using (StreamReader sr = new StreamReader("material.data"))
+                            {
+                                string line;
+                                while ((line = sr.ReadLine()) != null)
+                                {
+                                    if (System.IO.Path.GetFileName(line).Equals(info_text.background))
+                                    {
+                                        path_file = line;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (path_file.Length > 0)
+                            {
+                                control1.BackgroundImage = System.Drawing.Image.FromFile(path_file);
+                                control1.BackgroundImageLayout = ImageLayout.Stretch;
+                            }
+                        }
+                            
+                        break;
                     }
                 }
             }
@@ -5978,10 +6777,10 @@ namespace WindowsFormsApp
                     String duration = "00:00:00";
 
                     // Is a video
-                    if (extension == ".mp4" || extension == ".avi" ||
-                        extension == ".wmv" || extension == ".mpg" ||
+                    if (extension == ".mp4"  || extension == ".avi" ||
+                        extension == ".wmv"  || extension == ".mpg" ||
                         extension == ".rmvp" || extension == ".mov" ||
-                        extension == ".dat" || extension == ".flv")
+                        extension == ".dat"  || extension == ".flv")
                     {
                         try
                         {
@@ -6002,6 +6801,9 @@ namespace WindowsFormsApp
                              extension == ".png" || extension == ".gif")
                     {
                         typeFile = "Image";
+
+                        // Add Option
+                        this.background_select.Items.Add(fileName);
                     }
                     else
                     {
@@ -6407,12 +7209,6 @@ namespace WindowsFormsApp
             {
                 ResizablePanel panel_windown = control1 as ResizablePanel;
 
-                if (panel_windown.updateTimer != null)
-                {
-                    panel_windown.updateTimer.Stop();
-                    panel_windown.updateTimer = null;
-                }
-
                 if (panel_windown.videoFileReader != null)
                 {
                     panel_windown.videoFileReader.Close();
@@ -6442,6 +7238,7 @@ namespace WindowsFormsApp
             this.panel70.Visible = false;
             this.panel70.Name = "";
             this.panel80.Visible = false;
+            this.textarea_select.Text = "";
 
             if (!flagIgnore)
             {
@@ -6788,23 +7585,23 @@ namespace WindowsFormsApp
                                                     this.panel70.Visible = true;
                                                     this.panel70.Name = infoWindow.Name;
 
-                                                    this.textBox1.Text = Math.Round(Normalize(X1, 0, info_program.width_area, 0, int.Parse(program.info_program.width_real))).ToString();
-                                                    this.textBox2.Text = Math.Round(Normalize(Y1, 0, info_program.height_area, 0, int.Parse(program.info_program.height_real))).ToString();
+                                                    this.X_Info.Text = Math.Round(Normalize(X1 - info_program.x_area, 0, info_program.width_area, 0, int.Parse(program.info_program.width_real))).ToString();
+                                                    this.Y_Info.Text = Math.Round(Normalize(Y1 - info_program.y_area, 0, info_program.height_area, 0, int.Parse(program.info_program.height_real))).ToString();
                                                     if (active_select)
                                                     {
-                                                        this.textBox4.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(program.info_program.width_real))).ToString();
-                                                        this.textBox3.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(program.info_program.height_real))).ToString();
+                                                        this.Width_Info.Text = Math.Round(Normalize(app_width, 0, info_program.width_area, 0, int.Parse(program.info_program.width_real))).ToString();
+                                                        this.Height_info.Text = Math.Round(Normalize(app_height, 0, info_program.height_area, 0, int.Parse(program.info_program.height_real))).ToString();
                                                     }
 
                                                     if (direction == 1)
                                                     {
                                                         Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                                        this.textBox1.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
+                                                        this.X_Info.Text = (infoOtherWindow.windown_left + infoOtherWindow.windown_width).ToString();
                                                     }
                                                     else if (direction == 3)
                                                     {
                                                         Info_Window infoOtherWindow = JsonConvert.DeserializeObject<Info_Window>(info_other_panel);
-                                                        this.textBox2.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
+                                                        this.Y_Info.Text = (infoOtherWindow.windown_top + infoOtherWindow.windown_height).ToString();
                                                     }
 
                                                     // Select first item
@@ -6819,10 +7616,10 @@ namespace WindowsFormsApp
                                                             if (infoWindow1.Name.Equals(infoWindow.Name))
                                                             {
                                                                 // update detail location
-                                                                infoWindow1.windown_width = int.Parse(this.textBox4.Text);
-                                                                infoWindow1.windown_height = int.Parse(this.textBox3.Text);
-                                                                infoWindow1.windown_top = int.Parse(this.textBox2.Text);
-                                                                infoWindow1.windown_left = int.Parse(this.textBox1.Text);
+                                                                infoWindow1.windown_width = int.Parse(this.Width_Info.Text);
+                                                                infoWindow1.windown_height = int.Parse(this.Height_info.Text);
+                                                                infoWindow1.windown_top = int.Parse(this.Y_Info.Text);
+                                                                infoWindow1.windown_left = int.Parse(this.X_Info.Text);
 
                                                             }
 
@@ -6858,10 +7655,10 @@ namespace WindowsFormsApp
                                                                 this.panel70.Visible = true;
                                                                 this.panel70.Name  = infoWindow.Name;
 
-                                                                this.textBox1.Text = infoWindow1.windown_left.ToString();
-                                                                this.textBox2.Text = infoWindow1.windown_top.ToString();
-                                                                this.textBox4.Text = infoWindow1.windown_width.ToString();
-                                                                this.textBox3.Text = infoWindow1.windown_height.ToString();
+                                                                this.X_Info.Text = infoWindow1.windown_left.ToString();
+                                                                this.Y_Info.Text = infoWindow1.windown_top.ToString();
+                                                                this.Width_Info.Text = infoWindow1.windown_width.ToString();
+                                                                this.Height_info.Text = infoWindow1.windown_height.ToString();
                                                             }
 
                                                             resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -6874,14 +7671,14 @@ namespace WindowsFormsApp
                                                     }
 
                                                     // Check again
-                                                    if ((int.Parse(this.textBox1.Text) + int.Parse(this.textBox4.Text)) > int.Parse(program.info_program.width_real))
+                                                    if ((int.Parse(this.X_Info.Text) + int.Parse(this.Width_Info.Text)) > int.Parse(program.info_program.width_real))
                                                     {
-                                                        this.textBox4.Text = (int.Parse(program.info_program.width_real) - int.Parse(this.textBox1.Text)).ToString();
+                                                        this.Width_Info.Text = (int.Parse(program.info_program.width_real) - int.Parse(this.X_Info.Text)).ToString();
                                                     }
 
-                                                    if ((int.Parse(this.textBox2.Text) + int.Parse(this.textBox3.Text)) > int.Parse(program.info_program.height_real))
+                                                    if ((int.Parse(this.Y_Info.Text) + int.Parse(this.Height_info.Text)) > int.Parse(program.info_program.height_real))
                                                     {
-                                                        this.textBox3.Text = (int.Parse(program.info_program.height_real) - int.Parse(this.textBox2.Text)).ToString();
+                                                        this.Height_info.Text = (int.Parse(program.info_program.height_real) - int.Parse(this.Y_Info.Text)).ToString();
                                                     }
 
                                                     // Select first item
@@ -6906,10 +7703,10 @@ namespace WindowsFormsApp
                                                                 }
 
                                                                 // update detai location
-                                                                infoWindow1.windown_width = int.Parse(this.textBox4.Text);
-                                                                infoWindow1.windown_height = int.Parse(this.textBox3.Text);
-                                                                infoWindow1.windown_top = int.Parse(this.textBox2.Text);
-                                                                infoWindow1.windown_left = int.Parse(this.textBox1.Text);
+                                                                infoWindow1.windown_width = int.Parse(this.Width_Info.Text);
+                                                                infoWindow1.windown_height = int.Parse(this.Height_info.Text);
+                                                                infoWindow1.windown_top = int.Parse(this.Y_Info.Text);
+                                                                infoWindow1.windown_left = int.Parse(this.X_Info.Text);
                                                             }
 
                                                             resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
@@ -6928,6 +7725,12 @@ namespace WindowsFormsApp
 
                                             windown_load.CustomEventDragDrop += (sender1, e1) =>
                                             {
+                                                // Clean text area
+                                                this.textarea_select.Text = "";
+
+                                                // Clean text area
+                                                this.textarea_select.Text = "";
+
                                                 // Unselect all
                                                 foreach (Control control in controlsListSelect[currentIdxList])
                                                 {
@@ -6982,7 +7785,7 @@ namespace WindowsFormsApp
                                                                     display_time    = 5,
                                                                     font            = "Arial",
                                                                     size            = 48,
-                                                                    function        = 2,
+                                                                    function        = 0,
                                                                     vertical        = 2,
                                                                     horizontal      = 5,
                                                                     animation       = "None",
@@ -7060,7 +7863,46 @@ namespace WindowsFormsApp
                                             if (File.Exists(objectName))
                                                 windown_load.videoFileReader.Open(objectName);
 
-                                            long total_frame = 0;
+                                            // Create lable
+                                            Label textBox = new Label();
+                                            textBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                                            textBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
+                                            textBox.AutoSize = false;
+                                            textBox.AutoEllipsis = false;
+                                            textBox.Width = info_program.width_area;
+                                            textBox.Anchor = AnchorStyles.None;
+                                            textBox.Font = new Font("Arial", 12, FontStyle.Regular);
+                                            textBox.MouseDown += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseDown(sender1, e1);
+                                            };
+                                            textBox.MouseUp += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseUp(sender1, e1);
+                                            };
+                                            textBox.MouseMove += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseMove(sender1, e1);
+                                            };
+
+                                            // Tạo và thêm Panel chứa Label
+                                            Panel textPanel = new Panel();
+                                            textPanel.BackColor = Color.Transparent;
+                                            textPanel.Dock = DockStyle.Fill;
+                                            textPanel.Controls.Add(textBox);
+                                            textPanel.MouseDown += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseDown(sender1, e1);
+                                            };
+                                            textPanel.MouseUp += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseUp(sender1, e1);
+                                            };
+                                            textPanel.MouseMove += (sender1, e1) =>
+                                            {
+                                                windown_load.maunalActiveMouseMove(sender1, e1);
+                                            };
+                                            windown_load.Controls.Add(textPanel);
 
                                             // Create PictureBox for the image
                                             PictureBox pictureBox = new PictureBox();
@@ -7081,42 +7923,6 @@ namespace WindowsFormsApp
                                                 windown_load.maunalActiveMouseMove(sender1, e1);
                                             };
                                             windown_load.Controls.Add(pictureBox);
-
-
-                                            windown_load.updateTimer = new Timer();
-                                            if (File.Exists(objectName))
-                                                windown_load.updateTimer.Interval = 1000 / (int)windown_load.videoFileReader.FrameRate.Value;
-                                            windown_load.updateTimer.Tick += (sender1, e1) =>
-                                            {
-                                                if (InvokeRequired)
-                                                {
-                                                    Invoke(new MethodInvoker(delegate { /* Công việc giao diện người dùng */ }));
-                                                }
-                                                else
-                                                {
-                                                    if (total_frame != windown_load.videoFileReader.FrameCount)
-                                                    {
-                                                        total_frame = windown_load.videoFileReader.FrameCount;
-                                                        pictureBox.Name = "0";
-                                                    }
-                                                    else if (int.Parse(pictureBox.Name) > total_frame)
-                                                    {
-                                                        pictureBox.Name = "0";
-                                                    }
-
-                                                    // Get the first frame
-                                                    // Giải phóng hình ảnh cũ trước khi gán hình ảnh mới
-                                                    if (pictureBox.Image != null)
-                                                    {
-                                                        pictureBox.Image.Dispose();
-                                                    }
-                                                    pictureBox.Image = windown_load.videoFileReader.ReadVideoFrame(int.Parse(pictureBox.Name));
-                                                    pictureBox.Name = (int.Parse(pictureBox.Name) + 1).ToString();
-
-                                                }
-                                            };
-                                            if (File.Exists(objectName))
-                                                windown_load.updateTimer.Start();
 
                                             controlsListSelect[currentIdxList].Insert(0, windown_load);
                                             destinationPanel.Controls.AddRange(controlsListSelect[currentIdxList].ToArray());
@@ -7435,15 +8241,14 @@ namespace WindowsFormsApp
                                     }
                                 }
 
-                                // Set blackImage background
-                                if (resizablePanel1.updateTimer.Enabled)
-                                {
-                                    resizablePanel1.updateTimer.Stop();
-                                }
-
                                 foreach (Control control2 in resizablePanel1.Controls)
                                 {
-                                    if (control2 is PictureBox)
+                                    if (control2 is Panel)
+                                    {
+                                        this.textarea_select.Text = "";
+                                        ((Label)control2.Controls[0]).Text = "";
+                                    }
+                                    else if (control2 is PictureBox)
                                     {
                                         PictureBox pictureBox = control2 as PictureBox;
 
@@ -7469,6 +8274,8 @@ namespace WindowsFormsApp
                                         break;
                                     }
                                 }
+
+                                this.panel70.Visible = false;
                             }
                         }
                     }
@@ -9724,14 +10531,6 @@ namespace WindowsFormsApp
         {
             process_button_delete_list(sender as Button);
         }
-
-        private void color_picker_Click(object sender, EventArgs e)
-        {
-            if (this.colorDialog1.ShowDialog() == DialogResult.OK)
-            {
-                this.color_select.BackColor = colorDialog1.Color;
-            }
-        }
     }
 
     public static class ControlExtensions
@@ -9855,6 +10654,16 @@ namespace WindowsFormsApp
         public List<bool> selected { get; set; }
     }
 
+    public class ComboBoxItem
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+
+        public override string ToString()
+        {
+            return Name; // Hiển thị tên trong ComboBox
+        }
+    }
     public class Info_stored
     {
         public Info_Program info_program { get; set; }

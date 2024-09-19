@@ -156,7 +156,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.panel101 = new System.Windows.Forms.Panel();
-            this.background = new System.Windows.Forms.ComboBox();
+            this.background_select = new System.Windows.Forms.ComboBox();
             this.label56 = new System.Windows.Forms.Label();
             this.style_select = new System.Windows.Forms.ComboBox();
             this.label55 = new System.Windows.Forms.Label();
@@ -181,7 +181,7 @@
             this.color_select = new System.Windows.Forms.Panel();
             this.size_select = new System.Windows.Forms.ComboBox();
             this.font_select = new System.Windows.Forms.ComboBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.textarea_select = new System.Windows.Forms.TextBox();
             this.label52 = new System.Windows.Forms.Label();
             this.panel100 = new System.Windows.Forms.Panel();
             this.url_select = new System.Windows.Forms.TextBox();
@@ -190,15 +190,15 @@
             this.name_select = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.panel69 = new System.Windows.Forms.Panel();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.Height_info = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.Width_Info = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label42 = new System.Windows.Forms.Label();
             this.panel49 = new System.Windows.Forms.Panel();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.Y_Info = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.X_Info = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
             this.label37 = new System.Windows.Forms.Label();
             this.panel41 = new System.Windows.Forms.Panel();
@@ -1890,7 +1890,7 @@
             // 
             // panel101
             // 
-            this.panel101.Controls.Add(this.background);
+            this.panel101.Controls.Add(this.background_select);
             this.panel101.Controls.Add(this.label56);
             this.panel101.Controls.Add(this.style_select);
             this.panel101.Controls.Add(this.label55);
@@ -1905,7 +1905,7 @@
             this.panel101.Controls.Add(this.panel102);
             this.panel101.Controls.Add(this.size_select);
             this.panel101.Controls.Add(this.font_select);
-            this.panel101.Controls.Add(this.textBox5);
+            this.panel101.Controls.Add(this.textarea_select);
             this.panel101.Controls.Add(this.label52);
             this.panel101.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel101.Location = new System.Drawing.Point(0, 158);
@@ -1913,17 +1913,18 @@
             this.panel101.Size = new System.Drawing.Size(298, 312);
             this.panel101.TabIndex = 7;
             // 
-            // background
+            // background_select
             // 
-            this.background.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.background.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.background.ForeColor = System.Drawing.Color.White;
-            this.background.FormattingEnabled = true;
-            this.background.ItemHeight = 20;
-            this.background.Location = new System.Drawing.Point(107, 281);
-            this.background.Name = "background";
-            this.background.Size = new System.Drawing.Size(140, 28);
-            this.background.TabIndex = 19;
+            this.background_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.background_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.background_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.background_select.ForeColor = System.Drawing.Color.White;
+            this.background_select.FormattingEnabled = true;
+            this.background_select.ItemHeight = 16;
+            this.background_select.Location = new System.Drawing.Point(107, 284);
+            this.background_select.Name = "background_select";
+            this.background_select.Size = new System.Drawing.Size(183, 24);
+            this.background_select.TabIndex = 19;
             // 
             // label56
             // 
@@ -1938,13 +1939,14 @@
             // style_select
             // 
             this.style_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.style_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.style_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.style_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.style_select.ForeColor = System.Drawing.Color.White;
             this.style_select.FormattingEnabled = true;
-            this.style_select.ItemHeight = 20;
-            this.style_select.Location = new System.Drawing.Point(227, 241);
+            this.style_select.ItemHeight = 16;
+            this.style_select.Location = new System.Drawing.Point(227, 244);
             this.style_select.Name = "style_select";
-            this.style_select.Size = new System.Drawing.Size(57, 28);
+            this.style_select.Size = new System.Drawing.Size(63, 24);
             this.style_select.TabIndex = 17;
             // 
             // label55
@@ -1960,13 +1962,14 @@
             // speed_select
             // 
             this.speed_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.speed_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.speed_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.speed_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.speed_select.ForeColor = System.Drawing.Color.White;
             this.speed_select.FormattingEnabled = true;
-            this.speed_select.ItemHeight = 20;
-            this.speed_select.Location = new System.Drawing.Point(107, 241);
+            this.speed_select.ItemHeight = 16;
+            this.speed_select.Location = new System.Drawing.Point(107, 244);
             this.speed_select.Name = "speed_select";
-            this.speed_select.Size = new System.Drawing.Size(57, 28);
+            this.speed_select.Size = new System.Drawing.Size(57, 24);
             this.speed_select.TabIndex = 15;
             // 
             // label54
@@ -1981,6 +1984,7 @@
             // 
             // e2e_select
             // 
+            this.e2e_select.AutoCheck = false;
             this.e2e_select.AutoSize = true;
             this.e2e_select.Location = new System.Drawing.Point(253, 207);
             this.e2e_select.Name = "e2e_select";
@@ -1993,13 +1997,14 @@
             // animation_select
             // 
             this.animation_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.animation_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.animation_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.animation_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.animation_select.ForeColor = System.Drawing.Color.White;
             this.animation_select.FormattingEnabled = true;
-            this.animation_select.ItemHeight = 20;
-            this.animation_select.Location = new System.Drawing.Point(107, 201);
+            this.animation_select.ItemHeight = 16;
+            this.animation_select.Location = new System.Drawing.Point(107, 204);
             this.animation_select.Name = "animation_select";
-            this.animation_select.Size = new System.Drawing.Size(140, 28);
+            this.animation_select.Size = new System.Drawing.Size(140, 24);
             this.animation_select.TabIndex = 12;
             // 
             // label53
@@ -2166,7 +2171,7 @@
             this.panel102.Controls.Add(this.color_select);
             this.panel102.Location = new System.Drawing.Point(217, 127);
             this.panel102.Name = "panel102";
-            this.panel102.Size = new System.Drawing.Size(77, 28);
+            this.panel102.Size = new System.Drawing.Size(73, 24);
             this.panel102.TabIndex = 7;
             // 
             // color_select
@@ -2174,46 +2179,48 @@
             this.color_select.BackColor = System.Drawing.Color.White;
             this.color_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.color_select.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.color_select.Location = new System.Drawing.Point(11, 5);
+            this.color_select.Location = new System.Drawing.Point(9, 3);
             this.color_select.Name = "color_select";
             this.color_select.Size = new System.Drawing.Size(55, 17);
             this.color_select.TabIndex = 1;
-            this.color_select.Click += new System.EventHandler(this.color_picker_Click);
             // 
             // size_select
             // 
             this.size_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.size_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.size_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.size_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.size_select.ForeColor = System.Drawing.Color.White;
             this.size_select.FormattingEnabled = true;
             this.size_select.Location = new System.Drawing.Point(125, 127);
             this.size_select.Name = "size_select";
-            this.size_select.Size = new System.Drawing.Size(78, 28);
+            this.size_select.Size = new System.Drawing.Size(78, 24);
             this.size_select.TabIndex = 6;
             // 
             // font_select
             // 
             this.font_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.font_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.font_select.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.font_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.font_select.ForeColor = System.Drawing.Color.White;
             this.font_select.FormattingEnabled = true;
-            this.font_select.ItemHeight = 20;
+            this.font_select.ItemHeight = 16;
             this.font_select.Location = new System.Drawing.Point(4, 127);
             this.font_select.Name = "font_select";
-            this.font_select.Size = new System.Drawing.Size(115, 28);
+            this.font_select.Size = new System.Drawing.Size(115, 24);
             this.font_select.TabIndex = 5;
             // 
-            // textBox5
+            // textarea_select
             // 
-            this.textBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox5.ForeColor = System.Drawing.Color.White;
-            this.textBox5.Location = new System.Drawing.Point(4, 36);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(290, 81);
-            this.textBox5.TabIndex = 4;
+            this.textarea_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.textarea_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textarea_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textarea_select.ForeColor = System.Drawing.Color.White;
+            this.textarea_select.Location = new System.Drawing.Point(4, 36);
+            this.textarea_select.Multiline = true;
+            this.textarea_select.Name = "textarea_select";
+            this.textarea_select.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textarea_select.Size = new System.Drawing.Size(290, 81);
+            this.textarea_select.TabIndex = 4;
             // 
             // label52
             // 
@@ -2291,9 +2298,9 @@
             // 
             // panel69
             // 
-            this.panel69.Controls.Add(this.textBox3);
+            this.panel69.Controls.Add(this.Height_info);
             this.panel69.Controls.Add(this.label40);
-            this.panel69.Controls.Add(this.textBox4);
+            this.panel69.Controls.Add(this.Width_Info);
             this.panel69.Controls.Add(this.label41);
             this.panel69.Controls.Add(this.label42);
             this.panel69.Dock = System.Windows.Forms.DockStyle.Top;
@@ -2303,20 +2310,20 @@
             this.panel69.Size = new System.Drawing.Size(298, 40);
             this.panel69.TabIndex = 2;
             // 
-            // textBox3
+            // Height_info
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox3.ForeColor = System.Drawing.Color.White;
-            this.textBox3.Location = new System.Drawing.Point(202, 10);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox3.MaxLength = 5;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(46, 20);
-            this.textBox3.TabIndex = 4;
-            this.textBox3.Text = "0";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Height_info.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.Height_info.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Height_info.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Height_info.ForeColor = System.Drawing.Color.White;
+            this.Height_info.Location = new System.Drawing.Point(222, 10);
+            this.Height_info.Margin = new System.Windows.Forms.Padding(0);
+            this.Height_info.MaxLength = 5;
+            this.Height_info.Name = "Height_info";
+            this.Height_info.Size = new System.Drawing.Size(46, 20);
+            this.Height_info.TabIndex = 4;
+            this.Height_info.Text = "0";
+            this.Height_info.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label40
             // 
@@ -2324,27 +2331,27 @@
             this.label40.Dock = System.Windows.Forms.DockStyle.Left;
             this.label40.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label40.ForeColor = System.Drawing.Color.White;
-            this.label40.Location = new System.Drawing.Point(153, 10);
+            this.label40.Location = new System.Drawing.Point(173, 10);
             this.label40.Name = "label40";
             this.label40.Padding = new System.Windows.Forms.Padding(20, 0, 10, 0);
             this.label40.Size = new System.Drawing.Size(49, 17);
             this.label40.TabIndex = 3;
             this.label40.Text = "H";
             // 
-            // textBox4
+            // Width_Info
             // 
-            this.textBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox4.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox4.ForeColor = System.Drawing.Color.White;
-            this.textBox4.Location = new System.Drawing.Point(107, 10);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox4.MaxLength = 5;
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(46, 20);
-            this.textBox4.TabIndex = 1;
-            this.textBox4.Text = "0";
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Width_Info.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.Width_Info.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Width_Info.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Width_Info.ForeColor = System.Drawing.Color.White;
+            this.Width_Info.Location = new System.Drawing.Point(127, 10);
+            this.Width_Info.Margin = new System.Windows.Forms.Padding(0);
+            this.Width_Info.MaxLength = 5;
+            this.Width_Info.Name = "Width_Info";
+            this.Width_Info.Size = new System.Drawing.Size(46, 20);
+            this.Width_Info.TabIndex = 1;
+            this.Width_Info.Text = "0";
+            this.Width_Info.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label41
             // 
@@ -2354,8 +2361,8 @@
             this.label41.ForeColor = System.Drawing.Color.White;
             this.label41.Location = new System.Drawing.Point(75, 10);
             this.label41.Name = "label41";
-            this.label41.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.label41.Size = new System.Drawing.Size(32, 17);
+            this.label41.Padding = new System.Windows.Forms.Padding(20, 0, 10, 0);
+            this.label41.Size = new System.Drawing.Size(52, 17);
             this.label41.TabIndex = 2;
             this.label41.Text = "W";
             // 
@@ -2373,9 +2380,9 @@
             // 
             // panel49
             // 
-            this.panel49.Controls.Add(this.textBox2);
+            this.panel49.Controls.Add(this.Y_Info);
             this.panel49.Controls.Add(this.label39);
-            this.panel49.Controls.Add(this.textBox1);
+            this.panel49.Controls.Add(this.X_Info);
             this.panel49.Controls.Add(this.label38);
             this.panel49.Controls.Add(this.label37);
             this.panel49.Dock = System.Windows.Forms.DockStyle.Top;
@@ -2385,20 +2392,20 @@
             this.panel49.Size = new System.Drawing.Size(298, 40);
             this.panel49.TabIndex = 1;
             // 
-            // textBox2
+            // Y_Info
             // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox2.ForeColor = System.Drawing.Color.White;
-            this.textBox2.Location = new System.Drawing.Point(201, 10);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox2.MaxLength = 5;
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(46, 20);
-            this.textBox2.TabIndex = 4;
-            this.textBox2.Text = "0";
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.Y_Info.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.Y_Info.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.Y_Info.Dock = System.Windows.Forms.DockStyle.Left;
+            this.Y_Info.ForeColor = System.Drawing.Color.White;
+            this.Y_Info.Location = new System.Drawing.Point(221, 10);
+            this.Y_Info.Margin = new System.Windows.Forms.Padding(0);
+            this.Y_Info.MaxLength = 5;
+            this.Y_Info.Name = "Y_Info";
+            this.Y_Info.Size = new System.Drawing.Size(46, 20);
+            this.Y_Info.TabIndex = 4;
+            this.Y_Info.Text = "0";
+            this.Y_Info.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label39
             // 
@@ -2406,27 +2413,27 @@
             this.label39.Dock = System.Windows.Forms.DockStyle.Left;
             this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label39.ForeColor = System.Drawing.Color.White;
-            this.label39.Location = new System.Drawing.Point(153, 10);
+            this.label39.Location = new System.Drawing.Point(173, 10);
             this.label39.Name = "label39";
             this.label39.Padding = new System.Windows.Forms.Padding(20, 0, 10, 0);
             this.label39.Size = new System.Drawing.Size(48, 17);
             this.label39.TabIndex = 3;
             this.label39.Text = "Y";
             // 
-            // textBox1
+            // X_Info
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.textBox1.ForeColor = System.Drawing.Color.White;
-            this.textBox1.Location = new System.Drawing.Point(107, 10);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.textBox1.MaxLength = 5;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(46, 20);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "0";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.X_Info.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.X_Info.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.X_Info.Dock = System.Windows.Forms.DockStyle.Left;
+            this.X_Info.ForeColor = System.Drawing.Color.White;
+            this.X_Info.Location = new System.Drawing.Point(127, 10);
+            this.X_Info.Margin = new System.Windows.Forms.Padding(0);
+            this.X_Info.MaxLength = 5;
+            this.X_Info.Name = "X_Info";
+            this.X_Info.Size = new System.Drawing.Size(46, 20);
+            this.X_Info.TabIndex = 1;
+            this.X_Info.Text = "0";
+            this.X_Info.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label38
             // 
@@ -2436,8 +2443,8 @@
             this.label38.ForeColor = System.Drawing.Color.White;
             this.label38.Location = new System.Drawing.Point(74, 10);
             this.label38.Name = "label38";
-            this.label38.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.label38.Size = new System.Drawing.Size(33, 17);
+            this.label38.Padding = new System.Windows.Forms.Padding(20, 0, 10, 0);
+            this.label38.Size = new System.Drawing.Size(53, 17);
             this.label38.TabIndex = 2;
             this.label38.Text = "X ";
             // 
@@ -3793,14 +3800,14 @@
         private System.Windows.Forms.PictureBox drappPictureBox;
         private System.Windows.Forms.Panel panel49;
         private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox X_Info;
         private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox Y_Info;
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.Panel panel69;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox Height_info;
         private System.Windows.Forms.Label label40;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox Width_Info;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.Panel panel70;
@@ -3889,7 +3896,7 @@
         private System.Windows.Forms.TextBox url_select;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.Panel panel101;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox textarea_select;
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.ComboBox font_select;
         private System.Windows.Forms.ComboBox size_select;
@@ -3912,7 +3919,7 @@
         private System.Windows.Forms.RadioButton e2e_select;
         private System.Windows.Forms.ComboBox animation_select;
         private System.Windows.Forms.Label label54;
-        private System.Windows.Forms.ComboBox background;
+        private System.Windows.Forms.ComboBox background_select;
         private System.Windows.Forms.Label label56;
         private System.Windows.Forms.ComboBox style_select;
         private System.Windows.Forms.Label label55;
