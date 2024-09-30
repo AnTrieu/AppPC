@@ -896,7 +896,7 @@ namespace WindowsFormsApp
                 return;
 
             force_edit = false;
-
+            
             if (sender is TextBox objInput)
             {
                 // Resize child panels in program list (panel43)
@@ -916,7 +916,7 @@ namespace WindowsFormsApp
 
                     // width
                     int width = this.Width_Info.Text.Length > 0 ? int.Parse(this.Width_Info.Text) : 0;
-
+                   
                     // height
                     int height = this.Height_info.Text.Length > 0 ? int.Parse(this.Height_info.Text) : 0;
 
@@ -935,35 +935,35 @@ namespace WindowsFormsApp
 
                                 if ((left_expect + width_expect) > info_program.width_area)
                                 {
-                                    if (objInput.Name.Equals("textBox1"))
+                                    if (objInput.Name.Equals(this.X_Info.Name))
                                         X = int.Parse(info_program.width_real) - int.Parse(this.Width_Info.Text) + 0;
 
-                                    if (objInput.Name.Equals("textBox4"))
+                                    if (objInput.Name.Equals(this.Width_Info.Name))
                                         width = int.Parse(info_program.width_real) - int.Parse(this.X_Info.Text) + 0;
 
                                     left_expect = (int)Math.Round(Normalize(X, 0, int.Parse(info_program.width_real), 0, info_program.width_area));
                                     width_expect = (int)Math.Round(Normalize(width, 0, int.Parse(info_program.width_real), 0, info_program.width_area));
                                 }
-                                if (objInput.Name.Equals("textBox1"))
-                                    resizablePanel.Left = left_expect;
-                                if (objInput.Name.Equals("textBox4"))
+                                if (objInput.Name.Equals(this.X_Info.Name))
+                                    resizablePanel.Left = left_expect + info_program.x_area;
+                                if (objInput.Name.Equals(this.Width_Info.Name))
                                     resizablePanel.Width = width_expect;
 
                                 if ((top_expect + height_expect) > info_program.height_area)
                                 {
-                                    if (objInput.Name.Equals("textBox2"))
+                                    if (objInput.Name.Equals(this.Y_Info.Name))
                                         Y = int.Parse(info_program.height_real) - int.Parse(this.Height_info.Text) + 0;
 
-                                    if (objInput.Name.Equals("textBox3"))
+                                    if (objInput.Name.Equals(this.Height_info.Name))
                                         height = int.Parse(info_program.height_real) - int.Parse(this.Y_Info.Text) + 0;
 
                                     top_expect = (int)Math.Round(Normalize(Y, 0, int.Parse(info_program.height_real), 0, info_program.height_area));
                                     height_expect = (int)Math.Round(Normalize(height, 0, int.Parse(info_program.height_real), 0, info_program.height_area));
                                 }
-                                if (objInput.Name.Equals("textBox3"))
+                                if (objInput.Name.Equals(this.Height_info.Name))
                                     resizablePanel.Height = height_expect;
-                                if (objInput.Name.Equals("textBox2"))
-                                    resizablePanel.Top = top_expect;
+                                if (objInput.Name.Equals(this.Y_Info.Name))
+                                    resizablePanel.Top = top_expect + info_program.y_area;
 
                                 // update detail location
                                 if (this.Width_Info.Text.Length > 0)

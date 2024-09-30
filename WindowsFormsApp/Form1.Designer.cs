@@ -155,6 +155,9 @@
             this.entrytime_select = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.panel106 = new System.Windows.Forms.Panel();
+            this.displaytime_select = new System.Windows.Forms.TextBox();
+            this.label57 = new System.Windows.Forms.Label();
             this.panel101 = new System.Windows.Forms.Panel();
             this.background_select = new System.Windows.Forms.ComboBox();
             this.label56 = new System.Windows.Forms.Label();
@@ -284,9 +287,6 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
-            this.panel106 = new System.Windows.Forms.Panel();
-            this.displaytime_select = new System.Windows.Forms.TextBox();
-            this.label57 = new System.Windows.Forms.Label();
             this.title.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -334,6 +334,7 @@
             this.panel40.SuspendLayout();
             this.panel70.SuspendLayout();
             this.panel80.SuspendLayout();
+            this.panel106.SuspendLayout();
             this.panel101.SuspendLayout();
             this.panel105.SuspendLayout();
             this.panel104.SuspendLayout();
@@ -381,7 +382,6 @@
             this.panel82.SuspendLayout();
             this.panel71.SuspendLayout();
             this.panel75.SuspendLayout();
-            this.panel106.SuspendLayout();
             this.SuspendLayout();
             // 
             // title
@@ -1892,6 +1892,39 @@
             this.label6.Size = new System.Drawing.Size(83, 17);
             this.label6.TabIndex = 2;
             this.label6.Text = " Entry time :";
+            // 
+            // panel106
+            // 
+            this.panel106.Controls.Add(this.displaytime_select);
+            this.panel106.Controls.Add(this.label57);
+            this.panel106.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel106.Location = new System.Drawing.Point(0, 470);
+            this.panel106.Name = "panel106";
+            this.panel106.Size = new System.Drawing.Size(298, 39);
+            this.panel106.TabIndex = 8;
+            this.panel106.Visible = false;
+            // 
+            // displaytime_select
+            // 
+            this.displaytime_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
+            this.displaytime_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.displaytime_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displaytime_select.ForeColor = System.Drawing.Color.White;
+            this.displaytime_select.Location = new System.Drawing.Point(107, 10);
+            this.displaytime_select.Name = "displaytime_select";
+            this.displaytime_select.Size = new System.Drawing.Size(141, 23);
+            this.displaytime_select.TabIndex = 5;
+            this.displaytime_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label57.Location = new System.Drawing.Point(0, 10);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(92, 17);
+            this.label57.TabIndex = 0;
+            this.label57.Text = " Display time:";
             // 
             // panel101
             // 
@@ -3519,39 +3552,6 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // panel106
-            // 
-            this.panel106.Controls.Add(this.displaytime_select);
-            this.panel106.Controls.Add(this.label57);
-            this.panel106.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel106.Location = new System.Drawing.Point(0, 470);
-            this.panel106.Name = "panel106";
-            this.panel106.Size = new System.Drawing.Size(298, 39);
-            this.panel106.TabIndex = 8;
-            this.panel106.Visible = false;
-            // 
-            // displaytime_select
-            // 
-            this.displaytime_select.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
-            this.displaytime_select.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.displaytime_select.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displaytime_select.ForeColor = System.Drawing.Color.White;
-            this.displaytime_select.Location = new System.Drawing.Point(107, 10);
-            this.displaytime_select.Name = "displaytime_select";
-            this.displaytime_select.Size = new System.Drawing.Size(141, 23);
-            this.displaytime_select.TabIndex = 5;
-            this.displaytime_select.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label57
-            // 
-            this.label57.AutoSize = true;
-            this.label57.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label57.Location = new System.Drawing.Point(0, 10);
-            this.label57.Name = "label57";
-            this.label57.Size = new System.Drawing.Size(92, 17);
-            this.label57.TabIndex = 0;
-            this.label57.Text = " Display time:";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3632,6 +3632,8 @@
             this.panel70.ResumeLayout(false);
             this.panel80.ResumeLayout(false);
             this.panel80.PerformLayout();
+            this.panel106.ResumeLayout(false);
+            this.panel106.PerformLayout();
             this.panel101.ResumeLayout(false);
             this.panel101.PerformLayout();
             this.panel105.ResumeLayout(false);
@@ -3702,8 +3704,6 @@
             this.panel71.ResumeLayout(false);
             this.panel75.ResumeLayout(false);
             this.panel75.PerformLayout();
-            this.panel106.ResumeLayout(false);
-            this.panel106.PerformLayout();
             this.ResumeLayout(false);
 
         }
