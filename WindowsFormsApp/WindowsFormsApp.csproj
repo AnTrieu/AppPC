@@ -129,6 +129,9 @@
     <Compile Include="loop_form.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="upload_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="usb_form.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,6 +177,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="setting_form.resx">
       <DependentUpon>setting_form.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="upload_form.resx">
+      <DependentUpon>upload_form.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />

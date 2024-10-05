@@ -60,3 +60,4 @@ C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.no
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.loop_form.resources
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.timing_loop.resources
 C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.instruction_form.resources
+C:\Users\Admin\source\repos\AppPC\WindowsFormsApp\obj\Release\WindowsFormsApp.upload_form.resources

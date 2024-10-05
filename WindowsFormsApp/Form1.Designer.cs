@@ -594,6 +594,7 @@
             // 
             // button8
             // 
+            this.button8.Cursor = System.Windows.Forms.Cursors.Default;
             this.button8.Dock = System.Windows.Forms.DockStyle.Left;
             this.button8.FlatAppearance.BorderSize = 0;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -3559,9 +3560,9 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(1500, 750);
+            this.Controls.Add(this.main_terminal);
             this.Controls.Add(this.main_program);
             this.Controls.Add(this.main_release);
-            this.Controls.Add(this.main_terminal);
             this.Controls.Add(this.content);
             this.Controls.Add(this.title);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;

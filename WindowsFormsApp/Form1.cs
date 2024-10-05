@@ -2598,11 +2598,17 @@ namespace WindowsFormsApp
 
                                             process.OutputDataReceived += (sender, e) =>
                                             {
-                                                // Do nothing
+                                                if (!string.IsNullOrEmpty(e.Data))
+                                                {
+                                                    Console.WriteLine($"Output 1: {e.Data}"); 
+                                                }
                                             };
                                             process.ErrorDataReceived += (sender, e) =>
                                             {
-                                                // Do nothing
+                                                if (!string.IsNullOrEmpty(e.Data))
+                                                {
+                                                    Console.WriteLine($"Error 1: {e.Data}");
+                                                }
                                             };
                                             process.Start();
                                             process.BeginOutputReadLine();
@@ -2723,7 +2729,7 @@ namespace WindowsFormsApp
 
                                         cmd_ffmpeg += filter + overlay + " ";
                                         cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {(longestDuration / 1000) + 1} \"{contentFilePath}\"";
-                                        //Console.WriteLine(cmd_ffmpeg);
+                                        Console.WriteLine(cmd_ffmpeg);
                                         process.StartInfo.Arguments = cmd_ffmpeg;
                                         process.StartInfo.UseShellExecute = false;
                                         process.StartInfo.RedirectStandardOutput = true;
@@ -2733,10 +2739,18 @@ namespace WindowsFormsApp
                                         process.OutputDataReceived += (sender, e) =>
                                         {
                                             // Do nothing
+                                            if (!string.IsNullOrEmpty(e.Data))
+                                            {
+                                                Console.WriteLine($"Output 2: {e.Data}"); // Print log for output
+                                            }
+
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
-                                            //Console.WriteLine(e.Data);
+                                            if (!string.IsNullOrEmpty(e.Data))
+                                            {
+                                                Console.WriteLine($"Error 2: {e.Data}"); // Print log for errors
+                                            }
                                             if (flag_cancel)
                                             {
                                                 process.CancelErrorRead();
@@ -3346,7 +3360,7 @@ namespace WindowsFormsApp
                             command       = "SEND_SUBMIT",
                             type          = sendDetailInfo.type,
                             program_list  = program_list,
-                            detail_submit = ((sendDetailInfo.type == 0) || (sendDetailInfo.type == 1)) ? detail_submit : (sendDetailInfo.type == 2) ? detail_submit : detail_submit
+                            detail_submit = detail_submit
                         };
                         
                         byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
@@ -4387,6 +4401,12 @@ namespace WindowsFormsApp
                     // Create list program
                     add_layout_program(this.panel6, e1.name, width_real, height_real, JsonConvert.SerializeObject(infoProgram));
                     add_layout_program(this.panel71, e1.name, width_real, height_real, null);
+
+                    // Turn off USB mode when two program
+                    if (this.panel6.Controls.Count > 3)
+                    {
+                        button8.Enabled = false;
+                    }
                 }
             };
 
@@ -5759,12 +5779,6 @@ namespace WindowsFormsApp
                 //Console.WriteLine((string)parameter);
                 Command_device cmd_packet = JsonConvert.DeserializeObject<Command_device>((string)parameter);
 
-                // Create a Stopwatch instance
-                Stopwatch stopwatch = new Stopwatch();
-
-                // Start the stopwatch
-                stopwatch.Start();
-
                 // Get resolution device
                 TcpClient client = new TcpClient();
                 client.Connect(cmd_packet.ip_address, 12345);
@@ -5790,7 +5804,7 @@ namespace WindowsFormsApp
 
                         Command_response_device response_device = JsonConvert.DeserializeObject<Command_response_device>(Encoding.UTF8.GetString(buffer));
                         //Console.WriteLine(Encoding.UTF8.GetString(buffer));
-
+                        
                         if (cmd_packet.deviceName.Length == 0)
                         {
                             // Login
@@ -5830,6 +5844,7 @@ namespace WindowsFormsApp
                                                     {
                                                         panel35.Invoke((MethodInvoker)delegate
                                                         {
+                                                           
                                                             // Create the add panel
                                                             Panel addPanel = new Panel();
                                                             addPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -5967,7 +5982,7 @@ namespace WindowsFormsApp
                                                             version_label.Size = new System.Drawing.Size(283, 30);
                                                             version_label.TabIndex = 0;
                                                             version_label.Name = response_device.UUID;
-                                                            version_label.Text = "v" + data.data.systemVersion + "-" + data.data.appVersion;
+                                                            version_label.Text = $"{response_device.version}";
                                                             version_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                                             version_label.MouseEnter += row_device_MouseEnter;
                                                             version_label.MouseLeave += row_device_MouseLeave;
@@ -6184,6 +6199,12 @@ namespace WindowsFormsApp
                                                     voice_label.Text = $"{response_device.voice}";
                                                 }
 
+                                                if (response_device.version != null)
+                                                {
+                                                    Label version_label = tableLayoutPanel.GetControlFromPosition(6, 0) as Label;
+                                                    version_label.Text = $"{response_device.version}";
+                                                }
+
                                                 break;
                                             }
                                         }
@@ -6198,9 +6219,6 @@ namespace WindowsFormsApp
 
                 stream.Close();
                 client.Close();
-
-                // Display the elapsed time
-                Console.WriteLine($"Execution Time: {stopwatch.ElapsedMilliseconds} ms");
 
             }
             catch (Exception e1)
@@ -6236,7 +6254,7 @@ namespace WindowsFormsApp
                             {
                                 if (udpListener.Available < 256)
                                 {
-                                    if (time_finish.ElapsedMilliseconds > 2000)
+                                    if (time_finish.ElapsedMilliseconds > 3000)
                                     {
                                         time_finish.Stop();
                                         Console.WriteLine($"Scan device finished with \"{time_finish.ElapsedMilliseconds} ms\"");
@@ -6248,7 +6266,6 @@ namespace WindowsFormsApp
                                         continue;
                                     }
                                 }
-
 
                                 // Use Task.Factory.StartNew to run the asynchronous operation with a cancellation token
                                 byte[] receivedBytes = udpListener.Receive(ref endPoint);
@@ -6298,6 +6315,7 @@ namespace WindowsFormsApp
                                     String resolution_str = "--";
                                     String brightness = "--";
                                     String voice = "--";
+                                    String version = "--";
                                     try
                                     {
                                         var cmd_for_device = new
@@ -6456,7 +6474,7 @@ namespace WindowsFormsApp
                                             version_label.Size = new System.Drawing.Size(283, 30);
                                             version_label.TabIndex = 0;
                                             version_label.Name = data.deviceId;
-                                            version_label.Text = "v" + data.systemVersion + "-" + data.appVersion;
+                                            version_label.Text = version;
                                             version_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
                                             version_label.MouseEnter += row_device_MouseEnter;
                                             version_label.MouseLeave += row_device_MouseLeave;
@@ -7234,6 +7252,12 @@ namespace WindowsFormsApp
                         }
                     }
                 }
+            }
+
+            // Turn on USB mode when two program
+            if (this.panel6.Controls.Count < 4)
+            {
+                button8.Enabled = true;
             }
         }
 
@@ -8396,8 +8420,6 @@ namespace WindowsFormsApp
                 int windown_left_expected = 0;
                 int percentage = 0, percentageK1 = 0;
                 int counter_windown_empty = 0;
-                int entry_time = 0;
-                int duration_time = 1;
                 List<long> listDuration = new List<long>();
                 bool flag_cancel = false;
 
@@ -8442,7 +8464,7 @@ namespace WindowsFormsApp
                         if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                         {
                             // Deserialize JSON data from the Name property
-                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
+                            Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
                             long longestDurationWindown = 0;
 
                             for (int idx = 0; idx < infoWindow.list.Count; idx++)
@@ -8487,7 +8509,6 @@ namespace WindowsFormsApp
                                                     longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
                                                 }
                                             }
-
                                         };
                                         process.Start();
                                         process.BeginOutputReadLine();
@@ -8499,7 +8520,7 @@ namespace WindowsFormsApp
                                 else if (extension == ".jpg" || extension == ".bmp" ||
                                          extension == ".png" || extension == ".gif")
                                 {
-                                    longestDurationWindown += (entry_time * 1000 + duration_time * 1000);
+                                    longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
                                 }
                             }
 
@@ -8513,12 +8534,13 @@ namespace WindowsFormsApp
                     }
 
                     // Step 2: convert video
-                    foreach (Control control in controlsListSelect[currentIdxList])
+                    for (int i = controlsListSelect[currentIdxList].Count - 1; i >= 0; i--)
                     {
+                        Control control = controlsListSelect[currentIdxList][i];
                         if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                         {
-                            Info_Window infoWindow = JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name);
-                            int idx_windown = controlsListSelect[currentIdxList].IndexOf(control);
+                            Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+                            int idx_windown = controlsListSelect[currentIdxList].Count - i - 1;
 
                             if (idx_windown == 0)
                             {
@@ -8695,7 +8717,10 @@ namespace WindowsFormsApp
 
                                                 double milliseconds = TimeSpan.Parse(time_str).TotalMilliseconds;
 
-                                                percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
+                                                if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
+                                                    percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty) * 2));
+                                                else
+                                                    percentage = percentageK1 + (int)((milliseconds * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
 
                                                 // set process bar
                                                 dialog.Invoke((MethodInvoker)delegate
@@ -8714,7 +8739,10 @@ namespace WindowsFormsApp
                                 process.BeginErrorReadLine();
                                 process.WaitForExit();
 
-                                percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
+                                if ((int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution)) || (int.Parse(info_program.height_real) > int.Parse(info_program.width_real)))
+                                    percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty) * 2));
+                                else
+                                    percentageK1 += (int)((longestDuration * 100) / ((double)longestDuration * (controlsListSelect[currentIdxList].Count - counter_windown_empty)));
 
 
                                 if (((idx_windown + 1) >= controlsListSelect[currentIdxList].Count) && File.Exists(backgroundFilePath))
@@ -8884,8 +8912,11 @@ namespace WindowsFormsApp
                     {
                         if (totalBytes == 0)
                         {
-                            FileInfo fileInfo = new FileInfo(contentFilePath);
-                            totalBytes = fileInfo.Length;
+                            if (File.Exists(contentFilePath))
+                            {
+                                FileInfo fileInfo = new FileInfo(contentFilePath);
+                                totalBytes = fileInfo.Length;
+                            }
                         }
                     }
                     else
@@ -8972,13 +9003,27 @@ namespace WindowsFormsApp
                         }
                     }
                 }
+                else
+                {
+                    // Active message
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("File error, please try again");
+                    popup.ShowDialog();
+                }
 
                 var save_info = new
                 {
                     durationProgramConvert  = longestDuration,
                     sync_mode               = info_packet.mode_usb == 0 ? false:true,
                     info_program            = info_program,
-                    info_windown            = info_windown
+                    info_windown            = info_windown,
+                    type                    = 0,
+                    program_list            = new List<string> {info_program .Name},
+                    detail_submit           = new List<loop_type> {JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
+                                              {
+                                                  loop     = "1",
+                                                  timeLoop = ""
+                                              }))}
                 };
 
                 // Save the program string to the selected file path
@@ -10731,6 +10776,7 @@ namespace WindowsFormsApp
         public string UUID { get; set; }
         public string bright { get; set; }
         public string voice { get; set; }
+        public string version { get; set; }
     }
 
     public class getCurTime
