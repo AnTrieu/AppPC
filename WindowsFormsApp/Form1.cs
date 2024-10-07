@@ -1905,6 +1905,7 @@ namespace WindowsFormsApp
                 (sender as Button).BackgroundImage = normal_button();
 
                 List<string> program_list = new List<string> {};
+                List<string> device_list = new List<string> {};
 
                 // Search program is selected
                 foreach (Control control in this.panel71.Controls)
@@ -1933,70 +1934,108 @@ namespace WindowsFormsApp
                     }
                 }
 
-                if (program_list.Count > 1)
+                // Search device is selected
+                foreach (Control control in this.panel84.Controls)
+                {
+                    if (control is Panel panel)
+                    {
+                        foreach (Control innerControl in panel.Controls)
+                        {
+                            if (innerControl is TableLayoutPanel tableLayoutPanel)
+                            {
+                                RadioButton radioObj = (RadioButton)tableLayoutPanel.GetControlFromPosition(0, 0);
+                                if (radioObj.Checked)
+                                {
+                                    Label UUID_Obj = (Label)tableLayoutPanel.GetControlFromPosition(1, 0);
+                                    Label IP_Obj = (Label)tableLayoutPanel.GetControlFromPosition(2, 0);
+                                    Label Storage_Obj = (Label)tableLayoutPanel.GetControlFromPosition(3, 0);
+
+                                    // Find resolution device
+                                    foreach (Control control1 in this.panel35.Controls)
+                                    {
+                                        if (control1 is Panel panel_chill)
+                                        {
+                                            // Now, check if there is a TableLayoutPanel within panel_chill
+                                            TableLayoutPanel tableLayoutPanel1 = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                                            if (tableLayoutPanel1 != null)
+                                            {
+                                                // Get the control in the first cell of the first column (assuming it's a Label)
+                                                Control controlInFirstColumn = tableLayoutPanel1.GetControlFromPosition(0, 0);
+
+                                                if (controlInFirstColumn != null  && UUID_Obj.Text.Equals(controlInFirstColumn.Text))
+                                                {
+                                                    var detailDevice = new
+                                                    {
+                                                        UUID        = UUID_Obj.Text,
+                                                        IP          = IP_Obj.Text,
+                                                        Resolution  = tableLayoutPanel1.GetControlFromPosition(3, 0).Text,
+                                                        Storage     = Storage_Obj.Text
+                                                    };
+
+                                                    device_list.Add(JsonConvert.SerializeObject(detailDevice));
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (program_list.Count == 0)
+                {
+                    // Active message
+                    notify_form popup = new notify_form(false);
+                    popup.set_message("Please select the program to upload");
+                    popup.ShowDialog();
+                }
+                else if (program_list.Count > 1)
                 {
                     // Active message
                     notify_form popup = new notify_form(false);
                     popup.set_message("Select an excessive number of programs.");
                     popup.ShowDialog();
                 }
-                else if (program_list.Count == 1)
-                {
-                    String IP_client = "";
-
-                    foreach (Control control in this.panel84.Controls)
-                    {
-                        if (control is Panel panel)
-                        {
-                            foreach (Control innerControl in panel.Controls)
-                            {
-                                if (innerControl is TableLayoutPanel tableLayoutPanel)
-                                {
-                                    RadioButton radioObj = (RadioButton)tableLayoutPanel.GetControlFromPosition(0, 0);
-                                    Label labelObj = (Label)tableLayoutPanel.GetControlFromPosition(2, 0);
-                                    if (radioObj.Checked)
-                                    {
-                                        IP_client = labelObj.Text;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (IP_client.Length == 0)
-                    {
-                        // Active message
-                        notify_form popup = new notify_form(false);
-                        popup.set_message("Please select the device to upload");
-                        popup.ShowDialog();
-                    }
-                    else
-                    {
-                        var detailPacket = new
-                        {
-                            IP_client    = IP_client,
-                            type         = 0,
-                            program_list = program_list
-                        };
-
-                        process_form popup = new process_form();
-                        popup.Name = JsonConvert.SerializeObject(detailPacket);
-
-                        // Start a new thread for the dialog with parameters
-                        Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
-                        dialogThread.Start(popup);
-
-                        // Show the dialog asynchronously without blocking the UI thread
-                        popup.ShowDialog();
-
-                    }
-                }
-                else
+                else if (device_list.Count == 0)
                 {
                     // Active message
                     notify_form popup = new notify_form(false);
-                    popup.set_message("Please select the program to upload");
+                    popup.set_message("Please select the device to upload");
                     popup.ShowDialog();
+                }
+                else
+                {
+                    string detailPacket_Str = "";
+                    upload_form popup = new upload_form(program_list, device_list);
+                    popup.ConfirmClick += (sender1, e1) =>
+                    {
+                        var detailPacket = new
+                        {
+                            type            = 0,
+                            device_list     = e1.device_list,
+                            program_list    = e1.program_list,
+                            sync_mode       = e1.sync_mode,
+                        };
+
+                        detailPacket_Str = JsonConvert.SerializeObject(detailPacket);
+                    };
+                    popup.ShowDialog();
+
+                    // Active after close popup
+                    if (detailPacket_Str.Length > 0)
+                    {
+                        process_form popup1 = new process_form();
+                        popup1.Name = detailPacket_Str;
+
+                        // Start a new thread for the dialog with parameters
+                        Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
+                        dialogThread.Start(popup1);
+
+                        // Show the dialog asynchronously without blocking the UI thread
+                        popup1.ShowDialog();
+                    }
                 }
             };
             this.General.Paint += (sender, e) =>
@@ -2025,9 +2064,11 @@ namespace WindowsFormsApp
             {
                 (sender as Button).BackgroundImage = normal_button();
 
-                String IP_client = "";
+                List<string> program_list = new List<string> { };
+                List<string> device_list = new List<string> { };
                 int type = -1;
 
+                // Search device is selected
                 foreach (Control control in this.panel84.Controls)
                 {
                     if (control is Panel panel)
@@ -2037,82 +2078,114 @@ namespace WindowsFormsApp
                             if (innerControl is TableLayoutPanel tableLayoutPanel)
                             {
                                 RadioButton radioObj = (RadioButton)tableLayoutPanel.GetControlFromPosition(0, 0);
-                                Label labelObj = (Label)tableLayoutPanel.GetControlFromPosition(2, 0);
                                 if (radioObj.Checked)
                                 {
-                                    IP_client = labelObj.Text;
-                                }
-                            }
-                        }
-                    }
-                }
+                                    Label UUID_Obj = (Label)tableLayoutPanel.GetControlFromPosition(1, 0);
+                                    Label IP_Obj = (Label)tableLayoutPanel.GetControlFromPosition(2, 0);
+                                    Label Storage_Obj = (Label)tableLayoutPanel.GetControlFromPosition(3, 0);
 
-                if (IP_client.Length == 0)
-                {
-                    // Active message
-                    notify_form popup = new notify_form(false);
-                    popup.set_message("Please select the device to upload");
-                    popup.ShowDialog();
-                }
-                else
-                {
-                    List<string> program_list = new List<string> { };
-
-                    // Check type
-                    if (this.panel96.Controls.Count > 0)
-                    {
-                        type = 1;
-
-                        foreach (Control control in this.panel96.Controls)
-                        {
-                            if (control.Controls.Count == 5)
-                            {
-                                foreach (Control control1 in this.panel6.Controls)
-                                {
-                                    if ((control != this.panel34) && (control != this.panel33) && (control1.Controls.Count == 3) && (control1.Controls[0] is Panel))
+                                    // Find resolution device
+                                    foreach (Control control1 in this.panel35.Controls)
                                     {
-                                        if (control1.Controls[0].Controls[1].Text == control.Controls[2].Controls[0].Text)
+                                        if (control1 is Panel panel_chill)
                                         {
-                                            program_list.Add(control1.Name);
-                                            break;
+                                            // Now, check if there is a TableLayoutPanel within panel_chill
+                                            TableLayoutPanel tableLayoutPanel1 = panel_chill.Controls.OfType<TableLayoutPanel>().FirstOrDefault();
+                                            if (tableLayoutPanel1 != null)
+                                            {
+                                                // Get the control in the first cell of the first column (assuming it's a Label)
+                                                Control controlInFirstColumn = tableLayoutPanel1.GetControlFromPosition(0, 0);
+
+                                                if (controlInFirstColumn != null && UUID_Obj.Text.Equals(controlInFirstColumn.Text))
+                                                {
+                                                    var detailDevice = new
+                                                    {
+                                                        UUID        = UUID_Obj.Text,
+                                                        IP          = IP_Obj.Text,
+                                                        Resolution  = tableLayoutPanel1.GetControlFromPosition(3, 0).Text,
+                                                        Storage     = Storage_Obj.Text
+                                                    };
+
+                                                    device_list.Add(JsonConvert.SerializeObject(detailDevice));
+                                                    break;
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }                        
-                    else if (this.panel97.Controls.Count > 0)
-                        type = 2;
-                    else if (this.panel98.Controls.Count > 0)
-                        type = 3;
-
-                    if (program_list.Count == 0)
-                    {
-                        // Active message
-                        notify_form popup = new notify_form(false);
-                        popup.set_message("Please select the program to upload");
-                        popup.ShowDialog();
-                    }
-                    else if (type > 0)
-                    {
-                        var detailPacket = new
-                        {
-                            IP_client    = IP_client,
-                            type         = type,
-                            program_list = program_list
-                        };
-
-                        process_form popup = new process_form();
-                        popup.Name = JsonConvert.SerializeObject(detailPacket);
-
-                        // Start a new thread for the dialog with parameters
-                        Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
-                        dialogThread.Start(popup);
-
-                        // Show the dialog asynchronously without blocking the UI thread
-                        popup.ShowDialog();
                     }
                 }
+
+                // TODO: need to finish
+
+                //if (IP_client.Length == 0)
+                //{
+                //    // Active message
+                //    notify_form popup = new notify_form(false);
+                //    popup.set_message("Please select the device to upload");
+                //    popup.ShowDialog();
+                //}
+                //else
+                //{
+                //    List<string> program_list = new List<string> { };
+
+                //    // Check type
+                //    if (this.panel96.Controls.Count > 0)
+                //    {
+                //        type = 1;
+
+                //        foreach (Control control in this.panel96.Controls)
+                //        {
+                //            if (control.Controls.Count == 5)
+                //            {
+                //                foreach (Control control1 in this.panel6.Controls)
+                //                {
+                //                    if ((control != this.panel34) && (control != this.panel33) && (control1.Controls.Count == 3) && (control1.Controls[0] is Panel))
+                //                    {
+                //                        if (control1.Controls[0].Controls[1].Text == control.Controls[2].Controls[0].Text)
+                //                        {
+                //                            program_list.Add(control1.Name);
+                //                            break;
+                //                        }
+                //                    }
+                //                }
+                //            }
+                //        }
+                //    }                        
+                //    else if (this.panel97.Controls.Count > 0)
+                //        type = 2;
+                //    else if (this.panel98.Controls.Count > 0)
+                //        type = 3;
+
+                //    if (program_list.Count == 0)
+                //    {
+                //        // Active message
+                //        notify_form popup = new notify_form(false);
+                //        popup.set_message("Please select the program to upload");
+                //        popup.ShowDialog();
+                //    }
+                //    else if (type > 0)
+                //    {
+                //        var detailPacket = new
+                //        {
+                //            IP_client    = IP_client,
+                //            type         = type,
+                //            program_list = program_list
+                //        };
+
+                //        process_form popup = new process_form();
+                //        popup.Name = JsonConvert.SerializeObject(detailPacket);
+
+                //        // Start a new thread for the dialog with parameters
+                //        Thread dialogThread = new Thread(new ParameterizedThreadStart(SendFileThread));
+                //        dialogThread.Start(popup);
+
+                //        // Show the dialog asynchronously without blocking the UI thread
+                //        popup.ShowDialog();
+                //    }
+                //}
             };
             this.Advanced.Paint += (sender, e) =>
             {
@@ -2373,16 +2446,15 @@ namespace WindowsFormsApp
 
         private void SendFileThread(object parameter)
         {
-            //using (StreamWriter fileStream = new StreamWriter(outputPath))
+            long total_size = 0;
+            bool flag_cancel = false;
+
+            process_form dialog = (process_form)parameter;
+            var sendDetailInfo = JsonConvert.DeserializeObject<sendDetailInfo>((string)dialog.Name);
+
+            foreach (String device in sendDetailInfo.device_list)
             {
-                //Console.SetOut(fileStream);
-
-                long total_size = 0;
-                bool flag_cancel = false;
-
-                process_form dialog = (process_form)parameter;
-                var sendDetailInfo = JsonConvert.DeserializeObject<sendDetailInfo>((string)dialog.Name);
-                string IP_client = sendDetailInfo.IP_client;
+                var info_device = JsonConvert.DeserializeObject<Info_send_device>(device);
 
                 dialog.Name = "File sent unsuccessfully";
 
@@ -2403,7 +2475,7 @@ namespace WindowsFormsApp
                 {
                     // Connect device
                     clientSocket = new TcpClient();
-                    clientSocket.Connect(IP_client, 12345);
+                    clientSocket.Connect(info_device.IP, 12345);
 
                     // Get the network stream for receiving data
                     networkStream = clientSocket.GetStream();
@@ -2430,7 +2502,7 @@ namespace WindowsFormsApp
                             {
                                 // get info show area
                                 var info_program1 = JsonConvert.DeserializeObject<Info_Program>(control.Name);
-                                
+
                                 if (info_program1.Name == info_program.Name)
                                 {
                                     foreach (Control chill in control.Controls)
@@ -2439,7 +2511,7 @@ namespace WindowsFormsApp
                                         {
                                             foreach (Control item in chill.Controls)
                                             {
-                                                if (int.TryParse(item.Text, out int index) && index > 0 &&  controlsListSelect[index] != null)
+                                                if (int.TryParse(item.Text, out int index) && index > 0 && controlsListSelect[index] != null)
                                                 {
                                                     controlsListSelectTemp = controlsListSelect[index];
                                                 }
@@ -2511,10 +2583,10 @@ namespace WindowsFormsApp
                                         string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
 
                                         // Is a video
-                                        if (extension == ".mp4"  || extension == ".avi" ||
-                                            extension == ".wmv"  || extension == ".mpg" ||
+                                        if (extension == ".mp4" || extension == ".avi" ||
+                                            extension == ".wmv" || extension == ".mpg" ||
                                             extension == ".rmvp" || extension == ".mov" ||
-                                            extension == ".dat"  || extension == ".flv")
+                                            extension == ".dat" || extension == ".flv")
                                         {
                                             using (Process process = new Process())
                                             {
@@ -2598,17 +2670,17 @@ namespace WindowsFormsApp
 
                                             process.OutputDataReceived += (sender, e) =>
                                             {
-                                                if (!string.IsNullOrEmpty(e.Data))
-                                                {
-                                                    Console.WriteLine($"Output 1: {e.Data}"); 
-                                                }
+                                                //if (!string.IsNullOrEmpty(e.Data))
+                                                //{
+                                                //    Console.WriteLine($"Output 1: {e.Data}");
+                                                //}
                                             };
                                             process.ErrorDataReceived += (sender, e) =>
                                             {
-                                                if (!string.IsNullOrEmpty(e.Data))
-                                                {
-                                                    Console.WriteLine($"Error 1: {e.Data}");
-                                                }
+                                                //if (!string.IsNullOrEmpty(e.Data))
+                                                //{
+                                                //    Console.WriteLine($"Error 1: {e.Data}");
+                                                //}
                                             };
                                             process.Start();
                                             process.BeginOutputReadLine();
@@ -2738,19 +2810,19 @@ namespace WindowsFormsApp
 
                                         process.OutputDataReceived += (sender, e) =>
                                         {
-                                            // Do nothing
-                                            if (!string.IsNullOrEmpty(e.Data))
-                                            {
-                                                Console.WriteLine($"Output 2: {e.Data}"); // Print log for output
-                                            }
+                                            //if (!string.IsNullOrEmpty(e.Data))
+                                            //{
+                                            //    Console.WriteLine($"Output 2: {e.Data}"); // Print log for output
+                                            //}
 
                                         };
                                         process.ErrorDataReceived += (sender, e) =>
                                         {
-                                            if (!string.IsNullOrEmpty(e.Data))
-                                            {
-                                                Console.WriteLine($"Error 2: {e.Data}"); // Print log for errors
-                                            }
+                                            //if (!string.IsNullOrEmpty(e.Data))
+                                            //{
+                                            //    Console.WriteLine($"Error 2: {e.Data}"); // Print log for errors
+                                            //}
+
                                             if (flag_cancel)
                                             {
                                                 process.CancelErrorRead();
@@ -3088,7 +3160,7 @@ namespace WindowsFormsApp
 
                                                 byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                                                 Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-                                                // Console.WriteLine("-------------- " + Math.Max(bytesRead + 256, buffer.Length));
+
                                                 networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
                                                 networkStream.Flush();
 
@@ -3126,7 +3198,7 @@ namespace WindowsFormsApp
                                                 {
                                                     int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
                                                     string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
-                                                    Console.WriteLine("Server Response: " + response);
+                                                    Console.WriteLine("Server Response 1: " + response);
 
                                                     if (response.Equals("Exist file"))
                                                     {
@@ -3238,7 +3310,7 @@ namespace WindowsFormsApp
                                             {
                                                 int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
                                                 string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
-                                                Console.WriteLine("Server Response: " + response);
+                                                Console.WriteLine("Server Response 2: " + response);
 
                                                 if (response.Equals("Exist file"))
                                                 {
@@ -3275,7 +3347,7 @@ namespace WindowsFormsApp
                                 {
                                     command                 = "SEND_PROGRAM",
                                     durationProgramConvert  = longestDuration,
-                                    sync_mode               = false,
+                                    sync_mode               = sendDetailInfo.sync_mode,
                                     info_program            = JsonConvert.DeserializeObject<Info_Program>(program),
                                     info_windown            = info_windown
                                 };
@@ -3309,14 +3381,14 @@ namespace WindowsFormsApp
                     // Only send submit when all program is sended succeed
                     if ((program_list.Count > 0) && (cntProgramSended == sendDetailInfo.program_list.Count))
                     {
-                        List<loop_type> detail_submit = new List<loop_type> {};
+                        List<loop_type> detail_submit = new List<loop_type> { };
 
 
                         if (sendDetailInfo.type == 0)
                         {
                             detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
                             {
-                                loop     = "1",
+                                loop = "1",
                                 timeLoop = ""
                             })));
                         }
@@ -3334,35 +3406,35 @@ namespace WindowsFormsApp
                                             {
                                                 detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
                                                 {
-                                                    loop     = "",
-                                                    timeLoop = (int) TimeSpan.Parse(control.Controls[0].Controls[0].Text).TotalMinutes
+                                                    loop = "",
+                                                    timeLoop = (int)TimeSpan.Parse(control.Controls[0].Controls[0].Text).TotalMinutes
                                                 })));
                                             }
                                             else
                                             {
                                                 detail_submit.Add(JsonConvert.DeserializeObject<loop_type>(JsonConvert.SerializeObject(new
                                                 {
-                                                    loop     = control.Controls[0].Controls[0].Text,
+                                                    loop = control.Controls[0].Controls[0].Text,
                                                     timeLoop = ""
                                                 })));
-                                            }                                           
-                                            
+                                            }
+
                                             break;
                                         }
                                     }
                                 }
                             }
-                                
+
                         }
 
                         var detailPacket = new
                         {
-                            command       = "SEND_SUBMIT",
-                            type          = sendDetailInfo.type,
-                            program_list  = program_list,
+                            command = "SEND_SUBMIT",
+                            type = sendDetailInfo.type,
+                            program_list = program_list,
                             detail_submit = detail_submit
                         };
-                        
+
                         byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
                         Array.Copy(jsonBytes, buffer, jsonBytes.Length);
                         // Console.WriteLine(JsonConvert.SerializeObject(detailPacket));
@@ -10749,6 +10821,16 @@ namespace WindowsFormsApp
         public List<Info_Window> info_windown { get; set; }
     }
 
+    public class Info_send_device
+    {
+        public string UUID { get; set; }
+
+        public string IP { get; set; }
+        public string Resolution { get; set; }
+        
+        public string Storage { get; set; }
+    }
+
     public class Info_device
     {
         public string deviceName { get; set; }
@@ -10822,9 +10904,11 @@ namespace WindowsFormsApp
 
     public class sendDetailInfo
     {
-        public String IP_client { get; set; }
+        
         public int type { get; set; }
+        public List<string> device_list { get; set; }
         public List<string> program_list { get; set; }
+        public bool sync_mode { get; set; }
     }
 
     public class infoProgramFromPopup
