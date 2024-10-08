@@ -35,6 +35,7 @@ namespace WindowsFormsApp
 {    
     public partial class Form1 : Form
     {
+        public const bool OVERLOAD_SELECT = false;
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         private String screen = "terminal_button";
@@ -2780,18 +2781,25 @@ namespace WindowsFormsApp
 
                                         filter += ("[windown" + (idx_windown + 1) + "]" + "loop=" + loop + ":32767:0[looped_windown" + (idx_windown + 1) + "_timebase];");
 
-                                        // Add overlay video
-                                        if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                        if (OVERLOAD_SELECT)
                                         {
-                                            if (windown_left_expected >= infoWindow.windown_left)
+                                            // Add overlay video
+                                            if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
                                             {
-                                                overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
-                                                windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                                if (windown_left_expected >= infoWindow.windown_left)
+                                                {
+                                                    overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                                    windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                                }
+                                                else
+                                                {
+                                                    overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
+                                                    windown_left_expected += infoWindow.windown_width;
+                                                }
                                             }
                                             else
                                             {
-                                                overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
-                                                windown_left_expected += infoWindow.windown_width;
+                                                overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
                                             }
                                         }
                                         else
@@ -8731,18 +8739,25 @@ namespace WindowsFormsApp
 
                                 filter += ("[windown" + (idx_windown + 1) + "]" + "loop=" + loop + ":32767:0[looped_windown" + (idx_windown + 1) + "_timebase];");
 
-                                // Add overlay video
-                                if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
+                                if (OVERLOAD_SELECT)
                                 {
-                                    if (windown_left_expected >= infoWindow.windown_left)
+                                    // Add overlay video
+                                    if (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))
                                     {
-                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
-                                        windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                        if (windown_left_expected >= infoWindow.windown_left)
+                                        {
+                                            overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
+                                            windown_left_expected = infoWindow.windown_width + infoWindow.windown_left;
+                                        }
+                                        else
+                                        {
+                                            overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
+                                            windown_left_expected += infoWindow.windown_width;
+                                        }
                                     }
                                     else
                                     {
-                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + windown_left_expected + ":" + infoWindow.windown_top + "[output]");
-                                        windown_left_expected += infoWindow.windown_width;
+                                        overlay += ("[0][looped_windown" + (idx_windown + 1) + "_timebase]overlay=" + infoWindow.windown_left + ":" + infoWindow.windown_top + "[output]");
                                     }
                                 }
                                 else
