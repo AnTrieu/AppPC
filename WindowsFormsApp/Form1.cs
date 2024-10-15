@@ -1697,6 +1697,9 @@ namespace WindowsFormsApp
 
                                 if (info_text != null)
                                 {
+                                    // Update value
+                                    infoWindow.list_duration[index] = "99999";
+
                                     // Reint value
                                     info_text.animation = this.animation_select.SelectedItem.ToString();
 
@@ -1996,7 +1999,7 @@ namespace WindowsFormsApp
                 {
                     // Active message
                     notify_form popup = new notify_form(false);
-                    popup.set_message("Select an excessive number of programs.");
+                    popup.set_message("It is only permitted to run one program.");
                     popup.ShowDialog();
                 }
                 else if (device_list.Count == 0)
@@ -2391,8 +2394,8 @@ namespace WindowsFormsApp
             }, null, 0, 1000);
 
             // Icon feature
-            this.Webpage.MouseDown += PictureBox_MouseDown;
-            this.Text.MouseDown += PictureBox_MouseDown;
+            this.webpage.MouseDown += PictureBox_MouseDown;
+            this.text.MouseDown += PictureBox_MouseDown;
 
             // Load Font file
             privateFonts = new PrivateFontCollection();
@@ -2532,6 +2535,7 @@ namespace WindowsFormsApp
                         if (controlsListSelectTemp == null)
                             continue;
 
+                        int counterWindown = 0;
                         var flag_convert = false;
                         long longestDuration = 0;
 
@@ -2541,8 +2545,27 @@ namespace WindowsFormsApp
                         string devideFilePath = Path.Combine(outputBackgroundPath, $"Divide_{info_program.Name}.mp4");
                         string contentFilePath = Path.Combine(outputBackgroundPath, $"{info_program.Name}.mp4");
 
+                        // Counter windown video/image
+                        foreach (Control control in controlsListSelectTemp)
+                        {
+                            if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                            {
+                                // Deserialize JSON data from the Name property
+                                Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+
+                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                {
+                                    if (!(infoWindow.list[idx].Equals("webpage")) && !(infoWindow.list[idx].Equals("text")))
+                                    {
+                                        counterWindown++;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
                         // Convert video
-                        if (true && ((controlsListSelectTemp.Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                        if (true && ((counterWindown >= 2) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                         {
                             int windown_left_expected = 0;
                             int percentage = 0, percentageK1 = 0;
@@ -2581,59 +2604,66 @@ namespace WindowsFormsApp
 
                                     for (int idx = 0; idx < infoWindow.list.Count; idx++)
                                     {
-                                        string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
-
-                                        // Is a video
-                                        if (extension == ".mp4" || extension == ".avi" ||
-                                            extension == ".wmv" || extension == ".mpg" ||
-                                            extension == ".rmvp" || extension == ".mov" ||
-                                            extension == ".dat" || extension == ".flv")
-                                        {
-                                            using (Process process = new Process())
-                                            {
-                                                process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
-                                                process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
-                                                process.StartInfo.UseShellExecute = false;
-                                                process.StartInfo.RedirectStandardOutput = true;
-                                                process.StartInfo.RedirectStandardError = true;
-                                                process.StartInfo.CreateNoWindow = true;
-
-                                                process.OutputDataReceived += (sender, e) =>
-                                                {
-                                                    // Do nothing
-                                                };
-                                                process.ErrorDataReceived += (sender, e) =>
-                                                {
-                                                    if (!string.IsNullOrEmpty(e.Data))
-                                                    {
-                                                        // Variables for capturing duration
-                                                        string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
-                                                        Regex regex = new Regex(durationPattern);
-
-                                                        // Search for duration pattern in the output
-                                                        Match match = regex.Match(e.Data);
-
-                                                        if (match.Success)
-                                                        {
-                                                            // Extract the matched duration
-                                                            string durationString = match.Groups[1].Value;
-
-                                                            longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
-                                                        }
-                                                    }
-
-                                                };
-                                                process.Start();
-                                                process.BeginOutputReadLine();
-                                                process.BeginErrorReadLine();
-
-                                                process.WaitForExit();
-                                            }
-                                        }
-                                        else if (extension == ".jpg" || extension == ".bmp" ||
-                                                 extension == ".png" || extension == ".gif")
+                                        if (infoWindow.list[idx].Equals("webpage") || infoWindow.list[idx].Equals("text"))
                                         {
                                             longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
+                                        }
+                                        else
+                                        {
+                                            string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+
+                                            // Is a video
+                                            if (extension == ".mp4"  || extension == ".avi" ||
+                                                extension == ".wmv"  || extension == ".mpg" ||
+                                                extension == ".rmvp" || extension == ".mov" ||
+                                                extension == ".dat"  || extension == ".flv")
+                                            {
+                                                using (Process process = new Process())
+                                                {
+                                                    process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                                                    process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
+                                                    process.StartInfo.UseShellExecute = false;
+                                                    process.StartInfo.RedirectStandardOutput = true;
+                                                    process.StartInfo.RedirectStandardError = true;
+                                                    process.StartInfo.CreateNoWindow = true;
+
+                                                    process.OutputDataReceived += (sender, e) =>
+                                                    {
+                                                        // Do nothing
+                                                    };
+                                                    process.ErrorDataReceived += (sender, e) =>
+                                                    {
+                                                        if (!string.IsNullOrEmpty(e.Data))
+                                                        {
+                                                            // Variables for capturing duration
+                                                            string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
+                                                            Regex regex = new Regex(durationPattern);
+
+                                                            // Search for duration pattern in the output
+                                                            Match match = regex.Match(e.Data);
+
+                                                            if (match.Success)
+                                                            {
+                                                                // Extract the matched duration
+                                                                string durationString = match.Groups[1].Value;
+
+                                                                longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
+                                                            }
+                                                        }
+
+                                                    };
+                                                    process.Start();
+                                                    process.BeginOutputReadLine();
+                                                    process.BeginErrorReadLine();
+
+                                                    process.WaitForExit();
+                                                }
+                                            }
+                                            else if (extension == ".jpg" || extension == ".bmp" ||
+                                                     extension == ".png" || extension == ".gif")
+                                            {
+                                                longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
+                                            }
                                         }
                                     }
 
@@ -2651,13 +2681,13 @@ namespace WindowsFormsApp
                             // Step 2: convert video
                             for (int i = controlsListSelectTemp.Count - 1; i >= 0; i--)
                             {
-                                Control control = controlsListSelectTemp[i];
-                                if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                if (controlsListSelectTemp[i] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
                                 {
                                     //Console.WriteLine(resizablePanel.Name);
                                     Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
-                                    int idx_windown = controlsListSelectTemp.Count - i - 1;
 
+                                    int idx_windown = controlsListSelectTemp.Count - i - 1;
+                                    //Console.WriteLine($"-> Windown: {idx_windown}");
                                     if (idx_windown == 0)
                                     {
                                         using (Process process = new Process())
@@ -2710,23 +2740,27 @@ namespace WindowsFormsApp
                                         {
                                             string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
 
-
                                             if (idx == 0)
                                             {
                                                 cmd_ffmpeg += ($"-i \"{backgroundFilePath}\" ");
                                             }
 
                                             // Is a video
-                                            if (extension == ".mp4" || extension == ".avi" ||
-                                                extension == ".wmv" || extension == ".mpg" ||
+                                            if (extension == ".mp4"  || extension == ".avi" ||
+                                                extension == ".wmv"  || extension == ".mpg" ||
                                                 extension == ".rmvp" || extension == ".mov" ||
-                                                extension == ".dat" || extension == ".flv")
+                                                extension == ".dat"  || extension == ".flv")
                                             {
                                                 cmd_ffmpeg += ($"-i \"{infoWindow.list[idx]}\" ");
                                             }
                                             else
                                             {
-                                                cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
+                                                if ((infoWindow.list[idx].Equals("webpage")) || (infoWindow.list[idx].Equals("text")))
+                                                {
+                                                    cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "black_background.png")}\" ");
+                                                }
+                                                else
+                                                    cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
                                             }
                                         }
 
@@ -2809,7 +2843,7 @@ namespace WindowsFormsApp
 
                                         cmd_ffmpeg += filter + overlay + " ";
                                         cmd_ffmpeg += $"-map [output] -c:v libx264 -b:v {info_program.bittrate_select} -preset slow -tune film -t {(longestDuration / 1000) + 1} \"{contentFilePath}\"";
-                                        Console.WriteLine(cmd_ffmpeg);
+                                        //Console.WriteLine(cmd_ffmpeg);
                                         process.StartInfo.Arguments = cmd_ffmpeg;
                                         process.StartInfo.UseShellExecute = false;
                                         process.StartInfo.RedirectStandardOutput = true;
@@ -3045,33 +3079,141 @@ namespace WindowsFormsApp
 
                         bool flagForceSucceed = false;
 
-                        // Carculator total size                          
-                        if (!flag_convert && controlsListSelectTemp.Count > 0 && controlsListSelectTemp[0] is ResizablePanel resizablePanel1 && !string.IsNullOrEmpty(resizablePanel1.Name))
-                        {
-                            // Deserialize JSON data from the Name property
-                            Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name));
-
-                            for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                            {
-                                FileInfo fileInfo = new FileInfo(infoWindow.list[idx]);
-                                total_size += fileInfo.Length;
-                            }
-
-                        }
-                        else if (flag_convert)
-                        {
-                            if (File.Exists(contentFilePath))
-                            {
-                                FileInfo fileInfo = new FileInfo(contentFilePath);
-                                total_size += fileInfo.Length;
-                            }
-                        }
                         // Empty windown in program
-                        else if (controlsListSelectTemp.Count == 0)
+                        if (controlsListSelectTemp.Count == 0)
                         {
                             flagForceSucceed = true;
                         }
+                        else
+                        {
+                            // Carculator total size 
+                            if (flag_convert)
+                            {
+                                if (File.Exists(contentFilePath))
+                                {
+                                    FileInfo fileInfo = new FileInfo(contentFilePath);
+                                    total_size += fileInfo.Length;
+                                }
 
+                                // Add size for type webpage, text, v.v.
+                                foreach (Control control in controlsListSelectTemp)
+                                {
+                                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                    {
+                                        // Deserialize JSON data from the Name property
+                                        Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+
+                                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                        {
+                                            if (infoWindow.list[idx].Equals("webpage"))
+                                            {
+                                                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png")))
+                                                {
+                                                    FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png"));
+                                                    total_size += fileInfo.Length;
+                                                }
+                                            }
+                                            else if (infoWindow.list[idx].Equals("text"))
+                                            {
+                                                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png")))
+                                                {
+                                                    // Parse data to download background
+                                                    Info_Text infoText = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[idx]);
+
+                                                    if (!infoText.background.Equals("None"))
+                                                    {
+                                                        // Find path item
+                                                        string path_file_background = "";
+                                                        using (StreamReader sr = new StreamReader("material.data"))
+                                                        {
+                                                            string line;
+                                                            while ((line = sr.ReadLine()) != null)
+                                                            {
+                                                                if (System.IO.Path.GetFileName(line).Equals(infoText.background))
+                                                                {
+                                                                    path_file_background = line;
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+
+                                                        if ((path_file_background.Length > 0) && (File.Exists(path_file_background)))
+                                                        {
+                                                            FileInfo fileInfoBackground = new FileInfo(path_file_background);
+                                                            total_size += fileInfoBackground.Length;
+                                                        }
+                                                    }
+
+                                                    FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png"));
+                                                    total_size += fileInfo.Length;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Add size all item
+                                foreach (Control control in controlsListSelectTemp)
+                                {
+                                    if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                    {
+                                        // Deserialize JSON data from the Name property
+                                        Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+
+                                        for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                        {
+                                            String pathFile = infoWindow.list[idx];
+                                            if (infoWindow.list[idx].Equals("webpage"))
+                                            {
+                                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png");
+                                            }
+                                            else if (infoWindow.list[idx].Equals("text"))
+                                            {
+                                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png");
+
+                                                // Parse data to download background
+                                                Info_Text infoText = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[idx]);
+
+                                                if (!infoText.background.Equals("None"))
+                                                {
+                                                    // Find path item
+                                                    string path_file_background = "";
+                                                    using (StreamReader sr = new StreamReader("material.data"))
+                                                    {
+                                                        string line;
+                                                        while ((line = sr.ReadLine()) != null)
+                                                        {
+                                                            if (System.IO.Path.GetFileName(line).Equals(infoText.background))
+                                                            {
+                                                                path_file_background = line;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if ((path_file_background.Length > 0) && (File.Exists(path_file_background)))
+                                                    {
+                                                        FileInfo fileInfoBackground = new FileInfo(path_file_background);
+                                                        total_size += fileInfoBackground.Length;
+                                                    }
+                                                }
+                                            }
+
+                                            if (File.Exists(pathFile))
+                                            {
+                                                FileInfo fileInfo = new FileInfo(pathFile);
+                                                total_size += fileInfo.Length;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                         
+
+                        // Finial process
                         if (flagForceSucceed)
                         {
                             ManualResetEvent resetEvent = new ManualResetEvent(false);
@@ -3109,125 +3251,8 @@ namespace WindowsFormsApp
                             long sended_size = 0;
                             int percent = 0, percentK1 = -1;
 
-                            // Send file                        
-                            if (!flag_convert && controlsListSelectTemp[0] is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
-                            {
-                                // Deserialize JSON data from the Name property
-                                Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
-
-                                for (int idx = 0; idx < infoWindow.list.Count; idx++)
-                                {
-                                    using (FileStream receivedVideoFile = new FileStream(infoWindow.list[idx], FileMode.Open, FileAccess.Read))
-                                    {
-                                        int bytesRead = 0;
-                                        int idxChuck = 0;
-
-                                        long length_file = receivedVideoFile.Length;
-
-                                        // Active send plan
-                                        send_program = true;
-
-                                        // Receive video data in chunks
-                                        while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
-                                        {
-                                            if (flag_cancel)
-                                            {
-                                                var detailPacket = new
-                                                {
-                                                    command = "SEND_CANCEL",
-                                                    plan = ""
-                                                };
-
-                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
-                                                Array.Copy(jsonBytes, buffer, jsonBytes.Length);
-
-                                                networkStream.Write(buffer, 0, buffer.Length);
-                                                networkStream.Flush();
-
-                                                // Clean (reset) the buffer
-                                                Array.Clear(buffer, 0, buffer.Length);
-                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
-
-                                                // Release memory
-                                                jsonBytes = null;
-                                                detailPacket = null;
-
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                var detailPacket = new
-                                                {
-                                                    command = "SEND_FILE",
-                                                    chuck = idxChuck++,
-                                                    path = infoWindow.list[idx],
-                                                    sended = bytesRead,
-                                                    length = length_file,
-                                                    type = ""
-                                                };
-
-                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
-                                                Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
-
-                                                networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
-                                                networkStream.Flush();
-
-                                                sended_size += bytesRead;
-                                                percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
-                                                if (percentK1 != percent)
-                                                {
-                                                    ManualResetEvent resetEvent = new ManualResetEvent(false);
-
-                                                    // set process bar
-                                                    dialog.Invoke((MethodInvoker)delegate
-                                                    {
-                                                        try
-                                                        {
-                                                            // Your UI update code
-                                                            dialog.ProgressValue = percent;
-                                                            dialog.progressBar1.Refresh();
-                                                        }
-                                                        finally
-                                                        {
-                                                            // Signal that the UI update is completed
-                                                            resetEvent.Set();
-                                                        }
-                                                    });
-
-                                                    // Block until the UI update is completed
-                                                    resetEvent.WaitOne();
-                                                    resetEvent = null;
-
-                                                    percentK1 = percent;
-                                                }
-
-                                                // Wait for the response in first time
-                                                if (idxChuck == 1)
-                                                {
-                                                    int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
-                                                    string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
-                                                    Console.WriteLine("Server Response 1: " + response);
-
-                                                    if (response.Equals("Exist file"))
-                                                    {
-                                                        sended_size = sended_size - bytesRead + length_file;
-                                                        break;
-                                                    }
-                                                }
-
-                                                // Release memory
-                                                jsonBytes = null;
-                                                detailPacket = null;
-
-                                                // Clean (reset) the buffer
-                                                Array.Clear(buffer, 0, buffer.Length);
-                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else if (flag_convert)
+                            // Send file
+                            if (flag_convert)
                             {
                                 // Active send program
                                 send_program = true;
@@ -3271,11 +3296,11 @@ namespace WindowsFormsApp
                                             var detailPacket = new
                                             {
                                                 command = "SEND_FILE",
-                                                chuck = idxChuck++,
-                                                path = contentFilePath,
-                                                sended = bytesRead,
-                                                length = length_file,
-                                                type = "Convert"
+                                                chuck   = idxChuck++,
+                                                path    = contentFilePath,
+                                                sended  = bytesRead,
+                                                length  = length_file,
+                                                type    = "Convert"
                                             };
 
                                             byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
@@ -3318,7 +3343,7 @@ namespace WindowsFormsApp
                                             {
                                                 int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
                                                 string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
-                                                Console.WriteLine("Server Response 2: " + response);
+                                                Console.WriteLine("Server Response 1: " + response);
 
                                                 if (response.Equals("Exist file"))
                                                 {
@@ -3339,6 +3364,273 @@ namespace WindowsFormsApp
                                 }
                             }
 
+                            foreach (Control control in controlsListSelectTemp)
+                            {
+                                if (control is ResizablePanel resizablePanel && !string.IsNullOrEmpty(resizablePanel.Name))
+                                {
+                                    // Deserialize JSON data from the Name property
+                                    Info_Window infoWindow = removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>(resizablePanel.Name));
+
+                                    for (int idx = 0; idx < infoWindow.list.Count; idx++)
+                                    {
+                                        String pathFile = infoWindow.list[idx];
+
+                                        if (infoWindow.list[idx].Equals("webpage"))
+                                        {
+                                            pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png");
+                                        }
+                                        else if (infoWindow.list[idx].Equals("text"))
+                                        {
+                                            pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png");
+
+                                            // Parse data to download background
+                                            Info_Text infoText = JsonConvert.DeserializeObject<Info_Text>(infoWindow.list_text[idx]);
+
+                                            if (!infoText.background.Equals("None"))
+                                            {
+                                                // Find path item
+                                                string path_file_background = "";
+                                                using (StreamReader sr = new StreamReader("material.data"))
+                                                {
+                                                    string line;
+                                                    while ((line = sr.ReadLine()) != null)
+                                                    {
+                                                        if (System.IO.Path.GetFileName(line).Equals(infoText.background))
+                                                        {
+                                                            path_file_background = line;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+
+                                                if (path_file_background.Length > 0)
+                                                {
+                                                    using (FileStream receivedVideoFile = new FileStream(path_file_background, FileMode.Open, FileAccess.Read))
+                                                    {
+                                                        int bytesRead = 0;
+                                                        int idxChuck = 0;
+
+                                                        long length_file = receivedVideoFile.Length;
+
+                                                        // Active send plan
+                                                        send_program = true;
+
+                                                        // Receive video data in chunks
+                                                        while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
+                                                        {
+                                                            if (flag_cancel)
+                                                            {
+                                                                var detailPacket = new
+                                                                {
+                                                                    command = "SEND_CANCEL",
+                                                                    plan    = ""
+                                                                };
+
+                                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                                Array.Copy(jsonBytes, buffer, jsonBytes.Length);
+
+                                                                networkStream.Write(buffer, 0, buffer.Length);
+                                                                networkStream.Flush();
+
+                                                                // Clean (reset) the buffer
+                                                                Array.Clear(buffer, 0, buffer.Length);
+                                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
+
+                                                                // Release memory
+                                                                jsonBytes = null;
+                                                                detailPacket = null;
+
+                                                                break;
+                                                            }
+                                                            else
+                                                            {
+                                                                var detailPacket = new
+                                                                {
+                                                                    command = "SEND_FILE",
+                                                                    chuck   = idxChuck++,
+                                                                    path    = path_file_background,
+                                                                    sended  = bytesRead,
+                                                                    length  = length_file,
+                                                                    type    = ""
+                                                                };
+
+                                                                byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                                Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
+
+                                                                networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
+                                                                networkStream.Flush();
+
+                                                                sended_size += bytesRead;
+                                                                percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
+                                                                if (percentK1 != percent)
+                                                                {
+                                                                    ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                                                                    // set process bar
+                                                                    dialog.Invoke((MethodInvoker)delegate
+                                                                    {
+                                                                        try
+                                                                        {
+                                                                            // Your UI update code
+                                                                            dialog.ProgressValue = percent;
+                                                                            dialog.progressBar1.Refresh();
+                                                                        }
+                                                                        finally
+                                                                        {
+                                                                            // Signal that the UI update is completed
+                                                                            resetEvent.Set();
+                                                                        }
+                                                                    });
+
+                                                                    // Block until the UI update is completed
+                                                                    resetEvent.WaitOne();
+                                                                    resetEvent = null;
+
+                                                                    percentK1 = percent;
+                                                                }
+
+                                                                // Wait for the response in first time
+                                                                if (idxChuck == 1)
+                                                                {
+                                                                    int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
+                                                                    string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
+                                                                    Console.WriteLine("Server Response 2: " + response);
+
+                                                                    if (response.Equals("Exist file"))
+                                                                    {
+                                                                        sended_size = sended_size - bytesRead + length_file;
+                                                                        break;
+                                                                    }
+                                                                }
+
+                                                                // Release memory
+                                                                jsonBytes = null;
+                                                                detailPacket = null;
+
+                                                                // Clean (reset) the buffer
+                                                                Array.Clear(buffer, 0, buffer.Length);
+                                                                Array.Clear(responseBuffer, 0, responseBuffer.Length);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (flag_convert)
+                                            continue;
+
+                                        using (FileStream receivedVideoFile = new FileStream(pathFile, FileMode.Open, FileAccess.Read))
+                                        {
+                                            int bytesRead = 0;
+                                            int idxChuck = 0;
+
+                                            long length_file = receivedVideoFile.Length;
+
+                                            // Active send plan
+                                            send_program = true;
+
+                                            // Receive video data in chunks
+                                            while ((bytesRead = receivedVideoFile.Read(buffer, 256, buffer.Length - 256)) > 0)
+                                            {
+                                                if (flag_cancel)
+                                                {
+                                                    var detailPacket = new
+                                                    {
+                                                        command = "SEND_CANCEL",
+                                                        plan    = ""
+                                                    };
+
+                                                    byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                    Array.Copy(jsonBytes, buffer, jsonBytes.Length);
+
+                                                    networkStream.Write(buffer, 0, buffer.Length);
+                                                    networkStream.Flush();
+
+                                                    // Clean (reset) the buffer
+                                                    Array.Clear(buffer, 0, buffer.Length);
+                                                    Array.Clear(responseBuffer, 0, responseBuffer.Length);
+
+                                                    // Release memory
+                                                    jsonBytes = null;
+                                                    detailPacket = null;
+
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    var detailPacket = new
+                                                    {
+                                                        command = "SEND_FILE",
+                                                        chuck   = idxChuck++,
+                                                        path    = pathFile,
+                                                        sended  = bytesRead,
+                                                        length  = length_file,
+                                                        type    = ""
+                                                    };
+
+                                                    byte[] jsonBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detailPacket));
+                                                    Array.Copy(jsonBytes, buffer, Math.Min(jsonBytes.Length, 256));
+
+                                                    networkStream.Write(buffer, 0, Math.Max(bytesRead + 256, buffer.Length));
+                                                    networkStream.Flush();
+
+                                                    sended_size += bytesRead;
+                                                    percent = ((int)Math.Round((double)sended_size * 100 / (double)total_size, 0));
+                                                    if (percentK1 != percent)
+                                                    {
+                                                        ManualResetEvent resetEvent = new ManualResetEvent(false);
+
+                                                        // set process bar
+                                                        dialog.Invoke((MethodInvoker)delegate
+                                                        {
+                                                            try
+                                                            {
+                                                                // Your UI update code
+                                                                dialog.ProgressValue = percent;
+                                                                dialog.progressBar1.Refresh();
+                                                            }
+                                                            finally
+                                                            {
+                                                                // Signal that the UI update is completed
+                                                                resetEvent.Set();
+                                                            }
+                                                        });
+
+                                                        // Block until the UI update is completed
+                                                        resetEvent.WaitOne();
+                                                        resetEvent = null;
+
+                                                        percentK1 = percent;
+                                                    }
+
+                                                    // Wait for the response in first time
+                                                    if (idxChuck == 1)
+                                                    {
+                                                        int bytesReadResponse = networkStream.Read(responseBuffer, 0, responseBuffer.Length);
+                                                        string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesReadResponse);
+                                                        Console.WriteLine("Server Response 3: " + response);
+
+                                                        if (response.Equals("Exist file"))
+                                                        {
+                                                            sended_size = sended_size - bytesRead + length_file;
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    // Release memory
+                                                    jsonBytes = null;
+                                                    detailPacket = null;
+
+                                                    // Clean (reset) the buffer
+                                                    Array.Clear(buffer, 0, buffer.Length);
+                                                    Array.Clear(responseBuffer, 0, responseBuffer.Length);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             // Send program for device
                             if (send_program)
                             {
@@ -3350,6 +3642,7 @@ namespace WindowsFormsApp
                                     info_windown.Add(removeObjEmpty(JsonConvert.DeserializeObject<Info_Window>((control as ResizablePanel).Name)));
                                 }
                                 //Console.WriteLine($"---------------------------------------{longestDuration}");
+                                //Console.WriteLine($"---------------------------------------{program}");
 
                                 var detailPacket = new
                                 {
@@ -3973,7 +4266,7 @@ namespace WindowsFormsApp
                                                     string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                                     this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                                    if (name_file.Equals("Webpage"))
+                                                    if (name_file.Equals("webpage"))
                                                     {
                                                         // Data not use
                                                         infoWindow.list_text.Add("");
@@ -3983,7 +4276,7 @@ namespace WindowsFormsApp
                                                         infoWindow.list_entrytime.Add("0");
                                                         infoWindow.list_duration.Add("10");
                                                     }
-                                                    else if (name_file.Equals("Text"))
+                                                    else if (name_file.Equals("text"))
                                                     {
                                                         // Data not use
                                                         infoWindow.list_url.Add("");
@@ -4069,9 +4362,7 @@ namespace WindowsFormsApp
                                     };
 
                                     // Load the video file
-                                    windown_load.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
-                                    if (File.Exists(objectName))
-                                        windown_load.videoFileReader.Open(objectName);
+                                    windown_load.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();                                       
 
                                     // Create lable
                                     Label textBox = new Label();
@@ -4549,7 +4840,7 @@ namespace WindowsFormsApp
                         bool[] list_selected = { true };
                         bool have_image = false;
 
-                        if (objectName.Equals("Webpage"))
+                        if (objectName.Equals("webpage"))
                         {
                             // Type Webpage
                             list_url[0] = "toantrungcloud.com";
@@ -4557,21 +4848,21 @@ namespace WindowsFormsApp
                             list_entrytime[0] = "0";
                             list_duration[0] = "10";
                         }
-                        else if (objectName.Equals("Text"))
+                        else if (objectName.Equals("text"))
                         {
-                            list_text[0] = JsonConvert.SerializeObject(new {display_time    = 5,
-                                                                            font            = "Arial",
-                                                                            size            = 48,
-                                                                            function        = 0,
-                                                                            vertical        = 2,
-                                                                            horizontal      = 5,
-                                                                            animation       = "None",
-                                                                            E2E             = false,
-                                                                            speed           = 50,
-                                                                            style           = "None",
-                                                                            background      = "None",
-                                                                            Color           = "#FFFFFF",
-                                                                            textarea        = "Hello World"});
+                            list_text[0] = JsonConvert.SerializeObject(new {display_time = 5,
+                                                                            font         = "Arial",
+                                                                            size         = 48,
+                                                                            function     = 0,
+                                                                            vertical     = 2,
+                                                                            horizontal   = 5,
+                                                                            animation    = "None",
+                                                                            E2E          = false,
+                                                                            speed        = 50,
+                                                                            style        = "None",
+                                                                            background   = "None",
+                                                                            Color        = "#FFFFFF",
+                                                                            textarea     = "Hello World"});
 
                             // Type Text
                             list_entrytime[0] = "0";
@@ -4870,7 +5161,7 @@ namespace WindowsFormsApp
                                         string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                         this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                        if (name_file.Equals("Webpage"))
+                                        if (name_file.Equals("webpage"))
                                         {
                                             // Data not use
                                             infoWindow.list_text.Add("");
@@ -4880,7 +5171,7 @@ namespace WindowsFormsApp
                                             infoWindow.list_entrytime.Add("0");
                                             infoWindow.list_duration.Add("10");
                                         }
-                                        else if (name_file.Equals("Text"))
+                                        else if (name_file.Equals("text"))
                                         {
                                             // Data not use
                                             infoWindow.list_url.Add("");
@@ -5185,17 +5476,15 @@ namespace WindowsFormsApp
                     for (int i = infoWindow.list.Count - 1; i >= 0; i--)
                     {
                         String selectfilePath = infoWindow.list[i];
-                        if (!selectfilePath.Equals("Webpage") && !selectfilePath.Equals("Text") && !File.Exists(selectfilePath))
+                        if (!selectfilePath.Equals("webpage") && !selectfilePath.Equals("text") && !File.Exists(selectfilePath))
                             continue;
 
                         String typeFile = "Video/Image";
                         string extension = System.IO.Path.GetExtension(selectfilePath).ToLower();
                         Image videoFrame = null;
 
-                        if (selectfilePath.Equals("Webpage"))
-                            typeFile = "Webpage";
-                        else if (selectfilePath.Equals("Text"))
-                            typeFile = "Text";
+                        if ((selectfilePath.Equals("webpage")) || (selectfilePath.Equals("text")))
+                            typeFile = selectfilePath;
 
                         Panel item_Panel = new Panel();
                         item_Panel.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
@@ -5213,7 +5502,6 @@ namespace WindowsFormsApp
                                 {
                                     // Deserialize JSON data from the Name property
                                     Info_Window infoWindow1 = JsonConvert.DeserializeObject<Info_Window>(resizablePanel1.Name);
-
                                     if (infoWindow1.Name.Equals(infoWindow.Name))
                                     {
                                         int index = int.Parse((sender as Control).Name);
@@ -5221,13 +5509,11 @@ namespace WindowsFormsApp
                                         {
                                             String path_file = infoWindow1.list[index];
                                             string extension_1 = System.IO.Path.GetExtension(path_file).ToLower();
-
+    
                                             // Filter type
                                             String type_file = "Video/Image";
-                                            if (path_file.Equals("Webpage"))
-                                                type_file = "Webpage";
-                                            else if (path_file.Equals("Text"))
-                                                type_file = "Text";
+                                            if ((path_file.Equals("webpage")) || (path_file.Equals("text")))
+                                                type_file = path_file;
 
                                             this.panel70.Visible = true;
                                             this.panel70.Name = infoWindow.Name;
@@ -5271,7 +5557,8 @@ namespace WindowsFormsApp
                                                         infoWindow1.path_windown = path_file;
                                                         resizablePanel1.Name = JsonConvert.SerializeObject(infoWindow1);
 
-                                                        resizablePanel1.videoFileReader.Close();
+                                                        if (resizablePanel1.videoFileReader.IsOpen)
+                                                            resizablePanel1.videoFileReader.Close();
                                                         resizablePanel1.videoFileReader.Open(path_file);
                                                     }
 
@@ -5357,7 +5644,7 @@ namespace WindowsFormsApp
                                                     }
                                                 }
                                             }
-                                            else if (type_file.Equals("Webpage"))
+                                            else if (type_file.Equals("webpage"))
                                             {
                                                 this.panel80.Visible = true;
                                                 this.panel100.Visible = true;
@@ -5391,7 +5678,7 @@ namespace WindowsFormsApp
                                                                 pictureBoxInPanel.Image = null;
                                                             }
                                                             pictureBoxInPanel.Image = Properties.Resources.browser_icon;
-                                                            pictureBoxInPanel.Name = this.Webpage.Name;
+                                                            pictureBoxInPanel.Name = this.webpage.Name;
                                                         }
 
                                                         // Break out of the loop if you only need the first PictureBox
@@ -5399,7 +5686,7 @@ namespace WindowsFormsApp
                                                     }
                                                 }
                                             }
-                                            else if (type_file.Equals("Text"))
+                                            else if (type_file.Equals("text"))
                                             {
                                                 this.panel80.Visible = true;
                                                 this.panel100.Visible = false;
@@ -5451,11 +5738,11 @@ namespace WindowsFormsApp
                                 typeFile = "Image";
                             }
                         }
-                        else if (typeFile.Equals("Webpage"))
+                        else if (typeFile.Equals("webpage"))
                         {
                             videoFrame = Properties.Resources.browser_icon;
                         }
-                        else if (typeFile.Equals("Text"))
+                        else if (typeFile.Equals("text"))
                         {
                             videoFrame = Properties.Resources.text_icon;
                         }
@@ -5571,7 +5858,7 @@ namespace WindowsFormsApp
                     // Update background windown
                     if (infoWindow.list.Count == 0)
                     {
-                        if (resizablePanel.videoFileReader != null)
+                        if ((resizablePanel.videoFileReader != null) && (resizablePanel.videoFileReader.IsOpen))
                         {
                             resizablePanel.videoFileReader.Close();
                         }
@@ -6848,7 +7135,7 @@ namespace WindowsFormsApp
                         if (control is Panel panel_chill && panel_chill.Visible)
                         {
                             // Show image
-                            if (featureIcon.Name.Equals(this.Webpage.Name))
+                            if (featureIcon.Name.Equals(this.webpage.Name))
                             {
                                 drappPictureBox.Image = Properties.Resources.browser_icon;
                                 drappPictureBox.Visible = true;
@@ -6866,7 +7153,7 @@ namespace WindowsFormsApp
 
                                 this.show.AutoScrollPosition = new System.Drawing.Point(Math.Abs(this.show.AutoScrollPosition.X), Math.Abs(this.show.AutoScrollPosition.Y));
                             }
-                            else if (featureIcon.Name.Equals(this.Text.Name))
+                            else if (featureIcon.Name.Equals(this.text.Name))
                             {
                                 drappPictureBox.Image = Properties.Resources.text_icon;
                                 drappPictureBox.Visible = true;
@@ -6974,7 +7261,7 @@ namespace WindowsFormsApp
                         videoFileReader.Open(selectfilePath);
 
                         // Get the first frame
-                        videoFrame = videoFileReader.ReadVideoFrame();
+                        videoFrame = videoFileReader.ReadVideoFrame(10);
 
                         // Close the video file reader
                         videoFileReader.Close();
@@ -7347,7 +7634,7 @@ namespace WindowsFormsApp
             {
                 ResizablePanel panel_windown = control1 as ResizablePanel;
 
-                if (panel_windown.videoFileReader != null)
+                if ((panel_windown.videoFileReader != null) && (panel_windown.videoFileReader.IsOpen))
                 {
                     panel_windown.videoFileReader.Close();
                     panel_windown.videoFileReader = null;
@@ -7902,7 +8189,7 @@ namespace WindowsFormsApp
                                                             string extension1 = System.IO.Path.GetExtension(name_file).ToLower();
                                                             this.name_select.Text = " " + System.IO.Path.GetFileNameWithoutExtension(name_file);
 
-                                                            if (name_file.Equals("Webpage"))
+                                                            if (name_file.Equals("webpage"))
                                                             {
                                                                 // Data not use
                                                                 infoWindow.list_text.Add("");
@@ -7912,7 +8199,7 @@ namespace WindowsFormsApp
                                                                 infoWindow.list_entrytime.Add("0");
                                                                 infoWindow.list_duration.Add("10");
                                                             }
-                                                            else if (name_file.Equals("Text"))
+                                                            else if (name_file.Equals("text"))
                                                             {
                                                                 // Data not use
                                                                 infoWindow.list_url.Add("");
@@ -7995,18 +8282,13 @@ namespace WindowsFormsApp
                                                     drappPictureBox.Location = new Point(Cursor.Position.X - this.Location.X, Cursor.Position.Y - this.Location.Y - 80);
                                                 }
                                             };
-
-                                            // Load the video file
-                                            windown_load.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
-                                            if (File.Exists(objectName))
-                                                windown_load.videoFileReader.Open(objectName);
-
+                                                                                         
                                             // Create lable
                                             Label textBox = new Label();
                                             textBox.Dock = System.Windows.Forms.DockStyle.Fill;
                                             textBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
                                             textBox.AutoSize = false;
-                                            textBox.AutoEllipsis = false;
+                                            textBox.AutoEllipsis = true;
                                             textBox.Width = info_program.width_area;
                                             textBox.Anchor = AnchorStyles.None;
                                             textBox.Font = new Font("Arial", 12, FontStyle.Regular);
@@ -8025,6 +8307,7 @@ namespace WindowsFormsApp
 
                                             // Tạo và thêm Panel chứa Label
                                             Panel textPanel = new Panel();
+                                            textPanel.Visible = false;
                                             textPanel.BackColor = Color.Transparent;
                                             textPanel.Dock = DockStyle.Fill;
                                             textPanel.Controls.Add(textBox);
@@ -8044,10 +8327,10 @@ namespace WindowsFormsApp
 
                                             // Create PictureBox for the image
                                             PictureBox pictureBox = new PictureBox();
+                                            pictureBox.BackColor = Color.Transparent;
                                             pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
                                             pictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
                                             pictureBox.Padding = new System.Windows.Forms.Padding(1, 1, 1, 1);
-                                            pictureBox.Name = "0";
                                             pictureBox.MouseDown += (sender1, e1) =>
                                             {
                                                 windown_load.maunalActiveMouseDown(sender1, e1);
@@ -8061,6 +8344,21 @@ namespace WindowsFormsApp
                                                 windown_load.maunalActiveMouseMove(sender1, e1);
                                             };
                                             windown_load.Controls.Add(pictureBox);
+
+                                            // Load the video file
+                                            windown_load.videoFileReader = new Accord.Video.FFMPEG.VideoFileReader();
+                                            if (File.Exists(objectName))
+                                            {
+                                                windown_load.videoFileReader.Open(objectName);
+
+                                                if (pictureBox.Image != null)
+                                                {
+                                                    pictureBox.Image.Dispose();
+                                                }
+                                                pictureBox.Image = windown_load.videoFileReader.ReadVideoFrame(10);
+
+                                                windown_load.videoFileReader.Close();
+                                            }
 
                                             controlsListSelect[currentIdxList].Insert(0, windown_load);
                                             destinationPanel.Controls.AddRange(controlsListSelect[currentIdxList].ToArray());
@@ -8549,58 +8847,65 @@ namespace WindowsFormsApp
 
                             for (int idx = 0; idx < infoWindow.list.Count; idx++)
                             {
-                                string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
-
-                                // Is a video
-                                if (extension == ".mp4" || extension == ".avi" ||
-                                    extension == ".wmv" || extension == ".mpg" ||
-                                    extension == ".rmvp" || extension == ".mov" ||
-                                    extension == ".dat" || extension == ".flv")
-                                {
-                                    using (Process process = new Process())
-                                    {
-                                        process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
-                                        process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
-                                        process.StartInfo.UseShellExecute = false;
-                                        process.StartInfo.RedirectStandardOutput = true;
-                                        process.StartInfo.RedirectStandardError = true;
-                                        process.StartInfo.CreateNoWindow = true;
-
-                                        process.OutputDataReceived += (sender, e) =>
-                                        {
-                                            // Do nothing
-                                        };
-                                        process.ErrorDataReceived += (sender, e) =>
-                                        {
-                                            if (!string.IsNullOrEmpty(e.Data))
-                                            {
-                                                // Variables for capturing duration
-                                                string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
-                                                Regex regex = new Regex(durationPattern);
-
-                                                // Search for duration pattern in the output
-                                                Match match = regex.Match(e.Data);
-
-                                                if (match.Success)
-                                                {
-                                                    // Extract the matched duration
-                                                    string durationString = match.Groups[1].Value;
-
-                                                    longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
-                                                }
-                                            }
-                                        };
-                                        process.Start();
-                                        process.BeginOutputReadLine();
-                                        process.BeginErrorReadLine();
-
-                                        process.WaitForExit();
-                                    }
-                                }
-                                else if (extension == ".jpg" || extension == ".bmp" ||
-                                         extension == ".png" || extension == ".gif")
+                                if (infoWindow.list[idx].Equals("webpage") || infoWindow.list[idx].Equals("text"))
                                 {
                                     longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
+                                }
+                                else
+                                {
+                                    string extension = System.IO.Path.GetExtension(infoWindow.list[idx]).ToLower();
+
+                                    // Is a video
+                                    if (extension == ".mp4"  || extension == ".avi" ||
+                                        extension == ".wmv"  || extension == ".mpg" ||
+                                        extension == ".rmvp" || extension == ".mov" ||
+                                        extension == ".dat"  || extension == ".flv")
+                                    {
+                                        using (Process process = new Process())
+                                        {
+                                            process.StartInfo.FileName = $"{AppDomain.CurrentDomain.BaseDirectory}ffmpeg.exe"; // Assuming "ffmpeg" is in the PATH
+                                            process.StartInfo.Arguments = $"-i \"{infoWindow.list[idx]}\"";
+                                            process.StartInfo.UseShellExecute = false;
+                                            process.StartInfo.RedirectStandardOutput = true;
+                                            process.StartInfo.RedirectStandardError = true;
+                                            process.StartInfo.CreateNoWindow = true;
+
+                                            process.OutputDataReceived += (sender, e) =>
+                                            {
+                                                // Do nothing
+                                            };
+                                            process.ErrorDataReceived += (sender, e) =>
+                                            {
+                                                if (!string.IsNullOrEmpty(e.Data))
+                                                {
+                                                    // Variables for capturing duration
+                                                    string durationPattern = @"Duration: (\d+:\d+:\d+\.\d+)";
+                                                    Regex regex = new Regex(durationPattern);
+
+                                                    // Search for duration pattern in the output
+                                                    Match match = regex.Match(e.Data);
+
+                                                    if (match.Success)
+                                                    {
+                                                        // Extract the matched duration
+                                                        string durationString = match.Groups[1].Value;
+
+                                                        longestDurationWindown += (long)TimeSpan.Parse(durationString).TotalMilliseconds;
+                                                    }
+                                                }
+                                            };
+                                            process.Start();
+                                            process.BeginOutputReadLine();
+                                            process.BeginErrorReadLine();
+
+                                            process.WaitForExit();
+                                        }
+                                    }
+                                    else if (extension == ".jpg" || extension == ".bmp" ||
+                                             extension == ".png" || extension == ".gif")
+                                    {
+                                        longestDurationWindown += (int.Parse(infoWindow.list_entrytime[idx]) * 1000 + int.Parse(infoWindow.list_duration[idx]) * 1000);
+                                    }
                                 }
                             }
 
@@ -8612,6 +8917,8 @@ namespace WindowsFormsApp
                             listDuration.Add(longestDurationWindown);
                         }
                     }
+
+                    Console.WriteLine($"-> longestDuration: {longestDuration}");
 
                     // Step 2: convert video
                     for (int i = controlsListSelect[currentIdxList].Count - 1; i >= 0; i--)
@@ -8635,11 +8942,17 @@ namespace WindowsFormsApp
 
                                     process.OutputDataReceived += (sender, e) =>
                                     {
-                                        // Do nothing
+                                        //if (!string.IsNullOrEmpty(e.Data))
+                                        //{
+                                        //    Console.WriteLine($"Output 1: {e.Data}");
+                                        //}
                                     };
                                     process.ErrorDataReceived += (sender, e) =>
                                     {
-                                        // Do nothing
+                                        //if (!string.IsNullOrEmpty(e.Data))
+                                        //{
+                                        //    Console.WriteLine($"Error 1: {e.Data}");
+                                        //}
                                     };
                                     process.Start();
                                     process.BeginOutputReadLine();
@@ -8675,16 +8988,21 @@ namespace WindowsFormsApp
                                     }
 
                                     // Is a video
-                                    if (extension == ".mp4" || extension == ".avi" ||
-                                        extension == ".wmv" || extension == ".mpg" ||
+                                    if (extension == ".mp4"  || extension == ".avi" ||
+                                        extension == ".wmv"  || extension == ".mpg" ||
                                         extension == ".rmvp" || extension == ".mov" ||
-                                        extension == ".dat" || extension == ".flv")
+                                        extension == ".dat"  || extension == ".flv")
                                     {
                                         cmd_ffmpeg += ($"-i \"{infoWindow.list[idx]}\" ");
                                     }
                                     else
                                     {
-                                        cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
+                                        if ((infoWindow.list[idx].Equals("webpage")) || (infoWindow.list[idx].Equals("text")))
+                                        {
+                                            cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "black_background.png")}\" ");
+                                        }
+                                        else
+                                            cmd_ffmpeg += ($"-framerate 25 -t {infoWindow.list_duration[idx]} -loop 1 -i \"{infoWindow.list[idx]}\" ");
                                     }
                                 }
 
@@ -8776,10 +9094,18 @@ namespace WindowsFormsApp
 
                                 process.OutputDataReceived += (sender, e) =>
                                 {
-                                    // Do nothing
+                                    //if (!string.IsNullOrEmpty(e.Data))
+                                    //{
+                                    //    Console.WriteLine($"Output 2: {e.Data}"); // Print log for output
+                                    //}
                                 };
                                 process.ErrorDataReceived += (sender, e) =>
                                 {
+                                    //if (!string.IsNullOrEmpty(e.Data))
+                                    //{
+                                    //    Console.WriteLine($"Error 2: {e.Data}"); // Print log for errors
+                                    //}
+
                                     if (flag_cancel)
                                     {
                                         process.CancelErrorRead();
@@ -8991,11 +9317,9 @@ namespace WindowsFormsApp
 
                 foreach (Control control1 in controlsListSelect[currentIdxList])
                 {
-                    ResizablePanel panel_windown = control1 as ResizablePanel;
-                    Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>(panel_windown.Name);
-                    info_windown.Add(Info_Window);
-
-                    if (true && ((controlsListSelect[currentIdxList].Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                    Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>((control1 as ResizablePanel).Name);
+                    
+                    if (true && ((controlsListSelect[currentIdxList].Count >= 2) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                     {
                         if (totalBytes == 0)
                         {
@@ -9005,25 +9329,116 @@ namespace WindowsFormsApp
                                 totalBytes = fileInfo.Length;
                             }
                         }
+
+                        // Add size for type webpage, text, v.v.
+                        for (int idx = 0; idx < Info_Window.list.Count; idx++)
+                        {
+                            if (Info_Window.list[idx].Equals("webpage"))
+                            {
+                                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png")))
+                                {
+                                    FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png"));
+                                    totalBytes += fileInfo.Length;
+                                }
+                            }
+                            else if (Info_Window.list[idx].Equals("text"))
+                            {
+                                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png")))
+                                {
+                                    // Parse data to download background
+                                    Info_Text infoText = JsonConvert.DeserializeObject<Info_Text>(Info_Window.list_text[idx]);
+
+                                    if (!infoText.background.Equals("None"))
+                                    {
+                                        // Find path item
+                                        string path_file_background = "";
+                                        using (StreamReader sr = new StreamReader("material.data"))
+                                        {
+                                            string line;
+                                            while ((line = sr.ReadLine()) != null)
+                                            {
+                                                if (System.IO.Path.GetFileName(line).Equals(infoText.background))
+                                                {
+                                                    path_file_background = line;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if ((path_file_background.Length > 0) && (File.Exists(path_file_background)))
+                                        {
+                                            FileInfo fileInfoBackground = new FileInfo(path_file_background);
+                                            totalBytes += fileInfoBackground.Length;
+                                        }
+                                    }
+
+                                    FileInfo fileInfo = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png"));
+                                    totalBytes += fileInfo.Length;
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        foreach (String filePath in Info_Window.list)
+                        for (int idx = 0; idx < Info_Window.list.Count; idx++)
                         {
-                            FileInfo fileInfo = new FileInfo(filePath);
-                            if (fileInfo.Exists)
+                            String pathFile = Info_Window.list[idx];
+                            if (Info_Window.list[idx].Equals("webpage"))
                             {
+                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png");
+                            }
+                            else if (Info_Window.list[idx].Equals("text"))
+                            {
+                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png");
+
+                                // Parse data to download background
+                                Info_Text infoText = JsonConvert.DeserializeObject<Info_Text>(Info_Window.list_text[idx]);
+
+                                if (!infoText.background.Equals("None"))
+                                {
+                                    // Find path item
+                                    string path_file_background = "";
+                                    using (StreamReader sr = new StreamReader("material.data"))
+                                    {
+                                        string line;
+                                        while ((line = sr.ReadLine()) != null)
+                                        {
+                                            if (System.IO.Path.GetFileName(line).Equals(infoText.background))
+                                            {
+                                                path_file_background = line;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if ((path_file_background.Length > 0) && (File.Exists(path_file_background)))
+                                    {
+                                        FileInfo fileInfoBackground = new FileInfo(path_file_background);
+                                        totalBytes += fileInfoBackground.Length;
+                                    }
+                                }
+                            }
+
+                            if (File.Exists(pathFile))
+                            {
+                                FileInfo fileInfo = new FileInfo(pathFile);
                                 totalBytes += fileInfo.Length;
                             }
                         }
                     }
+
+                    // Add item
+                    info_windown.Add(Info_Window);
                 }
                 info_windown.Reverse();
 
+                bool flagConvert = false;
                 if (totalBytes > 0)
                 {
-                    if (true && ((controlsListSelect[currentIdxList].Count > 1) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
+                    if (true && ((controlsListSelect[currentIdxList].Count >= 2) || (int.Parse(info_program.width_real) > int.Parse(info_program.width_resolution))))
                     {
+                        flagConvert = true;
+
                         using (var sourceStream = new FileStream(contentFilePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, true))
                         using (var destinationStream = new FileStream(Path.Combine(subFolderPath, Path.GetFileName(contentFilePath)), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, true))
                         {
@@ -9053,38 +9468,48 @@ namespace WindowsFormsApp
                             }
                         }
                     }
-                    else
+
+                    foreach (Control control1 in controlsListSelect[currentIdxList])
                     {
-                        foreach (Control control1 in controlsListSelect[currentIdxList])
+                        Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>((control1 as ResizablePanel).Name);
+
+                        for (int idx = 0; idx < Info_Window.list.Count; idx++)
                         {
-                            ResizablePanel panel_windown = control1 as ResizablePanel;
-                            Info_Window Info_Window = JsonConvert.DeserializeObject<Info_Window>(panel_windown.Name);
+                            String pathFile = Info_Window.list[idx];
 
-                            foreach (String filePath in Info_Window.list)
+                            if (Info_Window.list[idx].Equals("webpage"))
                             {
-                                using (var sourceStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, true))
-                                using (var destinationStream = new FileStream(Path.Combine(subFolderPath, Path.GetFileName(filePath)), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, true))
+                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "webpage_background.png");
+                            }
+                            else if (Info_Window.list[idx].Equals("text"))
+                            {
+                                pathFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Image", "text_background.png");
+                            }
+                            else if (flagConvert)
+                                continue;
+
+                            using (var sourceStream = new FileStream(pathFile, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, true))
+                            using (var destinationStream = new FileStream(Path.Combine(subFolderPath, Path.GetFileName(pathFile)), FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, true))
+                            {
+                                var buffer = new byte[bufferSize];
+                                int bytesRead;
+
+                                while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
                                 {
-                                    var buffer = new byte[bufferSize];
-                                    int bytesRead;
+                                    destinationStream.Write(buffer, 0, bytesRead);
 
-                                    while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                                    totalBytesRead += bytesRead;
+
+                                    if (!flag_cancel)
                                     {
-                                        destinationStream.Write(buffer, 0, bytesRead);
-
-                                        totalBytesRead += bytesRead;
-
-                                        if (!flag_cancel)
+                                        dialog.Invoke((MethodInvoker)delegate
                                         {
-                                            dialog.Invoke((MethodInvoker)delegate
-                                            {
-                                                // Your UI update code
-                                                dialog.ProgressValue = (int)((double)totalBytesRead / totalBytes * 100);
-                                                dialog.progressBar1.Refresh();
-                                            });
-                                        }
-
+                                            // Your UI update code
+                                            dialog.ProgressValue = (int)((double)totalBytesRead / totalBytes * 100);
+                                            dialog.progressBar1.Refresh();
+                                        });
                                     }
+
                                 }
                             }
                         }

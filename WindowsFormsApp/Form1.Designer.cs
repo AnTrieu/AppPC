@@ -145,9 +145,9 @@
             this.new_resource = new System.Windows.Forms.Button();
             this.panel44 = new System.Windows.Forms.Panel();
             this.panel99 = new System.Windows.Forms.Panel();
-            this.Text = new System.Windows.Forms.Button();
+            this.text = new System.Windows.Forms.Button();
             this.panel45 = new System.Windows.Forms.Panel();
-            this.Webpage = new System.Windows.Forms.Button();
+            this.webpage = new System.Windows.Forms.Button();
             this.panel40 = new System.Windows.Forms.Panel();
             this.panel70 = new System.Windows.Forms.Panel();
             this.panel80 = new System.Windows.Forms.Panel();
@@ -1753,60 +1753,60 @@
             // panel99
             // 
             this.panel99.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel99.Controls.Add(this.Text);
+            this.panel99.Controls.Add(this.text);
             this.panel99.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel99.Location = new System.Drawing.Point(75, 0);
             this.panel99.Name = "panel99";
             this.panel99.Size = new System.Drawing.Size(75, 60);
             this.panel99.TabIndex = 1;
             // 
-            // Text
+            // text
             // 
-            this.Text.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
-            this.Text.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Text.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Text.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Text.FlatAppearance.BorderSize = 0;
-            this.Text.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Text.ForeColor = System.Drawing.Color.White;
-            this.Text.Image = global::WindowsFormsApp.Properties.Resources.text_icon;
-            this.Text.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.Text.Location = new System.Drawing.Point(0, 0);
-            this.Text.Name = "Text";
-            this.Text.Size = new System.Drawing.Size(75, 60);
-            this.Text.TabIndex = 0;
-            this.Text.Text = "Text";
-            this.Text.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.Text.UseVisualStyleBackColor = true;
+            this.text.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
+            this.text.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.text.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.text.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.text.FlatAppearance.BorderSize = 0;
+            this.text.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.text.ForeColor = System.Drawing.Color.White;
+            this.text.Image = global::WindowsFormsApp.Properties.Resources.text_icon;
+            this.text.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.text.Location = new System.Drawing.Point(0, 0);
+            this.text.Name = "text";
+            this.text.Size = new System.Drawing.Size(75, 60);
+            this.text.TabIndex = 0;
+            this.text.Text = "Text";
+            this.text.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.text.UseVisualStyleBackColor = true;
             // 
             // panel45
             // 
             this.panel45.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel45.Controls.Add(this.Webpage);
+            this.panel45.Controls.Add(this.webpage);
             this.panel45.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel45.Location = new System.Drawing.Point(0, 0);
             this.panel45.Name = "panel45";
             this.panel45.Size = new System.Drawing.Size(75, 60);
             this.panel45.TabIndex = 0;
             // 
-            // Webpage
+            // webpage
             // 
-            this.Webpage.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
-            this.Webpage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.Webpage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Webpage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Webpage.FlatAppearance.BorderSize = 0;
-            this.Webpage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.Webpage.ForeColor = System.Drawing.Color.White;
-            this.Webpage.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
-            this.Webpage.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.Webpage.Location = new System.Drawing.Point(0, 0);
-            this.Webpage.Name = "Webpage";
-            this.Webpage.Size = new System.Drawing.Size(75, 60);
-            this.Webpage.TabIndex = 0;
-            this.Webpage.Text = "Webpage";
-            this.Webpage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.Webpage.UseVisualStyleBackColor = true;
+            this.webpage.BackgroundImage = global::WindowsFormsApp.Properties.Resources.net_bk;
+            this.webpage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.webpage.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.webpage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webpage.FlatAppearance.BorderSize = 0;
+            this.webpage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.webpage.ForeColor = System.Drawing.Color.White;
+            this.webpage.Image = global::WindowsFormsApp.Properties.Resources.browser_icon;
+            this.webpage.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.webpage.Location = new System.Drawing.Point(0, 0);
+            this.webpage.Name = "webpage";
+            this.webpage.Size = new System.Drawing.Size(75, 60);
+            this.webpage.TabIndex = 0;
+            this.webpage.Text = "Webpage";
+            this.webpage.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.webpage.UseVisualStyleBackColor = true;
             // 
             // panel40
             // 
@@ -3560,8 +3560,8 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(54)))), ((int)(((byte)(54)))), ((int)(((byte)(54)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(1500, 750);
-            this.Controls.Add(this.main_terminal);
             this.Controls.Add(this.main_program);
+            this.Controls.Add(this.main_terminal);
             this.Controls.Add(this.main_release);
             this.Controls.Add(this.content);
             this.Controls.Add(this.title);
@@ -3832,7 +3832,7 @@
         private System.Windows.Forms.Panel show_file;
         private System.Windows.Forms.Panel panel44;
         private System.Windows.Forms.Panel panel45;
-        private System.Windows.Forms.Button Webpage;
+        private System.Windows.Forms.Button webpage;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Panel panel42;
         private System.Windows.Forms.Button new_resource;
@@ -3932,7 +3932,7 @@
         private System.Windows.Forms.Panel panel98;
         private System.Windows.Forms.Panel panel97;
         private System.Windows.Forms.Panel panel99;
-        private System.Windows.Forms.Button Text;
+        private System.Windows.Forms.Button text;
         private System.Windows.Forms.Panel panel100;
         private System.Windows.Forms.TextBox url_select;
         private System.Windows.Forms.Label label51;
