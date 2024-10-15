@@ -2326,7 +2326,7 @@ namespace WindowsFormsApp
                                             foreach (Control item in child.Controls)
                                             {
                                                 var info_program = JsonConvert.DeserializeObject<Info_Program>(destinationPanel.Name);
-
+                                                
                                                 // Create a bitmap with the same size as the panel
                                                 Bitmap bitmap = new Bitmap(destinationPanel.Width, destinationPanel.Height);
                                                 destinationPanel.DrawToBitmap(bitmap, new Rectangle(0, 0, bitmap.Width, bitmap.Height));
@@ -5574,6 +5574,9 @@ namespace WindowsFormsApp
                                                         // Check if the control is a PictureBox
                                                         else if (control_1 is PictureBox)
                                                         {
+                                                            if (!control_1.Visible)
+                                                                control_1.Visible = true;
+
                                                             // You've found the PictureBox inside the Panel
                                                             PictureBox pictureBoxInPanel = (PictureBox) control_1;
 
@@ -5623,6 +5626,9 @@ namespace WindowsFormsApp
                                                         // Check if the control is a PictureBox
                                                         else if (control_1 is PictureBox)
                                                         {
+                                                            if (!control_1.Visible)
+                                                                control_1.Visible = true;
+
                                                             // You've found the PictureBox inside the Panel
                                                             PictureBox pictureBoxInPanel = (PictureBox)control_1;
 
@@ -5666,6 +5672,9 @@ namespace WindowsFormsApp
                                                     // Check if the control is a PictureBox
                                                     else if (control_1 is PictureBox)
                                                     {
+                                                        if (!control_1.Visible)
+                                                            control_1.Visible = true;
+
                                                         // You've found the PictureBox inside the Panel
                                                         PictureBox pictureBoxInPanel = (PictureBox)control_1;
 
@@ -5692,6 +5701,20 @@ namespace WindowsFormsApp
                                                 this.panel100.Visible = false;
                                                 this.panel101.Visible = true;
 
+                                                foreach (Control control_1 in resizablePanel1.Controls)
+                                                {
+                                                    if (control_1 is Panel)
+                                                    {
+                                                        if (!control_1.Visible)
+                                                            control_1.Visible = true;
+                                                    }
+                                                    else if (control_1 is PictureBox)
+                                                    {
+                                                        if (control_1.Visible)
+                                                            control_1.Visible = false;
+                                                    }
+                                                }
+                                                
                                                 processActionText(resizablePanel1, JsonConvert.DeserializeObject<Info_Text>(infoWindow1.list_text[index]), infoWindow1.list_entrytime[index], infoWindow1.list_duration[index]);
                                             }
 
@@ -6086,7 +6109,7 @@ namespace WindowsFormsApp
                         }
                             
                         break;
-                    }
+                    } 
                 }
             }
         }
