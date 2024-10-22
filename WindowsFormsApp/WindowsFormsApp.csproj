@@ -123,7 +123,7 @@
     <Compile Include="instruction_form.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ltiming_form.cs">
+    <Compile Include="timing_form.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="notify_form.cs">
@@ -161,8 +161,8 @@
     <EmbeddedResource Include="instruction_form.resx">
       <DependentUpon>instruction_form.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ltiming_form.resx">
-      <DependentUpon>ltiming_form.cs</DependentUpon>
+    <EmbeddedResource Include="timing_form.resx">
+      <DependentUpon>timing_form.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="loop_form.resx">
       <DependentUpon>loop_form.cs</DependentUpon>

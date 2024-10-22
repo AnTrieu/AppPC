@@ -60,6 +60,7 @@ namespace WindowsFormsApp
             public string startTime { get; set; }
             public string endTime { get; set; }
             public string loop { get; set; }
+            public string timeSetUp { get; set; }
             public string startDate { get; set; }
             public string endDate { get; set; }
             public List<string> weeks { get; set; }
@@ -73,13 +74,16 @@ namespace WindowsFormsApp
 
         public timing_loop(List<String> list_program, string startTime, string endTime, string loop, string startDate, string endDate, List<string> weeks)
         {
+            // Reverse the list
+            list_program.Reverse();
+
             this.list_program = list_program;
             InitializeComponent();
 
-            this.comboBox1.DataSource = list_program;
+            this.comboBox1.DataSource = this.list_program;
             this.comboBox2.DataSource = new List<string> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" };
-
-            if ((startTime != null) && (endTime != null) && (loop != null) && (startDate != null) && (endDate != null) && (weeks != null))
+            
+            if (startTime != null)
             {
                 // Parse the string to a TimeSpan object
                 if (TimeSpan.TryParse(startTime, out TimeSpan timeS))
@@ -87,16 +91,25 @@ namespace WindowsFormsApp
                     // Set the DateTimePicker value
                     this.dateTimePicker.Value = DateTime.Today.Add(timeS);
                 }
+            }
 
+            if (endTime != null)
+            {
                 // Parse the string to a TimeSpan object
                 if (TimeSpan.TryParse(endTime, out TimeSpan timeE))
                 {
                     // Set the DateTimePicker value
                     this.dateTimePicker1.Value = DateTime.Today.Add(timeE);
                 }
+            }
 
+            if (loop != null)
+            {
                 this.comboBox2.SelectedItem = loop;
+            }
 
+            if ((startDate != null) && (endDate != null))
+            {
                 if ((startDate.Length == 0) || (endDate.Length == 0))
                 {
                     this.radioButton1.Checked = true;
@@ -127,7 +140,10 @@ namespace WindowsFormsApp
                         this.dateTimePicker3.Value = dateE;
                     }
                 }
+            }
 
+            if (weeks != null)
+            {
                 if (weeks == null)
                 {
                     this.radioButton3.Checked = true;
@@ -648,31 +664,32 @@ namespace WindowsFormsApp
                 weeks_temp = new List<string>();
 
                 if (this.checkBox1.Checked)
-                    weeks_temp.Add(this.checkBox1.Text);
+                    weeks_temp.Add("2");
                 if (this.checkBox2.Checked)
-                    weeks_temp.Add(this.checkBox2.Text);
+                    weeks_temp.Add("3");
                 if (this.checkBox3.Checked)
-                    weeks_temp.Add(this.checkBox3.Text);
+                    weeks_temp.Add("4");
                 if (this.checkBox4.Checked)
-                    weeks_temp.Add(this.checkBox4.Text);
+                    weeks_temp.Add("5");
                 if (this.checkBox5.Checked)
-                    weeks_temp.Add(this.checkBox5.Text);
+                    weeks_temp.Add("6");
                 if (this.checkBox6.Checked)
-                    weeks_temp.Add(this.checkBox6.Text);
+                    weeks_temp.Add("7");
                 if (this.checkBox7.Checked)
-                    weeks_temp.Add(this.checkBox7.Text);
+                    weeks_temp.Add("1");
             }
 
 
             ConfirmEventArgs eventArgs = new ConfirmEventArgs
             {
-                program = this.comboBox1.Text,
-                startTime = this.dateTimePicker.Text,
-                endTime = this.dateTimePicker1.Text,
-                loop = this.comboBox2.Text,
-                startDate = this.radioButton2.Checked ? dateTimePicker2.Text : "",
-                endDate = this.radioButton2.Checked ? dateTimePicker3.Text : "",
-                weeks = weeks_temp
+                program     = this.comboBox1.Text,
+                startTime   = this.dateTimePicker.Text,
+                endTime     = this.dateTimePicker1.Text,
+                loop        = this.comboBox2.Text,
+                timeSetUp   = DateTime.Now.ToString("yyyy-MM-dd"),
+                startDate   = this.radioButton2.Checked ? dateTimePicker2.Value.ToString("yyyy-MM-dd") : "",
+                endDate     = this.radioButton2.Checked ? dateTimePicker3.Value.ToString("yyyy-MM-dd") : "",
+                weeks       = weeks_temp
             };
 
 

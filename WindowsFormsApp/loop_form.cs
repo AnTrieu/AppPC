@@ -47,12 +47,15 @@ namespace WindowsFormsApp
         // Định nghĩa sự kiện bằng delegate ở trên
         public event EventHandler<ConfirmEventArgs> ConfirmClick;
 
-        public loop_form(List<String> list_program, String program_select, string value)
+        public loop_form(string type, List<String> list_program, String program_select, string value)
         {
+            // Reverse the list
+            list_program.Reverse();
+
             this.list_program = list_program;
             InitializeComponent();
 
-            this.comboBox1.DataSource = list_program;
+            this.comboBox1.DataSource = this.list_program;
             this.comboBox2.DataSource = new List<string> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32" };
 
             if ((program_select != null) && (value != null))
@@ -79,6 +82,11 @@ namespace WindowsFormsApp
                     this.comboBox2.SelectedItem = value;
                 }
             }
+
+            if (type.Equals("new"))
+                this.label5.Text = "New loop";
+            else
+                this.label5.Text = "Edit loop";
         }
 
         private void InitializeComponent()
